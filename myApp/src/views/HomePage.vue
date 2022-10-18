@@ -2,8 +2,9 @@
   <ion-page>
     <ion-header :translucent="true">
       <ion-toolbar id="toolbar">
-        <ion-button>Page 1</ion-button>
-        <ion-button>Page 2</ion-button>
+        <ion-button @click="switchToPageOne">Page 1</ion-button>
+        <ion-button>Change Value</ion-button>
+        <ion-button @click="setOpenTrue">Check Alert</ion-button>
       </ion-toolbar>
     </ion-header>
     
@@ -13,7 +14,6 @@
           <ion-button>Default</ion-button>
         </ion-toolbar>
       </ion-header>
-    
       <div id="container">
         <ion-title>Test</ion-title>
       </div>
@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts">
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton } from '@ionic/vue';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton, alertController } from '@ionic/vue';
 import { defineComponent } from 'vue';
 
 
@@ -36,9 +36,21 @@ export default defineComponent({
     IonToolbar,
     IonButton
   },
+  data() {
+    return {
+      testValue: 10,
+      setOpen: false, 
+    }
+  },
   methods: {
     switchToPageOne() {
       this.$router.push({name: "PageOne"})
+    },
+    setOpenTrue() {
+      if( this.testValue !== 12) {
+        this.setOpen = true
+        console.log(this.setOpen)
+      }
     }
   }
 });

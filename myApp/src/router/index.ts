@@ -14,7 +14,9 @@ const routes: Array<RouteRecordRaw> = [
     component: HomePage
   },
   {
-    
+    path: '/PageOne',
+    name: 'PageOne',
+    component: PageOne
   }
 ]
 
