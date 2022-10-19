@@ -3,8 +3,8 @@
     <ion-header :translucent="true">
       <ion-toolbar id="toolbar">
         <ion-button @click="switchToPageOne">Page 1</ion-button>
-        <ion-button>Change Value</ion-button>
-        <ion-button @click="setOpenTrue">Check Alert</ion-button>
+        <ion-button >Change Value</ion-button>
+        
       </ion-toolbar>
     </ion-header>
     
@@ -16,6 +16,7 @@
       </ion-header>
       <div id="container">
         <ion-title>Test</ion-title>
+        <ion-button @click="changeValid">Check Alert</ion-button>
       </div>
     </ion-content>
   </ion-page>
@@ -37,20 +38,17 @@ export default defineComponent({
     IonButton
   },
   data() {
-    return {
-      testValue: 10,
-      setOpen: false, 
+    return{
+      valid: false
     }
   },
   methods: {
     switchToPageOne() {
       this.$router.push({name: "PageOne"})
     },
-    setOpenTrue() {
-      if( this.testValue !== 12) {
-        this.setOpen = true
-        console.log(this.setOpen)
-      }
+    changeValid() {
+      this.valid = true
+      console.log(this.valid)
     }
   }
 });
