@@ -3,7 +3,7 @@
     <ion-header :translucent="true">
       <ion-toolbar id="toolbar">
         <ion-button @click="switchToPageOne">Page 1</ion-button>
-        <ion-button >Change Value</ion-button>
+        <ion-button @click="changeValid">Change Value</ion-button>
         
       </ion-toolbar>
     </ion-header>
@@ -16,15 +16,23 @@
       </ion-header>
       <div id="container">
         <ion-title>Test</ion-title>
-        <ion-button @click="changeValid">Check Alert</ion-button>
+        <ion-button v-if="valid" @click="setOpen(true)">Check Alert</ion-button>
+        <ion-alert
+        :is-open="isOpenRef"
+        header="Alert"
+        sub-header="Important message"
+        message="This is an alert!"
+        :buttons="['OK']"
+        @didDismiss="setOpen(false)"
+       ></ion-alert>
       </div>
     </ion-content>
   </ion-page>
 </template>
 
 <script lang="ts">
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton, alertController } from '@ionic/vue';
-import { defineComponent } from 'vue';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton, IonAlert } from '@ionic/vue';
+import { defineComponent, ref } from 'vue';
 
 
 export default defineComponent({
@@ -35,7 +43,14 @@ export default defineComponent({
     IonPage,
     IonTitle,
     IonToolbar,
-    IonButton
+    IonButton,
+    IonAlert
+  },
+  setup() {
+    const isOpenRef = ref(false);
+    const setOpen = (state: boolean) => isOpenRef.value = state;
+    
+    return { isOpenRef, setOpen }
   },
   data() {
     return{
