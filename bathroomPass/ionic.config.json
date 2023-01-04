@@ -1,0 +1,7 @@
+{
+  "name": "bathroomPass",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue"
+}
