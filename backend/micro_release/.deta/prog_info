@@ -1,0 +1,1 @@
+{"id":"e6f7c66f-2486-4030-bb10-540a917e0c6d","space":36146,"runtime":"python3.9","name":"micro_release","path":"gssgc6","project":"b0to6p61","account":"144798365827","region":"us-west-1","deps":["fastapi","gspread"],"envs":null,"public":true,"log_level":"off","cron":""}
