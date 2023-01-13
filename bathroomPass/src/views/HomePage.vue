@@ -38,7 +38,7 @@ export default defineComponent({
   },
   methods: {
     PushToScanner() {
-      this.$router.push({name: "ScannerPage" })
+      this.$router.push({name: "SignIn" })
     }
   }
 });
