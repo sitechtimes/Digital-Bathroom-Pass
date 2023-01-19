@@ -4,8 +4,8 @@
             <ion-header collapse="condense">
             </ion-header>
             <div id="container">
-                <ion-title v-if="PassAvailability" >The Pass is </ion-title>
-                <ion-button>Click Me</ion-button>
+                <ion-title >The Pass is Not Available</ion-title>
+                <ion-button v-if="isSignedIn" >Take Out the Pass</ion-button>
                 <GoogleLogin v-if="!isSignedIn" :callback="callback"/>
             </div>
         </ion-content>
@@ -13,8 +13,8 @@
 </template>
 
 <script lang="ts">
-import{IonPage, IonContent, IonTitle, IonHeader, IonButton} from '@ionic/vue';
-import {defineComponent} from 'vue';
+import{ IonPage, IonContent, IonTitle, IonHeader, IonButton } from '@ionic/vue';
+import { defineComponent } from 'vue';
 import { decodeCredential } from 'vue3-google-login';
 
 export default defineComponent({
@@ -30,6 +30,7 @@ export default defineComponent({
         return{
             isSignedIn: false,
             PassAvailability: false,
+            roomNumber: ""
         }
     },
     methods:{ 
@@ -64,5 +65,12 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
+#container {   
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-150%);
+}
 </style>

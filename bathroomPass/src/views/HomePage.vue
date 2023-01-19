@@ -14,9 +14,7 @@
       </ion-header>
     
       <div id="container">
-        <ion-button @click="PushToScanner">Go To Scan</ion-button>
-        <strong>Ready to create an app?</strong>
-        <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+        <ion-button @click="PushToScanner">Go To Scanner</ion-button>
       </div>
     </ion-content>
   </ion-page>

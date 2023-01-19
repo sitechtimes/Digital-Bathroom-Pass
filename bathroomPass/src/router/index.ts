@@ -18,11 +18,6 @@ const routes: Array<RouteRecordRaw> = [
     path: '/SignIn',
     name: 'SignIn',
     component: SignIn
-  },
-  {
-    path: '/Scanner',
-    name: 'ScannerPage',
-    component: ScannerPage
   }
 ]
 
