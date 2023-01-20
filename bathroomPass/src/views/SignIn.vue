@@ -4,9 +4,9 @@
             <ion-header collapse="condense">
             </ion-header>
             <div id="container">
-                <ion-title >The Pass is Not Available</ion-title>
-                <ion-button v-if="isSignedIn" >Take Out the Pass</ion-button>
-                <GoogleLogin v-if="!isSignedIn" :callback="callback"/>
+                <ion-title v-if="isSignedIn && showUnavailable">The Pass is Not Available</ion-title>
+                <ion-button v-if="isSignedIn && !showUnavailable" @click="tryTakeOutPass" >Take Out the Pass</ion-button>
+                <GoogleLogin v-if="!isSignedIn " :callback="callback"/>
             </div>
         </ion-content>
      </ion-page>
@@ -29,8 +29,10 @@ export default defineComponent({
     data() {
         return{
             isSignedIn: false,
-            PassAvailability: false,
-            roomNumber: ""
+            PassAvailability: "",
+            roomNumber: "",
+            showUnavailable: false,
+            passRequirements: "",
         }
     },
     methods:{ 
@@ -56,9 +58,39 @@ export default defineComponent({
             const givenName = userData.given_name
             const familyName = userData.family_name
             const email = userData.email
+            const userInfo = givenName + "/" + familyName + "/" + email
+            this.passRequirements = userInfo
             console.log( givenName, familyName, email )
             this.isSignedIn = true
+        },
+        async tryTakeOutPass() {
+            const changePass = 'https://gssgc6.deta.dev/change_status'
+            const changeToFalse = changePass + "120" + "/false/" + this.passRequirements
+            const changeToTrue = changePass + "120" + "/false/" + this.passRequirements
+            const fetchPass = 'https://gssgc6.deta.dev/get_status/120'
+
+            if(this.PassAvailability === "") {
+            await fetch(fetchPass, {
+                method: 'get',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(res=>res.json()).then((response) => {
+                this.PassAvailability =response.message[0]
+                console.log(this.PassAvailability)
+            }).catch((error) => {
+                console.log('Error', error)
+            }) 
+        } else {
+            console.log("error")
         }
+        if(this.PassAvailability === "FALSE") {
+            await fetch(changeToTrue).then(res=>res.json()).then((response) => {console.log({response})}).catch((error) => {
+                console.log("Error", error)
+            })
+        }
+     }
     }
 })
 
