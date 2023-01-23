@@ -64,13 +64,11 @@ export default defineComponent({
             this.isSignedIn = true
         },
         async tryTakeOutPass() {
-            const changePass = 'https://gssgc6.deta.dev/change_status'
+            const changePass = 'https://gssgc6.deta.dev/change_status/'
             const changeToFalse = changePass + "120" + "/false/" + this.passRequirements
-            const changeToTrue = changePass + "120" + "/false/" + this.passRequirements
+            const changeToTrue = changePass + "120" + "/true/" + this.passRequirements
             const fetchPass = 'https://gssgc6.deta.dev/get_status/120'
-
-            if(this.PassAvailability === "") {
-            await fetch(fetchPass, {
+            const fetchFunction = await fetch(fetchPass, {
                 method: 'get',
                 mode: 'cors',
                 headers: {
@@ -82,13 +80,20 @@ export default defineComponent({
             }).catch((error) => {
                 console.log('Error', error)
             }) 
-        } else {
-            console.log("error")
+
+            if(this.PassAvailability === "") {
+            fetchFunction
         }
         if(this.PassAvailability === "FALSE") {
             await fetch(changeToTrue).then(res=>res.json()).then((response) => {console.log({response})}).catch((error) => {
                 console.log("Error", error)
             })
+            fetchFunction
+        } else {
+            await fetch(changeToFalse).then(res=>res.json()).then((response) => {console.log({response})}).catch((error) => {
+                console.log("Error", error)
+            })
+            fetchFunction
         }
      }
     }

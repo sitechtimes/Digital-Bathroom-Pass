@@ -1,5 +1,5 @@
 <template>
-  <ion-page>
+  <ion-page id="main">
     <ion-header :translucent="true">
       <ion-toolbar>
         <ion-title>Blank</ion-title>
@@ -14,7 +14,7 @@
       </ion-header>
     
       <div id="container">
-        <ion-button @click="PushToScanner">Go To Scanner</ion-button>
+        <ion-button id="buttonText"  shape="round" size="large"  color="warning" @click="PushToScanner">Go To Scanner</ion-button>
       </div>
     </ion-content>
   </ion-page>
@@ -45,7 +45,6 @@ export default defineComponent({
 <style scoped>
 #container {
   text-align: center;
-  
   position: absolute;
   left: 0;
   right: 0;
@@ -53,21 +52,12 @@ export default defineComponent({
   transform: translateY(-50%);
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+#main {
+  background-color: #000;
 }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-  
-  color: #8c8c8c;
-  
-  margin: 0;
+#buttonText {
+  font-size: medium;
 }
 
-#container a {
-  text-decoration: none;
-}
 </style>
