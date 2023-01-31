@@ -33,6 +33,9 @@ export default defineComponent({
             roomNumber: "",
             showUnavailable: false,
             passRequirements: "",
+            currentUserName: "",
+            lastUserName: "",
+            allowTakePass: true,
         }
     },
     methods:{ 
@@ -60,8 +63,10 @@ export default defineComponent({
             const email = userData.email
             const userInfo = givenName + "/" + familyName + "/" + email
             this.passRequirements = userInfo
-            console.log( givenName, familyName, email )
+            console.log( userInfo )
             this.isSignedIn = true
+            this.currentUserName = givenName + ' ' + familyName
+            console.log(this.currentUserName)
         },
         async tryTakeOutPass() {
             const changePass = 'https://gssgc6.deta.dev/change_status/'
@@ -75,25 +80,30 @@ export default defineComponent({
                     'Content-Type': 'application/json'
                 }
             }).then(res=>res.json()).then((response) => {
-                this.PassAvailability =response.message[0]
+                this.lastUserName = response.message[1]
+                this.PassAvailability = response.message[0]
                 console.log(this.PassAvailability)
+                console.log(this.lastUserName)
             }).catch((error) => {
                 console.log('Error', error)
             }) 
-
             if(this.PassAvailability === "") {
             fetchFunction
         }
-        if(this.PassAvailability === "FALSE") {
+        if(this.PassAvailability === "FALSE" && this.currentUserName === this.lastUserName) {
             await fetch(changeToTrue).then(res=>res.json()).then((response) => {console.log({response})}).catch((error) => {
                 console.log("Error", error)
             })
             fetchFunction
-        } else {
+        } else if(this.PassAvailability === "TRUE") {
             await fetch(changeToFalse).then(res=>res.json()).then((response) => {console.log({response})}).catch((error) => {
                 console.log("Error", error)
             })
             fetchFunction
+        } else {
+            console.log("before change", this.showUnavailable)
+            this.showUnavailable = true
+            console.log("after change", this.showUnavailable)
         }
      }
     }
