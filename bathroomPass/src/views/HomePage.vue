@@ -6,14 +6,15 @@
           <ion-title size="small" weight="strong" id="cardTitle">SITHS Bathroom Scanner</ion-title>
           <p class="card-text">Pooping made easy</p>
         </div>
-        <ion-button id="buttonText" shape="round" size="large" color="warning" @click="PushToScanner">Go To Scanner</ion-button>
+        <ion-button id="buttonText" shape="round" size="large" @click="PushToScanner" >
+          <ion-ripple-effect></ion-ripple-effect>Go To Scanner</ion-button>
       </div>
     </ion-content>
   </ion-page>
 </template>
 
 <script lang="ts">
-import { IonContent, IonPage, IonTitle, IonButton } from '@ionic/vue';
+import { IonContent, IonPage, IonTitle, IonButton, IonRippleEffect } from '@ionic/vue';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
@@ -22,7 +23,8 @@ export default defineComponent({
     IonContent,
     IonPage,
     IonTitle,
-    IonButton
+    IonButton,
+    IonRippleEffect
   },
   methods: {
     PushToScanner() {
@@ -33,6 +35,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
+
 #container {
   display: flex;
   flex-direction: column;
@@ -41,7 +44,7 @@ export default defineComponent({
   position: absolute;
   left: 0;
   right: 0;
-  top: 50%;
+  top: 55%;
   transform: translateY(-65%);
 }
 
@@ -58,7 +61,7 @@ export default defineComponent({
 }
 
 #card-wrapper {
-  background-color: yellow;
+  background-color: #CABC71;
   width: 86%;
   display: flex;
   border-radius: 2.5rem;
@@ -67,13 +70,20 @@ export default defineComponent({
   padding-bottom: 14%;
 }
 
-#card-text {
+p {
   color: black;
 }
 
 ion-title {
-  color: black;
+  color: #000;
   font-size: 2em;
+}
+
+ion-button {
+  --background: #CABC71;
+  --background-activated: #CABC71;
+
+  --color: #000; 
 }
 
 </style>
