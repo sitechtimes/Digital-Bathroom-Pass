@@ -82,7 +82,7 @@ ion-title {
 ion-button {
   --background: #CABC71;
   --background-activated: #CABC71;
-
+  
   --color: #000; 
 }
 
