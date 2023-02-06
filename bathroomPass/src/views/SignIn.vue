@@ -1,9 +1,11 @@
 <template>
      <ion-page id="main">
-        <ion-content id="main-container">
+        <ion-content color="dark" id="main-container">
             <div id="container">
                 <ion-title v-if="isSignedIn && showUnavailable">The Pass is Not Available</ion-title>
-                    <ion-button v-if="isSignedIn && !showUnavailable" @click="tryTakeOutPass" >Take Out the Pass</ion-button>
+                    <ion-button v-if="isSignedIn && !showUnavailable" @click="tryTakeOutPass" shape="round" weight="strong">
+                        <ion-ripple-effect></ion-ripple-effect>
+                        Take Out Pass</ion-button>
                 <GoogleLogin v-if="!isSignedIn " :callback="callback"/>
             </div>
         </ion-content>
@@ -11,7 +13,7 @@
 </template>
 
 <script lang="ts">
-import{ IonPage, IonContent, IonTitle, IonButton } from '@ionic/vue';
+import{ IonPage, IonContent, IonTitle, IonButton, IonRippleEffect } from '@ionic/vue';
 import { defineComponent } from 'vue';
 import { decodeCredential } from 'vue3-google-login';
 
@@ -21,7 +23,8 @@ export default defineComponent({
         IonPage,
         IonContent,
         IonTitle,
-        IonButton
+        IonButton,
+        IonRippleEffect
     },
     data() {
         return{
@@ -33,6 +36,7 @@ export default defineComponent({
             currentUserName: "",
             lastUserName: "",
             allowTakePass: true,
+            buttonText: "Take Out Pass"
         }
     },
     methods:{ 
@@ -80,6 +84,7 @@ export default defineComponent({
                 this.lastUserName = response.message[1]
                 this.PassAvailability = response.message[0]
                 console.log(this.PassAvailability)
+                console.log(this.currentUserName)
                 console.log(this.lastUserName)
             }).catch((error) => {
                 console.log('Error', error)
@@ -88,12 +93,15 @@ export default defineComponent({
             fetchFunction
         }
         if(this.PassAvailability === "FALSE" && this.currentUserName === this.lastUserName) {
-            await fetch(changeToTrue).then(res=>res.json()).then((response) => {console.log({response})}).catch((error) => {
+            await fetch(changeToTrue).then(res=>res.json()).then((response) => {
+                console.log({response})}).catch((error) => {
                 console.log("Error", error)
             })
             fetchFunction
         } else if(this.PassAvailability === "TRUE") {
-            await fetch(changeToFalse).then(res=>res.json()).then((response) => {console.log({response})}).catch((error) => {
+            await fetch(changeToFalse).then(res=>res.json()).then((response) => {
+                
+                console.log({response})}).catch((error) => {
                 console.log("Error", error)
             })
             fetchFunction
@@ -118,7 +126,11 @@ export default defineComponent({
   transform: translateY(-150%);
 }
 
-#main {
-  background-color: #000;
+ion-button {
+  --background: #CABC71;
+  --background-activated: #CABC71;
+  
+  --color: #000; 
 }
+
 </style>
