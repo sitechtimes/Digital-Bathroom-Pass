@@ -3,7 +3,7 @@
         <ion-content color="dark" id="main-container">
             <div id="container">
                 <ion-title v-if="isSignedIn && showUnavailable">The Pass is Not Available</ion-title>
-                    <ion-button v-if="isSignedIn && !showUnavailable" @click="tryTakeOutPass" shape="round" weight="strong">
+                    <ion-button v-if="isSignedIn && !showUnavailable" @click="tryTakeOutPass" size="large" shape="round" :strong="true" >
                         <ion-ripple-effect></ion-ripple-effect>
                         Take Out Pass</ion-button>
                 <GoogleLogin v-if="!isSignedIn " :callback="callback"/>
@@ -123,10 +123,16 @@ export default defineComponent({
   top: 50%;
   left: 0;
   right: 0;
-  transform: translateY(-150%);
+  transform: translateY(-60%);
 }
 
 ion-button {
+    width: 18rem;
+    height: 14rem;
+    font-size: 2rem;
+
+  --ion-font-family: 'Monserrat', sans-serif; 
+
   --background: #CABC71;
   --background-activated: #CABC71;
   

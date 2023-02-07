@@ -62,12 +62,16 @@ export default defineComponent({
 
 #card-wrapper {
   background-color: #CABC71;
-  width: 86%;
+  width: 50%;
   display: flex;
   border-radius: 2.5rem;
   margin-bottom: 13%;
   flex-direction: column;
   padding-bottom: 14%;
+  left: 0;
+  right: 0;
+  top: 55%;
+  transform: translateY(25%);
 }
 
 p {
@@ -84,6 +88,22 @@ ion-button {
   --background-activated: #CABC71;
   
   --color: #000; 
+}
+
+@media screen and (min-width : 300px) and (max-width : 1200px) {
+  #card-wrapper{
+    background-color: #CABC71;
+  width: 86%;
+  display: flex;
+  border-radius: 2.5rem;
+  margin-bottom: 13%;
+  flex-direction: column;
+  padding-bottom: 14%;
+  left: 0;
+  right: 0;
+  top: 55%;
+  transform: translateY(-5%);
+  }
 }
 
 </style>
