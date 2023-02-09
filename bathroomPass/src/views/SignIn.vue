@@ -7,10 +7,11 @@
                         <ion-ripple-effect></ion-ripple-effect>
                         Take Out Pass</ion-button>
                 <GoogleLogin v-if="!isSignedIn " :callback="callback" /> 
-              <!--   <ion-button id="loginButton" :strong="true" > 
+                <GoogleLogin v-if="!isSignedIn" :callback="callback" >
+                <ion-button id="loginButton" :strong="true" > 
                     <ion-icon slot="start" :icon="star"></ion-icon>
                     Custom Button Sign In </ion-button>
-                </GoogleLogin> -->
+                </GoogleLogin>
             </div>
         </ion-content>
      </ion-page>
@@ -49,7 +50,8 @@ export default defineComponent({
     },
     methods:{ 
         callback(response: any) {
-            type signIn = {
+            if (response.credential)
+            {type signIn = {
             iss?: string;
             aud?: string;
             azp?: string;
@@ -75,7 +77,9 @@ export default defineComponent({
             console.log( userInfo )
             this.isSignedIn = true
             this.currentUserName = givenName + ' ' + familyName
-            console.log(this.currentUserName)
+            console.log(this.currentUserName)} else {
+                console.log("call the endpoint which validates authorization code", response)
+            }
         },
         async tryTakeOutPass() {
             const changePass = 'https://gssgc6.deta.dev/change_status/'
@@ -118,8 +122,14 @@ export default defineComponent({
             this.showUnavailable = true
             console.log("after change", this.showUnavailable)
         }
+     },
+     doStuff() {
+        console.log("doing Stuff")
      }
-    }
+    },
+    mounted() {
+        window.addEventListener("load", this.doStuff)
+     }
 })
 
 </script>
@@ -153,4 +163,8 @@ ion-button {
   --color: #000; 
 }
 
+ion-title {
+    width: 100%;
+    height: 3rem;
+}
 </style>
