@@ -6,7 +6,11 @@
                     <ion-button v-if="isSignedIn && !showUnavailable" @click="tryTakeOutPass" size="large" shape="round" :strong="true" >
                         <ion-ripple-effect></ion-ripple-effect>
                         Take Out Pass</ion-button>
-                <GoogleLogin v-if="!isSignedIn " :callback="callback"/>
+                <GoogleLogin v-if="!isSignedIn " :callback="callback" /> 
+              <!--   <ion-button id="loginButton" :strong="true" > 
+                    <ion-icon slot="start" :icon="star"></ion-icon>
+                    Custom Button Sign In </ion-button>
+                </GoogleLogin> -->
             </div>
         </ion-content>
      </ion-page>
@@ -16,6 +20,7 @@
 import{ IonPage, IonContent, IonTitle, IonButton, IonRippleEffect } from '@ionic/vue';
 import { defineComponent } from 'vue';
 import { decodeCredential } from 'vue3-google-login';
+import { star } from 'ionicons/icons'
 
 export default defineComponent({
     name:"SignIn",
@@ -25,6 +30,9 @@ export default defineComponent({
         IonTitle,
         IonButton,
         IonRippleEffect
+    },
+    setup() {
+        return { star }
     },
     data() {
         return{
@@ -126,10 +134,16 @@ export default defineComponent({
   transform: translateY(-60%);
 }
 
+#loginButton {
+    width: 16rem;
+    height: 2rem;
+    font-size: 14px;
+}
+
 ion-button {
     width: 18rem;
     height: 14rem;
-    font-size: 2rem;
+    font-size: 1.7rem;
 
   --ion-font-family: 'Monserrat', sans-serif; 
 
