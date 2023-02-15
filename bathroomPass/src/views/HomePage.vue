@@ -26,6 +26,11 @@ export default defineComponent({
     IonButton,
     IonRippleEffect
   },
+  data() {
+    return {
+      roomNumber: ""
+    }
+  },
   methods: {
     PushToScanner() {
       this.$router.push({name: "SignIn" })

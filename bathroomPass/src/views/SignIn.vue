@@ -7,7 +7,7 @@
                         <ion-ripple-effect></ion-ripple-effect>
                         Take Out Pass</ion-button>
                 <GoogleLogin v-if="!isSignedIn " :callback="callback" /> 
-                <GoogleLogin v-if="!isSignedIn" :callback="callback" >
+                <GoogleLogin v-if="!isSignedIn" :callback="callback" popup-type="TOKEN" >
                 <ion-button id="loginButton" :strong="true" > 
                     <ion-icon slot="start" :icon="star"></ion-icon>
                     Custom Button Sign In </ion-button>
@@ -20,7 +20,7 @@
 <script lang="ts">
 import{ IonPage, IonContent, IonTitle, IonButton, IonRippleEffect } from '@ionic/vue';
 import { defineComponent } from 'vue';
-import { decodeCredential } from 'vue3-google-login';
+import { decodeCredential, CallbackTypes } from 'vue3-google-login';
 import { star } from 'ionicons/icons'
 
 export default defineComponent({
@@ -33,7 +33,15 @@ export default defineComponent({
         IonRippleEffect
     },
     setup() {
-        return { star }
+        const callback: CallbackTypes.TokenResponseCallback = (response) => {
+            const requestOptions = {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({title: "Vue POST Request Example"})
+            };
+            console.log("Access Token ", response.access_token)
+        }
+        return { star, callback }
     },
     data() {
         return{
@@ -49,7 +57,7 @@ export default defineComponent({
         }
     },
     methods:{ 
-        callback(response: any) {
+        /* callback(response: any) {
             if (response.credential)
             {type signIn = {
             iss?: string;
@@ -80,7 +88,7 @@ export default defineComponent({
             console.log(this.currentUserName)} else {
                 console.log("call the endpoint which validates authorization code", response)
             }
-        },
+        }, */
         async tryTakeOutPass() {
             const changePass = 'https://gssgc6.deta.dev/change_status/'
             const changeToFalse = changePass + "120" + "/false/" + this.passRequirements
