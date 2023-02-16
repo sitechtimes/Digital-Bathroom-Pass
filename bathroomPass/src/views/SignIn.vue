@@ -31,20 +31,9 @@ export default defineComponent({
         IonTitle,
         IonButton,
         IonRippleEffect
-    },
-    setup() {
-        const callback: CallbackTypes.TokenResponseCallback = (response) => {
-            const requestOptions = {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({title: "Vue POST Request Example"})
-            };
-            console.log("Access Token ", response.access_token)
-        }
-        return { star, callback }
-    },
-    data() {
+    },data() {
         return{
+            userToken: "",
             isSignedIn: false,
             PassAvailability: "",
             roomNumber: "",
@@ -56,7 +45,13 @@ export default defineComponent({
             buttonText: "Take Out Pass"
         }
     },
+    setup() {
+        return { star }
+    },
     methods:{ 
+        callback(response: any) {
+            console.log(response)
+        },
         /* callback(response: any) {
             if (response.credential)
             {type signIn = {
