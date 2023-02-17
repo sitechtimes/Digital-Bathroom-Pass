@@ -20,7 +20,7 @@
 <script lang="ts">
 import{ IonPage, IonContent, IonTitle, IonButton, IonRippleEffect } from '@ionic/vue';
 import { defineComponent } from 'vue';
-import { decodeCredential, CallbackTypes } from 'vue3-google-login';
+/* import { decodeCredential, CallbackTypes } from 'vue3-google-login'; */
 import { star } from 'ionicons/icons'
 
 export default defineComponent({
@@ -49,9 +49,19 @@ export default defineComponent({
         return { star }
     },
     methods:{ 
-        callback(response: any) {
-            console.log(response)
+        /* async  */sendPost() {
+            const postRequestOptions = {
+                method: "POST",
+                headers: { "Content-Type": "application/json"},
+                body: JSON.stringify({ title: this.userToken })
+            };
+            console.log(postRequestOptions.body)
         },
+        callback(response: any) {
+            this.userToken = response.access_token
+            this.sendPost()
+        },
+        
         /* callback(response: any) {
             if (response.credential)
             {type signIn = {
