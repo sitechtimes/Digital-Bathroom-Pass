@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router';
-
+import { URLOpenListenerEvent } from '@capacitor/app';
 import { IonicVue } from '@ionic/vue';
 
 /* Core CSS required for Ionic components to work properly */
@@ -30,7 +30,7 @@ const app = createApp(App)
   .use(vue3GoogleLogin, {
     clientId: '970810655131-jo7kkqs821lj746hhddtjno4k465ihm2.apps.googleusercontent.com'
   })
-  
 router.isReady().then(() => {
   app.mount('#app');
 });
+

@@ -42,19 +42,20 @@ export default defineComponent({
             currentUserName: "",
             lastUserName: "",
             allowTakePass: true,
-            buttonText: "Take Out Pass"
+            buttonText: "Take Out Pass",
         }
     },
     setup() {
         return { star }
     },
     methods:{ 
-        /* async  */sendPost() {
+        sendPost() {
             const postRequestOptions = {
                 method: "POST",
                 headers: { "Content-Type": "application/json"},
-                body: JSON.stringify({ title: this.userToken })
+                body: JSON.stringify({ token: this.userToken })
             };
+            this.isSignedIn = true
             console.log(postRequestOptions.body)
         },
         callback(response: any) {
