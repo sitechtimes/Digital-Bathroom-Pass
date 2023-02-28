@@ -62,7 +62,6 @@ export default defineComponent({
             this.userToken = response.access_token
             this.sendPost()
         },
-        
         /* callback(response: any) {
             if (response.credential)
             {type signIn = {
