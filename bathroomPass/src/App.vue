@@ -25,7 +25,9 @@ export default defineComponent({
       const slug = event.url.split(":8100").pop();
 
       if(slug) {
-        //
+        router.push({
+          path: slug,
+        })
       }
     })
   }

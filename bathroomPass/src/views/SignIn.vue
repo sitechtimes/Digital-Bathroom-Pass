@@ -24,7 +24,7 @@ import { defineComponent } from 'vue';
 import { star } from 'ionicons/icons'
 
 export default defineComponent({
-    name:"SignIn",
+    name: "SignIn",
     components: {
         IonPage,
         IonContent,
