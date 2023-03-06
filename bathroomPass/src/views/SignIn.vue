@@ -6,7 +6,7 @@
                     <ion-button v-if="isSignedIn && !showUnavailable" @click="tryTakeOutPass" size="large" shape="round" :strong="true" >
                         <ion-ripple-effect></ion-ripple-effect>
                         Take Out Pass</ion-button>
-                <GoogleLogin v-if="!isSignedIn " :callback="callback" /> 
+               <!--  <GoogleLogin v-if="!isSignedIn " :callback="callback" />  -->
                 <GoogleLogin v-if="!isSignedIn" :callback="callback" popup-type="TOKEN" >
                 <ion-button id="loginButton" :strong="true" > 
                     <ion-icon slot="start" :icon="star"></ion-icon>
