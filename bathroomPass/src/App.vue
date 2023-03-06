@@ -17,6 +17,11 @@ export default defineComponent({
     IonApp,
     IonRouterOutlet
   },
+  data() {
+    return {
+      roomNumber: "122"
+    }
+  },
   setup() {
     const router = useRouter();
     App.addListener('appUrlOpen', function(event: URLOpenListenerEvent) {
