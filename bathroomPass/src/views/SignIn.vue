@@ -6,12 +6,15 @@
                     <ion-button v-if="isSignedIn && !showUnavailable" @click="tryTakeOutPass" size="large" shape="round" :strong="true" >
                         <ion-ripple-effect></ion-ripple-effect>
                         Take Out Pass</ion-button>
-               <!--  <GoogleLogin v-if="!isSignedIn " :callback="callback" />  -->
-                <GoogleLogin v-if="!isSignedIn" :callback="callback" popup-type="TOKEN" >
-                <ion-button id="loginButton" :strong="true" > 
-                    <ion-icon slot="start" :icon="star"></ion-icon>
-                    Custom Button Sign In </ion-button>
-                </GoogleLogin>
+                <GoogleLogin v-if="!isSignedIn " :callback="callback" /> 
+               <ion-button v-if="!isSignedIn" id="loginButton" shape="round" @click="GoToPassOptions" :strong="true" >Take Out
+                <ion-ripple-effect></ion-ripple-effect> </ion-button>
+                <!-- <GoogleLogin v-if="!isSignedIn" :callback="callback" popup-type="TOKEN" >
+                <ion-button  id="loginButton" shape="round" :strong="true" > 
+                    <ion-ripple-effect></ion-ripple-effect>
+                    <ion-icon slot="start" :icon="logoGoogle"></ion-icon>
+                    Sign In With Google </ion-button>
+                </GoogleLogin> -->
             </div>
         </ion-content>
      </ion-page>
@@ -20,8 +23,8 @@
 <script lang="ts">
 import{ IonPage, IonContent, IonTitle, IonButton, IonRippleEffect } from '@ionic/vue';
 import { defineComponent } from 'vue';
-/* import { decodeCredential, CallbackTypes } from 'vue3-google-login'; */
-import { star } from 'ionicons/icons'
+import { decodeCredential, CallbackTypes } from 'vue3-google-login';
+import { logoGoogle } from 'ionicons/icons'
 
 export default defineComponent({
     name: "SignIn",
@@ -42,27 +45,33 @@ export default defineComponent({
             currentUserName: "",
             lastUserName: "",
             allowTakePass: true,
-            buttonText: "Take Out Pass",
+            buttonText: "Take Out Pass"
         }
     },
     setup() {
-        return { star }
+        return { logoGoogle }
     },
     methods:{ 
+        GoToPassOptions() {
+            //this.isSignedIn = true
+        },
         sendPost() {
             const postRequestOptions = {
                 method: "POST",
                 headers: { "Content-Type": "application/json"},
                 body: JSON.stringify({ token: this.userToken })
             };
-            this.isSignedIn = true
             console.log(postRequestOptions.body)
-        },
-        callback(response: any) {
-            this.userToken = response.access_token
-            this.sendPost()
+            if(postRequestOptions.body) {
+                this.isSignedIn = true
+            }
         },
         /* callback(response: any) {
+            console.log(response)
+            this.userToken = response.access_token
+            this.sendPost()
+        }, */
+        callback(response: any) {
             if (response.credential)
             {type signIn = {
             iss?: string;
@@ -88,12 +97,13 @@ export default defineComponent({
             const userInfo = givenName + "/" + familyName + "/" + email
             this.passRequirements = userInfo
             console.log( userInfo )
+            console.log(userData)
             this.isSignedIn = true
             this.currentUserName = givenName + ' ' + familyName
             console.log(this.currentUserName)} else {
                 console.log("call the endpoint which validates authorization code", response)
             }
-        }, */
+        },
         async tryTakeOutPass() {
             const changePass = 'https://gssgc6.deta.dev/change_status/'
             const changeToFalse = changePass + "120" + "/false/" + this.passRequirements
