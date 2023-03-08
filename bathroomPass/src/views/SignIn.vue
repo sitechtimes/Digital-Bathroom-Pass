@@ -9,12 +9,12 @@
                 <GoogleLogin v-if="!isSignedIn " :callback="callback" /> 
                <ion-button v-if="!isSignedIn" id="loginButton" shape="round" @click="GoToPassOptions" :strong="true" >Take Out
                 <ion-ripple-effect></ion-ripple-effect> </ion-button>
-                <!-- <GoogleLogin v-if="!isSignedIn" :callback="callback" popup-type="TOKEN" >
+                <GoogleLogin v-if="!isSignedIn" :callback="callback" popup-type="TOKEN" >
                 <ion-button  id="loginButton" shape="round" :strong="true" > 
                     <ion-ripple-effect></ion-ripple-effect>
                     <ion-icon slot="start" :icon="logoGoogle"></ion-icon>
                     Sign In With Google </ion-button>
-                </GoogleLogin> -->
+                </GoogleLogin>
             </div>
         </ion-content>
      </ion-page>
@@ -66,12 +66,12 @@ export default defineComponent({
                 this.isSignedIn = true
             }
         },
-        /* callback(response: any) {
+        callback(response: any) {
             console.log(response)
             this.userToken = response.access_token
             this.sendPost()
-        }, */
-        callback(response: any) {
+        },
+        /* callback(response: any) {
             if (response.credential)
             {type signIn = {
             iss?: string;
@@ -103,7 +103,7 @@ export default defineComponent({
             console.log(this.currentUserName)} else {
                 console.log("call the endpoint which validates authorization code", response)
             }
-        },
+        }, */
         async tryTakeOutPass() {
             const changePass = 'https://gssgc6.deta.dev/change_status/'
             const changeToFalse = changePass + "120" + "/false/" + this.passRequirements

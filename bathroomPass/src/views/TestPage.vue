@@ -24,7 +24,7 @@ export default defineComponent({
     },
     data() {
         return {
-            //
+            testUrl: "http://localhost:8100/home/123"
         }
     } 
 
