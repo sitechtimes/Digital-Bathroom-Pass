@@ -23,19 +23,24 @@ export default defineComponent({
     },
     data() {
         return {
-            testUrl: "http://localhost:8100/home/123",
+            testUrl: "http://localhost:8100/SignIn/123",
             splitUrl: ""
         }
     },
     methods: {
+        doThing() {
+            console.log("button works")
+        },
         testClick() {
             var testForHome = "home"
-
-            if(this.testUrl.includes(testForHome)) {
+            if( this.testUrl.includes(testForHome) == true) {
                 const Bongbing = this.testUrl.split("/home/").pop()
                 this.splitUrl = Bongbing!
+                console.log(this.splitUrl)
             } else {
-                console.log("herm")
+                const BingBong = this.testUrl.split("/SignIn/").pop()
+                this.splitUrl = BingBong!
+                console.log(this.splitUrl)
             }
         }
     }

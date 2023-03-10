@@ -30,7 +30,17 @@ export default defineComponent({
       // roomNumber: 122
       // new url: http:localhost:8100/home
       // slug = /tabs/tabs2
-      const slug = event.url.split(":8100").pop();
+
+      var roomNumber = event.url.split("/home/").pop()
+      var roomsNumber = event.url.split("/SignIn/").pop()
+      
+      const slug = event.url.split(":8100/").pop();
+
+      if(event.url.includes("home") == true){
+        //
+      } else {
+        //
+      }
       console.log(slug)
       if(slug) {
         router.push({
