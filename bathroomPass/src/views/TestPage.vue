@@ -23,8 +23,9 @@ export default defineComponent({
     },
     data() {
         return {
-            testUrl: "http://localhost:8100/SignIn/123",
-            splitUrl: ""
+            testUrl: "http://localhost:8100/home/123",
+            splitUrl: "",
+            navUrl: "",
         }
     },
     methods: {
@@ -34,10 +35,15 @@ export default defineComponent({
         testClick() {
             var testForHome = "home"
             if( this.testUrl.includes(testForHome) == true) {
+                this.navUrl = this.testUrl.slice(0,27)
+                console.log(this.navUrl)
                 const Bongbing = this.testUrl.split("/home/").pop()
                 this.splitUrl = Bongbing!
                 console.log(this.splitUrl)
+
             } else {
+                this.navUrl = this.testUrl.slice(0,29)
+                console.log(this.navUrl)
                 const BingBong = this.testUrl.split("/SignIn/").pop()
                 this.splitUrl = BingBong!
                 console.log(this.splitUrl)
