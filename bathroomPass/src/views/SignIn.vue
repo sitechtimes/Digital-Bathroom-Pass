@@ -15,6 +15,7 @@
                     <ion-icon slot="start" :icon="logoGoogle"></ion-icon>
                     Sign In With Google </ion-button>
                 </GoogleLogin>
+                <ion-button>prop passed?</ion-button>
             </div>
         </ion-content>
      </ion-page>
@@ -28,6 +29,9 @@ import { logoGoogle } from 'ionicons/icons'
 
 export default defineComponent({
     name: "SignIn",
+    /* props: [
+        roomNumber: Number
+    ], */
     components: {
         IonPage,
         IonContent,
@@ -39,7 +43,6 @@ export default defineComponent({
             userToken: "",
             isSignedIn: false,
             PassAvailability: "",
-            roomNumber: "",
             showUnavailable: false,
             passRequirements: "",
             currentUserName: "",
@@ -52,6 +55,9 @@ export default defineComponent({
         return { logoGoogle }
     },
     methods:{ 
+        checkPropPassed() {
+            console.log("noting")
+        },
         GoToPassOptions() {
             //this.isSignedIn = true
         },

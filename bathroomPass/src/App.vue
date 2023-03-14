@@ -45,6 +45,9 @@ export default defineComponent({
       if(slug) {
         router.push({
           path: slug,
+          params: {
+            props: roomsNumber
+          }
         })
       }
     })

@@ -28,12 +28,16 @@ export default defineComponent({
   },
   data() {
     return {
-      roomNumber: ""
+      user: {
+        roomNumber: 122
+      }
     }
   },
   methods: {
     PushToScanner() {
-      this.$router.push({name: "SignIn" })
+      this.$router.push({
+        name: "SignIn",
+      })
     }
   }
 });

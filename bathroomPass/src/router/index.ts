@@ -12,17 +12,20 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/home',
     name: 'Home',
-    component: HomePage
+    component: HomePage,
+    props: true
   },
   {
     path: '/SignIn',
     name: 'SignIn',
-    component: SignIn
+    component: SignIn,
+    props: true
   },
   {
     path: '/TestPage',
     name: 'TestPage',
-    component: TestPage
+    component: TestPage,
+    props: true
   }
 ]
 
