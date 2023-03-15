@@ -19,7 +19,7 @@ const routes: Array<RouteRecordRaw> = [
     path: '/SignIn',
     name: 'SignIn',
     component: SignIn,
-    props: true
+    props: (route) => ({query: route.query.id}) 
   },
   {
     path: '/TestPage',

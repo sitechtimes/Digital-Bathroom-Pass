@@ -28,17 +28,21 @@ export default defineComponent({
   },
   data() {
     return {
-      user: {
-        roomNumber: 122
-      }
+      roomNumber: 122
     }
   },
   methods: {
+    sendMessage() {
+      this.$root?.$emit("message-from-alexis", "eat ass")
+    },
     PushToScanner() {
       this.$router.push({
         name: "SignIn",
       })
     }
+  },
+  created() {
+    console.log(this.roomNumber)
   }
 });
 </script>
