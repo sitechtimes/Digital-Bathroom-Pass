@@ -158,10 +158,10 @@ export default defineComponent({
      }
     },
     mounted() {
-        this.$root?.$on("message-from-alexis", (msg) => {
+        /* this.$root?.$on("message-from-alexis", (msg: any) => {
             console.log(msg)
         })
-        window.addEventListener("load", this.doStuff)
+        window.addEventListener("load", this.doStuff) */
      }
 })
 
