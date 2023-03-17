@@ -6,6 +6,8 @@
           <ion-title size="small" weight="strong" id="cardTitle">SITHS Bathroom Scanner</ion-title>
           <p class="card-text">Pooping made easy</p>
         </div>
+        <ion-button @click="increment">increment</ion-button>
+        <ion-button @click="checkCounter">check counter</ion-button>
         <ion-button id="buttonText" shape="round" size="large" @click="PushToScanner" >
           <ion-ripple-effect></ion-ripple-effect>Go To Scanner</ion-button>
       </div>
@@ -16,6 +18,7 @@
 <script lang="ts">
 import { IonContent, IonPage, IonTitle, IonButton, IonRippleEffect } from '@ionic/vue';
 import { defineComponent } from 'vue';
+import { useRoomStore } from '@/store';
 
 export default defineComponent({
   name: 'HomePage',
@@ -29,6 +32,17 @@ export default defineComponent({
   data() {
     return {
       roomNumber: 122
+    }
+  },
+  setup() {
+    const store = useRoomStore()
+    const counter = store.count
+    const increment = store.increment()
+    const checkCounter = () => {
+      console.log(counter)
+    }
+    return {
+      counter, store, checkCounter, increment
     }
   },
   methods: {
