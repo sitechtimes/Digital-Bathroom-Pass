@@ -15,7 +15,6 @@
                     <ion-icon slot="start" :icon="logoGoogle"></ion-icon>
                     Sign In With Google </ion-button>
                 </GoogleLogin>
-                <ion-button @click="checkPropPassed">prop passed?</ion-button>
             </div>
         </ion-content>
      </ion-page>
@@ -56,9 +55,6 @@ export default defineComponent({
         return { logoGoogle }
     },
     methods:{ 
-        checkPropPassed() {
-            console.log("noting")     
-        },
         GoToPassOptions() {
             //this.isSignedIn = true
         },

@@ -5,20 +5,25 @@
         <div id="card-wrapper">
           <ion-title size="small" weight="strong" id="cardTitle">SITHS Bathroom Scanner</ion-title>
           <p class="card-text">Pooping made easy</p>
-        </div>
-        <ion-button @click="increment">increment</ion-button>
-        <ion-button @click="checkCounter">check counter</ion-button>
-        <ion-button id="buttonText" shape="round" size="large" @click="PushToScanner" >
+          </div>
+          <div>Current Count: {{ counter.count }} </div>
+          <ion-button @click="logIncrament"> Click me :D</ion-button>
+          <ion-button @click="counter.increment()"> increment?</ion-button>
+          <ion-button  on-button id="buttonText" shape="round" size="large" @click="PushToScanner" >
           <ion-ripple-effect></ion-ripple-effect>Go To Scanner</ion-button>
+          <ion-item>
+            <ion-label>Input</ion-label>
+            <ion-input></ion-input>
+          </ion-item>
       </div>
     </ion-content>
   </ion-page>
 </template>
 
 <script lang="ts">
-import { IonContent, IonPage, IonTitle, IonButton, IonRippleEffect } from '@ionic/vue';
+import { IonContent, IonPage, IonTitle, IonButton, IonRippleEffect, IonInput, IonItem, IonLabel } from '@ionic/vue';
 import { defineComponent } from 'vue';
-import { useRoomStore } from '@/store';
+import { useRoomStore } from '../stores/counter';
 
 export default defineComponent({
   name: 'HomePage',
@@ -27,7 +32,10 @@ export default defineComponent({
     IonPage,
     IonTitle,
     IonButton,
-    IonRippleEffect
+    IonRippleEffect,
+    IonInput,
+    IonItem,
+    IonLabel
   },
   data() {
     return {
@@ -35,17 +43,15 @@ export default defineComponent({
     }
   },
   setup() {
-    const store = useRoomStore()
-    const counter = store.count
-    const increment = store.increment()
-    const checkCounter = () => {
-      console.log(counter)
-    }
+    const counter =  useRoomStore()
     return {
-      counter, store, checkCounter, increment
+      counter
     }
   },
   methods: {
+    logIncrament() {
+      console.log(this.counter.count)
+    },
     sendMessage() {
       this.$root?.$emit("message-from-alexis", "eat ass")
     },
@@ -56,7 +62,7 @@ export default defineComponent({
     }
   },
   created() {
-    console.log(this.roomNumber)
+    //
   }
 });
 </script>

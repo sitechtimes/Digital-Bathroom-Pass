@@ -11,7 +11,7 @@ import { defineStore } from 'pinia'
     return { roomNumber, $reset }
 }) */
 
-export const useRoomStore = defineStore('counter', {
+/* export const useRoomStore = defineStore('counter', {
     state: () => {
         return { count: 0 }
     },
@@ -20,4 +20,16 @@ export const useRoomStore = defineStore('counter', {
             this.count++
         },
     },
+}) */
+
+export const useRoomStore = defineStore('counter', {
+    state: () => ({ count: 0 }),
+    getters: {
+        doubleCount: (state) => state.count * 2,
+    },
+    actions: {
+        increment() {
+            this.count++
+        }
+    }
 })
