@@ -23,13 +23,19 @@ import { defineStore } from 'pinia'
 }) */
 
 export const useRoomStore = defineStore('counter', {
-    state: () => ({ count: 0 }),
+    state: () => ({ 
+        count: 0,
+        testNumber: '',
+     }),
     getters: {
         doubleCount: (state) => state.count * 2,
     },
     actions: {
         increment() {
             this.count++
+        },
+        decrement() {
+            this.count--
         }
     }
 })

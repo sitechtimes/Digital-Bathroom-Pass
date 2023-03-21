@@ -7,14 +7,16 @@
           <p class="card-text">Pooping made easy</p>
           </div>
           <div>Current Count: {{ counter.count }} </div>
-          <ion-button @click="logIncrament"> Click me :D</ion-button>
           <ion-button @click="counter.increment()"> increment?</ion-button>
+          <ion-button @click="counter.decrement()"> decrement?</ion-button>
           <ion-button  on-button id="buttonText" shape="round" size="large" @click="PushToScanner" >
-          <ion-ripple-effect></ion-ripple-effect>Go To Scanner</ion-button>
+          <ion-ripple-effect></ion-ripple-effect>Go To Scanner</ion-button>     
           <ion-item>
             <ion-label>Input</ion-label>
             <ion-input></ion-input>
           </ion-item>
+          <ion-button @click="setToValue"> change to the set value </ion-button>
+          <ion-button> console the input </ion-button>
       </div>
     </ion-content>
   </ion-page>
@@ -39,7 +41,7 @@ export default defineComponent({
   },
   data() {
     return {
-      roomNumber: 122
+      roomNumber: 0
     }
   },
   setup() {
@@ -49,6 +51,14 @@ export default defineComponent({
     }
   },
   methods: {
+    logInput() {
+      console.log()
+    },
+    setToValue() {
+      console.log(this.counter.testNumber)
+      this.counter.testNumber = "122"
+      console.log(this.counter.testNumber)
+    },
     logIncrament() {
       console.log(this.counter.count)
     },
