@@ -6,8 +6,7 @@
                     <ion-button v-if="isSignedIn && !showUnavailable" @click="tryTakeOutPass" size="large" shape="round" :strong="true" >
                         <ion-ripple-effect></ion-ripple-effect>
                         Take Out Pass</ion-button>
-                <GoogleLogin v-if="!isSignedIn " :callback="callback" /> 
-               <ion-button v-if="!isSignedIn" id="loginButton" shape="round" @click="GoToPassOptions" :strong="true" >Take Out
+                <ion-button v-if="!isSignedIn" id="loginButton" shape="round" @click="GoToPassOptions" :strong="true" >Take Out
                 <ion-ripple-effect></ion-ripple-effect> </ion-button>
                 <GoogleLogin v-if="!isSignedIn" :callback="callback" popup-type="TOKEN" >
                 <ion-button  id="loginButton" shape="round" :strong="true" > 
@@ -15,6 +14,7 @@
                     <ion-icon slot="start" :icon="logoGoogle"></ion-icon>
                     Sign In With Google </ion-button>
                 </GoogleLogin>
+                <ion-button v-if="isSignedIn && !showUnavailable" id="loginButton">Log Pinia Store</ion-button>
             </div>
         </ion-content>
      </ion-page>
@@ -25,12 +25,10 @@ import{ IonPage, IonContent, IonTitle, IonButton, IonRippleEffect } from '@ionic
 import { defineComponent } from 'vue';
 import { decodeCredential, CallbackTypes } from 'vue3-google-login';
 import { logoGoogle } from 'ionicons/icons'
+import { useRoomStore } from '../stores/counter'
 
 export default defineComponent({
     name: "SignIn",
-    props: [
-        'userRoomNumber'
-    ],
     components: {
         IonPage,
         IonContent,
@@ -52,7 +50,8 @@ export default defineComponent({
         }
     },
     setup() {
-        return { logoGoogle }
+        const counter = useRoomStore()
+        return { logoGoogle, counter }
     },
     methods:{ 
         GoToPassOptions() {

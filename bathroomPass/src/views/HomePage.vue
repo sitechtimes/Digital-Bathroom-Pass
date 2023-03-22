@@ -7,16 +7,13 @@
           <p class="card-text">Pooping made easy</p>
           </div>
           <div>Current Count: {{ counter.count }} </div>
-          <ion-button @click="counter.increment()"> increment?</ion-button>
-          <ion-button @click="counter.decrement()"> decrement?</ion-button>
           <ion-button  on-button id="buttonText" shape="round" size="large" @click="PushToScanner" >
           <ion-ripple-effect></ion-ripple-effect>Go To Scanner</ion-button>     
           <ion-item>
             <ion-label>Input</ion-label>
-            <ion-input></ion-input>
+            <ion-input v-model="roomNumber" @ionInput="test"></ion-input>
           </ion-item>
-          <ion-button @click="setToValue"> change to the set value </ion-button>
-          <ion-button> console the input </ion-button>
+          <ion-button @click="logValue"> console the value </ion-button>
       </div>
     </ion-content>
   </ion-page>
@@ -41,7 +38,7 @@ export default defineComponent({
   },
   data() {
     return {
-      roomNumber: 0
+      roomNumber: ""
     }
   },
   setup() {
@@ -51,19 +48,15 @@ export default defineComponent({
     }
   },
   methods: {
-    logInput() {
-      console.log()
-    },
-    setToValue() {
-      console.log(this.counter.testNumber)
-      this.counter.testNumber = "122"
+    doTest() {
+      this.counter.testNumber = this.roomNumber
       console.log(this.counter.testNumber)
     },
-    logIncrament() {
-      console.log(this.counter.count)
+    test() {
+      setTimeout(this.doTest, 10)
     },
-    sendMessage() {
-      this.$root?.$emit("message-from-alexis", "eat ass")
+    logValue() {
+      console.log(this.roomNumber)
     },
     PushToScanner() {
       this.$router.push({
