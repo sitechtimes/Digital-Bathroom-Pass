@@ -10,8 +10,7 @@
           <ion-button  on-button id="buttonText" shape="round" size="large" @click="PushToScanner" >
           <ion-ripple-effect></ion-ripple-effect>Go To Scanner</ion-button>     
           <ion-item>
-            <ion-label>Input</ion-label>
-            <ion-input v-model="roomNumber" @ionInput="test"></ion-input>
+            <ion-input label="Room-Input" label-placement="floating" v-model="roomNumber" @ionInput="test" :counter="true" maxlength="3" ></ion-input>
           </ion-item>
           <ion-button @click="logValue"> console the value </ion-button>
       </div>
@@ -20,7 +19,7 @@
 </template>
 
 <script lang="ts">
-import { IonContent, IonPage, IonTitle, IonButton, IonRippleEffect, IonInput, IonItem, IonLabel } from '@ionic/vue';
+import { IonContent, IonPage, IonTitle, IonButton, IonRippleEffect, IonInput, IonItem } from '@ionic/vue';
 import { defineComponent } from 'vue';
 import { useRoomStore } from '../stores/counter';
 
@@ -33,8 +32,7 @@ export default defineComponent({
     IonButton,
     IonRippleEffect,
     IonInput,
-    IonItem,
-    IonLabel
+    IonItem
   },
   data() {
     return {

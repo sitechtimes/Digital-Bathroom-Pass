@@ -14,7 +14,6 @@
                     <ion-icon slot="start" :icon="logoGoogle"></ion-icon>
                     Sign In With Google </ion-button>
                 </GoogleLogin>
-                <ion-button v-if="isSignedIn && !showUnavailable" id="loginButton">Log Pinia Store</ion-button>
             </div>
         </ion-content>
      </ion-page>
@@ -46,7 +45,8 @@ export default defineComponent({
             currentUserName: "",
             lastUserName: "",
             allowTakePass: true,
-            buttonText: "Take Out Pass"
+            buttonText: "Take Out Pass",
+            roomNumber: ""
         }
     },
     setup() {
@@ -153,10 +153,8 @@ export default defineComponent({
      }
     },
     mounted() {
-        /* this.$root?.$on("message-from-alexis", (msg: any) => {
-            console.log(msg)
-        })
-        window.addEventListener("load", this.doStuff) */
+        this.roomNumber = this.counter.testNumber
+        console.log(this.roomNumber)
      }
 })
 
