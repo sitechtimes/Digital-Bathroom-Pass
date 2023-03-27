@@ -2,9 +2,11 @@
     <ion-page>
         <ion-content>
             <div class="container">
-                <a href="http://localhost:8100/" >testing links 1</a>
-                <a href="http://localhost:8100/SignIn" >testing links 2</a>
-                <ion-button @click="testClick">click test</ion-button>
+                <ion-button @click="testClick">check slug</ion-button>
+                <ion-item>
+                <ion-input v-model="inputValue" :counter="true" maxlength="3"></ion-input>
+                </ion-item>
+                <ion-button @click="doFunction">Set thing</ion-button>
             </div>
         </ion-content>
     </ion-page>
@@ -12,23 +14,31 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { IonPage, IonContent, IonButton } from '@ionic/vue'
+import { IonPage, IonContent, IonButton, IonInput, IonItem } from '@ionic/vue'
 
 export default defineComponent({
     name: "TestPage",
     components: {
         IonPage,
         IonContent,
-        IonButton
+        IonButton,
+        IonInput,
+        IonItem
     },
     data() {
         return {
-            testUrl: "http://localhost:8100/home/123",
+            testUrl: "http://localhost:8100/home/",
             splitUrl: "",
             navUrl: "",
+            inputValue: ""
         }
     },
     methods: {
+        doFunction() {
+            console.log(this.testUrl)
+            this.testUrl = this.testUrl + this.inputValue
+            console.log(this.testUrl)
+        },
         doThing() {
             console.log("button works")
         },
