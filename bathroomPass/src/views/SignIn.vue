@@ -7,13 +7,9 @@
                         <ion-ripple-effect></ion-ripple-effect>
                         Take Out Pass</ion-button>
                 <ion-button v-if="!isSignedIn" id="loginButton" shape="round" @click="GoToPassOptions" :strong="true" >Take Out
-                <ion-ripple-effect></ion-ripple-effect> </ion-button>
-                <GoogleLogin v-if="!isSignedIn" :callback="callback" popup-type="TOKEN" >
-                <ion-button  id="loginButton" shape="round" :strong="true" > 
-                    <ion-ripple-effect></ion-ripple-effect>
-                    <ion-icon slot="start" :icon="logoGoogle"></ion-icon>
-                    Sign In With Google </ion-button>
-                </GoogleLogin>
+                <ion-ripple-effect></ion-ripple-effect> 
+                </ion-button>
+                <ion-button id="loginButton" @click="logIn"> test new Log In </ion-button>
             </div>
         </ion-content>
      </ion-page>
@@ -21,10 +17,10 @@
 
 <script lang="ts">
 import{ IonPage, IonContent, IonTitle, IonButton, IonRippleEffect } from '@ionic/vue';
-import { defineComponent } from 'vue';
-import { decodeCredential, CallbackTypes } from 'vue3-google-login';
+import { defineComponent, onMounted } from 'vue';
 import { logoGoogle } from 'ionicons/icons'
 import { useRoomStore } from '../stores/counter'
+import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth'
 
 export default defineComponent({
     name: "SignIn",
@@ -51,7 +47,23 @@ export default defineComponent({
     },
     setup() {
         const counter = useRoomStore()
-        return { logoGoogle, counter }
+        onMounted(()=> {
+            GoogleAuth.initialize({
+            clientId: '970810655131-jo7kkqs821lj746hhddtjno4k465ihm2.apps.googleusercontent.com',
+            scopes: ['profile', 'email'],
+            grantOfflineAccess: true,
+            });
+        });
+
+        const logIn = async () => {
+            try {
+                const response =  await GoogleAuth.signIn();
+                console.log(response)
+            } catch (e) {
+                console.log("error")
+            }
+        }
+        return { logoGoogle, counter, logIn }
     },
     methods:{ 
         GoToPassOptions() {
@@ -68,44 +80,6 @@ export default defineComponent({
                 this.isSignedIn = true
             }
         },
-        callback(response: any) {
-            console.log(response)
-            this.userToken = response.access_token
-            this.sendPost()
-        },
-        /* callback(response: any) {
-            if (response.credential)
-            {type signIn = {
-            iss?: string;
-            aud?: string;
-            azp?: string;
-            email?: string;
-            email_verified?: boolean;
-            exp?: number;
-            family_name?: string;
-            given_name?: string;
-            iat?: number;
-            jti?: string;
-            name?: string;
-            nbf?: number;
-            picture?: string;
-            sub?: number;
-            hd?: string;
-            }
-            const userData: signIn = decodeCredential(response.credential)
-            const givenName = userData.given_name
-            const familyName = userData.family_name
-            const email = userData.email
-            const userInfo = givenName + "/" + familyName + "/" + email
-            this.passRequirements = userInfo
-            console.log( userInfo )
-            console.log(userData)
-            this.isSignedIn = true
-            this.currentUserName = givenName + ' ' + familyName
-            console.log(this.currentUserName)} else {
-                console.log("call the endpoint which validates authorization code", response)
-            }
-        }, */
         async tryTakeOutPass() {
             const changePass = 'https://gssgc6.deta.dev/change_status/'
             const changeToFalse = changePass + "120" + "/false/" + this.passRequirements
@@ -150,12 +124,8 @@ export default defineComponent({
      },
      doStuff() {
         console.log("doing Stuff")
-     }
+     },
     },
-    mounted() {
-        this.roomNumber = this.counter.testNumber
-        console.log(this.roomNumber)
-     }
 })
 
 </script>
