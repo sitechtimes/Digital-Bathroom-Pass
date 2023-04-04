@@ -6,20 +6,15 @@
           <ion-title size="small" weight="strong" id="cardTitle">SITHS Bathroom Scanner</ion-title>
           <p class="card-text">Pooping made easy</p>
           </div>
-          <div>Current Count: {{ counter.count }} </div>
           <ion-button  on-button id="buttonText" shape="round" size="large" @click="PushToScanner" >
           <ion-ripple-effect></ion-ripple-effect>Go To Scanner</ion-button>     
-          <ion-item>
-            <ion-input label="Room-Input" label-placement="floating" v-model="roomNumber" @ionInput="test" :counter="true" maxlength="3" ></ion-input>
-          </ion-item>
-          <ion-button @click="logValue"> console the value </ion-button>
       </div>
     </ion-content>
   </ion-page>
 </template>
 
 <script lang="ts">
-import { IonContent, IonPage, IonTitle, IonButton, IonRippleEffect, IonInput, IonItem } from '@ionic/vue';
+import { IonContent, IonPage, IonTitle, IonButton, IonRippleEffect } from '@ionic/vue';
 import { defineComponent } from 'vue';
 import { useRoomStore } from '../stores/counter';
 
@@ -31,8 +26,6 @@ export default defineComponent({
     IonTitle,
     IonButton,
     IonRippleEffect,
-    IonInput,
-    IonItem
   },
   data() {
     return {
