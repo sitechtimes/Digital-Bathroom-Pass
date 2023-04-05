@@ -26,17 +26,19 @@ def checkUser(email: string) -> bool:
     else:
         # The user has already taken a pass out before, check if they are trying to take another pass out while they already have a pass
         print(emailCell.row)
-        if worksheet1.cell(emailCell.row, 2).value == "TRUE":
+        print("email cell value = " + worksheet1.cell(emailCell.row, 2).value)
+        if worksheet1.cell(emailCell.row, 2).value == "FALSE":
             # This user is trying to take another pass out
             print("This user has already taken a pass out")
-            return True
+            return False
         else:
             print("This user doesn't have an already taken pass")
+            return True
 
 def updateStatus(roomNumber: string, changeTo: string, firstName: string, lastName: string, email: string):
-    if changeTo == "true":
+    if changeTo == "false":
         #Check if this user already has a pass
-        if checkUser(email=email) == True:
+        if checkUser(email=email) == False:
             # The user already has a pass from another room
             return("User has already taken another pass out")
 

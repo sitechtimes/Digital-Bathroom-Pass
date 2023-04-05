@@ -17,19 +17,51 @@ def getStatus(roomNumber: string):
     findCell = worksheet1.find(roomNumber)
     return (worksheet1.cell(findCell.row, findCell.col + 1).value, worksheet1.cell(findCell.row, findCell.col + 2).value)
 
+def checkUser(email: string) -> bool:
+    emailCell = worksheet1.find(email)
+    if emailCell is None:
+        # The user has not taken a pass out yet
+        print("This user has not taken a pass out yet")
+        return False
+    else:
+        # The user has already taken a pass out before, check if they are trying to take another pass out while they already have a pass
+        print(emailCell.row)
+        print("email cell value = " + worksheet1.cell(emailCell.row, 2).value)
+        if worksheet1.cell(emailCell.row, 2).value == "FALSE":
+            # This user is trying to take another pass out
+            print("This user has already taken a pass out")
+            return False
+        else:
+            print("This user doesn't have an already taken pass")
+            return True
+
 def updateStatus(roomNumber: string, changeTo: string, firstName: string, lastName: string, email: string):
+    if changeTo == "false":
+        #Check if this user already has a pass
+        if checkUser(email=email) == False:
+            # The user already has a pass from another room
+            return("User has already taken another pass out")
+
+    # Find the room the user wants to check the pass out from
     findRoom_Main = worksheet1.find(roomNumber)
-    changeToVal = worksheet1.cell(findRoom_Main.row, findRoom_Main.col + 1).value
-    print("changeToVal: " + changeToVal)
+    currentValue = worksheet1.cell(findRoom_Main.row, findRoom_Main.col + 1).value
+    print("changeToVal: " + currentValue)
     print("changeTo: " + changeTo)
-    if changeToVal != changeTo.upper():
+
+    # Check if the change to value is equal to the already existing status of the room
+    if currentValue != changeTo.upper():
         current_time = datetime.datetime.now()
+        # Updating the values in the master sheet
         worksheet1.update_cell(findRoom_Main.row, findRoom_Main.col + 1, changeTo)
         worksheet1.update_cell(findRoom_Main.row, findRoom_Main.col + 2, firstName + " " + lastName)
         worksheet1.update_cell(findRoom_Main.row, findRoom_Main.col + 3, email)
+
+        # Aquire the individual sheet of the room of which the status is being changed to log the new entry
         room_worksheet = sh.worksheet(roomNumber)
         worksheet_find_cell = room_worksheet.find('available')
         print(worksheet_find_cell.row, worksheet_find_cell.col)
+         
+        # Log the entry
         room_worksheet.update_cell(worksheet_find_cell.row, worksheet_find_cell.col - 4, changeTo)
         room_worksheet.update_cell(worksheet_find_cell.row, worksheet_find_cell.col - 3, firstName + " " + lastName)
         room_worksheet.update_cell(worksheet_find_cell.row, worksheet_find_cell.col - 2, email)
