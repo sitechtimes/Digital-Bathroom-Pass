@@ -1,4 +1,5 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Header
+from typing import Annotated
 from fastapi.middleware.cors import CORSMiddleware
 import string
 import gspread
@@ -85,6 +86,22 @@ def checkEmailValidity(email: string) -> bool:
         return True
 
 
+
+
+# MARK: - GOOGLE SIGN IN METHODS:
+from google.oauth2 import id_token
+from google.auth.transport import requests
+
+def authenticateGoogle(token: any):
+    try:
+        # Specify the CLIENT_ID of the app that accesses the backend:
+        idinfo = id_token.verify_oauth2_token(token, requests.Request(), 100005545758663475318)
+        return (idinfo['sub'])
+    except ValueError:
+        # Invalid token
+        return ("Invalid Token")
+
+
 app = FastAPI()
 
 origins = [
@@ -109,7 +126,7 @@ async def read_item(room_id):
     return {"message" : message}
 
 @app.get("/change_status/{room_id}/{change_to}/{first_name}/{last_name}/{email}")
-async def changeStatus(room_id, change_to, first_name, last_name, email) :
+async def change_status(room_id, change_to, first_name, last_name, email) :
     if (change_to == "true" or change_to == "false")  and (100<int(room_id)<232):
         if checkEmailValidity(email) == True:
             #There is a valid value for room_id and change_to value
@@ -119,3 +136,7 @@ async def changeStatus(room_id, change_to, first_name, last_name, email) :
             return {"message" : "Email is not valid"}
     else:
         return{"message" : "Something went wrong. Either change_to parameter is not valid or room_id is not within specified range"}
+
+@app.post("/token_sign_in")
+async def authenticate_google (user_agent: Annotated[str | None, Header()] = None):
+    return {"Token": authenticateGoogle(token=user_agent)}
