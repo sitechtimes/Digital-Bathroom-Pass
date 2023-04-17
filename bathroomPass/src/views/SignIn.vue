@@ -20,7 +20,7 @@ import{ IonPage, IonContent, IonTitle, IonButton, IonRippleEffect } from '@ionic
 import { defineComponent, onMounted } from 'vue';
 import { logoGoogle } from 'ionicons/icons'
 import { useRoomStore } from '../stores/counter'
-import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth'
+import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth' //package for google login
 
 export default defineComponent({
     name: "SignIn",
