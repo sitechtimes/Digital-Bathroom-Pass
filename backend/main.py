@@ -95,7 +95,7 @@ from google.auth.transport import requests
 def authenticateGoogle(token: any):
     try:
         # Specify the CLIENT_ID of the app that accesses the backend:
-        idinfo = id_token.verify_oauth2_token(token, requests.Request(), 100005545758663475318)
+        idinfo = id_token.verify_oauth2_token(token, requests.Request(), '970810655131-jo7kkqs821lj746hhddtjno4k465ihm2.apps.googleusercontent.com')
         return (idinfo['sub'])
     except ValueError:
         # Invalid token
