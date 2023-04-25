@@ -49,7 +49,7 @@ export default defineComponent({
         const counter = useRoomStore()
         onMounted(()=> {
             GoogleAuth.initialize({
-            clientId: '970810655131-jo7kkqs821lj746hhddtjno4k465ihm2.apps.googleusercontent.com',
+            clientId: '712891238786-8aj99006i0o1jsecsg8ds9n0ff7ehtmq.apps.googleusercontent.com',
             scopes: ['profile', 'email'],
             grantOfflineAccess: true,
             });
