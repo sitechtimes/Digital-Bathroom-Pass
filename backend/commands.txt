@@ -1,0 +1,9 @@
+
+NOT NEEDED ANYMORE
+make sure to initialize session with this in terminal: export GOOGLE_APPLICATION_CREDENTIALS="/Users/arshmeetsodhi/Desktop/Computer Science - School/Fast-API/prototype-bathroom-pass/credentials.json"
+
+uvicorn (windows): python -m uvicorn main:app --reload[]
+uvicorn (mac): uvicorn main:app --reload
+
+
+Deta endpoint: https://gssgc6.deta.dev
