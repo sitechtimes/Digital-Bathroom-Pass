@@ -59,6 +59,8 @@ export default defineComponent({
             try {
                 const response =  await GoogleAuth.signIn();
                 console.log(response)
+                const idToken = response.authentication.idToken
+                console.log(idToken)
             } catch (e) {
                 console.log("error")
             }
