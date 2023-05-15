@@ -9,7 +9,7 @@
                 <ion-button v-if="!isSignedIn" id="loginButton" shape="round" @click="GoToPassOptions" :strong="true" >Take Out
                 <ion-ripple-effect></ion-ripple-effect> 
                 </ion-button>
-                <ion-button id="loginButton" @click="logIn"> test new Log In </ion-button>
+                <ion-button id="loginButton" @click="doLogIn"> test new Log In </ion-button>
             </div>
         </ion-content>
      </ion-page>
@@ -18,7 +18,7 @@
 <script lang="ts">
 import{ IonPage, IonContent, IonTitle, IonButton, IonRippleEffect } from '@ionic/vue';
 import { defineComponent, onMounted } from 'vue';
-import { logoGoogle } from 'ionicons/icons'
+import { logIn, logoGoogle } from 'ionicons/icons'
 import { useRoomStore } from '../stores/counter'
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth' //package for google login
 
@@ -61,6 +61,12 @@ export default defineComponent({
                 console.log(response)
                 const idToken = response.authentication.idToken
                 console.log(idToken)
+                /* const postRequestOptions = {
+                    method: "POST",
+                    Headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({ token: idToken})
+                }
+                await fetch('10.94.168.231:8000/token_sign_in?user_agent=' + idToken , postRequestOptions) */
             } catch (e) {
                 console.log("error")
             }
@@ -68,6 +74,9 @@ export default defineComponent({
         return { logoGoogle, counter, logIn }
     },
     methods:{ 
+        doLogIn(){
+            this.logIn()
+        },
         GoToPassOptions() {
             //this.isSignedIn = true
         },
@@ -83,10 +92,10 @@ export default defineComponent({
             }
         },
         async tryTakeOutPass() {
-            const changePass = 'https://gssgc6.deta.dev/change_status/'
+            const changePass = 'http://10.94.168.231:8000/change_status/'
             const changeToFalse = changePass + "120" + "/false/" + this.passRequirements
             const changeToTrue = changePass + "120" + "/true/" + this.passRequirements
-            const fetchPass = 'https://gssgc6.deta.dev/get_status/120'
+            const fetchPass = 'http://10.94.168.231:8000/get_status/120'
             const fetchFunction = await fetch(fetchPass, {
                 method: 'get',
                 mode: 'cors',
