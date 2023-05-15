@@ -4,5 +4,7 @@ NOT NEEDED ANYMORE: make sure to initialize session with this in terminal: expor
 uvicorn (windows): python -m uvicorn main:app --reload[]
 uvicorn (mac): uvicorn main:app --reload
 
+local endpoint: 10.94.168.231:8000
+
 
 Deta endpoint: https://gssgc6.deta.dev
