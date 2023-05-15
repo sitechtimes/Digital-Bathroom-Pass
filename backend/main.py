@@ -69,6 +69,7 @@ def updateStatus(roomNumber: string, changeTo: string, firstName: string, lastNa
         room_worksheet.update_cell(worksheet_find_cell.row, worksheet_find_cell.col - 1, str(current_time))
         room_worksheet.update_cell(worksheet_find_cell.row + 1, worksheet_find_cell.col, 'available')
         room_worksheet.update_cell(worksheet_find_cell.row, worksheet_find_cell.col, 'unavailable')
+        room_worksheet.update_cell(worksheet_find_cell.row - 1, worksheet_find_cell.col, 'available')
 
         return("Successful")
     else:
@@ -95,8 +96,9 @@ from google.auth.transport import requests
 def authenticateGoogle(token: any):
     try:
         # Specify the CLIENT_ID of the app that accesses the backend:
-        idinfo = id_token.verify_oauth2_token(token, requests.Request(), '970810655131-jo7kkqs821lj746hhddtjno4k465ihm2.apps.googleusercontent.com')
-        return (idinfo['sub'])
+        idinfo = id_token.verify_oauth2_token(token, requests.Request(), '712891238786-8aj99006i0o1jsecsg8ds9n0ff7ehtmq.apps.googleusercontent.com')
+        information = [idinfo['email'], idinfo['name']]
+        return (information)
     except ValueError:
         # Invalid token
         return ("Invalid Token")
@@ -138,5 +140,5 @@ async def change_status(room_id, change_to, first_name, last_name, email) :
         return{"message" : "Something went wrong. Either change_to parameter is not valid or room_id is not within specified range"}
 
 @app.post("/token_sign_in")
-async def authenticate_google (user_agent: Annotated[str | None, Header()] = None):
+async def authenticate_google (user_agent: Annotated[str  | None, Header()] = None):
     return {"Token": authenticateGoogle(token=user_agent)}
