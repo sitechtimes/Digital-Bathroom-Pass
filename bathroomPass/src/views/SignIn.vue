@@ -6,10 +6,10 @@
                     <ion-button v-if="isSignedIn && !showUnavailable" @click="tryTakeOutPass" size="large" shape="round" :strong="true" >
                         <ion-ripple-effect></ion-ripple-effect>
                         Take Out Pass</ion-button>
-                <ion-button v-if="!isSignedIn" id="loginButton" shape="round" @click="GoToPassOptions" :strong="true" >Take Out
+               <!--  <ion-button v-if="!isSignedIn" id="loginButton" shape="round" @click="GoToPassOptions" :strong="true" >Take Out
                 <ion-ripple-effect></ion-ripple-effect> 
-                </ion-button>
-                <ion-button id="loginButton" @click="doLogIn"> test new Log In </ion-button>
+                </ion-button> -->
+                <ion-button id="loginButton" v-if="!isSignedIn" @click="doLogIn"> test new Log In </ion-button>
             </div>
         </ion-content>
      </ion-page>
@@ -57,10 +57,12 @@ export default defineComponent({
 
         const logIn = async () => {
             try {
-                const response =  await GoogleAuth.signIn();
-                console.log(response)
+                const response =  await GoogleAuth.signIn(); 
                 const idToken = response.authentication.idToken
-                console.log(idToken)
+                /* console.log(idToken) */
+                counter.$state.familyName = response.familyName
+                counter.$state.firstName = response.givenName
+                counter.$state.email = response.email
                 /* const postRequestOptions = {
                     method: "POST",
                     Headers: {"Content-Type": "application/json"},
@@ -74,13 +76,18 @@ export default defineComponent({
         return { logoGoogle, counter, logIn }
     },
     methods:{ 
+        setParams(){
+            this.passRequirements = this.counter.$state.firstName + "/" + this.counter.$state.familyName + "/" + this.counter.$state.email
+            this.currentUserName = this.counter.$state.firstName + " " + this.counter.$state.familyName 
+            console.log( this.passRequirements, this.currentUserName)
+        },
+        ChangeToTrue() {
+            this.isSignedIn = true
+        },
         doLogIn(){
-            this.logIn()
+            this.logIn().then(this.setParams).then(this.ChangeToTrue)
         },
-        GoToPassOptions() {
-            //this.isSignedIn = true
-        },
-        sendPost() {
+        /* sendPost() {
             const postRequestOptions = {
                 method: "POST",
                 headers: { "Content-Type": "application/json"},
@@ -90,7 +97,7 @@ export default defineComponent({
             if(postRequestOptions.body) {
                 this.isSignedIn = true
             }
-        },
+        }, */
         async tryTakeOutPass() {
             const changePass = 'http://10.94.168.231:8000/change_status/'
             const changeToFalse = changePass + "120" + "/false/" + this.passRequirements

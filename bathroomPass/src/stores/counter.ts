@@ -26,6 +26,9 @@ export const useRoomStore = defineStore('counter', {
     state: () => ({ 
         count: 0,
         testNumber: '',
+        firstName: '',
+        familyName: '',
+        email: '',
      }),
     getters: {
         doubleCount: (state) => state.count * 2,
@@ -39,3 +42,5 @@ export const useRoomStore = defineStore('counter', {
         }
     }
 })
+
+
