@@ -69,7 +69,6 @@ def updateStatus(roomNumber: string, changeTo: string, firstName: string, lastNa
         room_worksheet.update_cell(worksheet_find_cell.row, worksheet_find_cell.col - 1, str(current_time))
         room_worksheet.update_cell(worksheet_find_cell.row + 1, worksheet_find_cell.col, 'available')
         room_worksheet.update_cell(worksheet_find_cell.row, worksheet_find_cell.col, 'unavailable')
-        room_worksheet.update_cell(worksheet_find_cell.row - 1, worksheet_find_cell.col, 'available')
 
         return("Successful")
     else:
@@ -140,5 +139,5 @@ async def change_status(room_id, change_to, first_name, last_name, email) :
         return{"message" : "Something went wrong. Either change_to parameter is not valid or room_id is not within specified range"}
 
 @app.post("/token_sign_in")
-async def authenticate_google (user_agent: Annotated[str  | None, Header()] = None):
+async def authenticate_google (user_agent: Annotated[str | None, Header()] = None):
     return {"Token": authenticateGoogle(token=user_agent)}
