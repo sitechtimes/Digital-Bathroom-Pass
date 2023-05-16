@@ -18,7 +18,7 @@
 <script lang="ts">
 import{ IonPage, IonContent, IonTitle, IonButton, IonRippleEffect } from '@ionic/vue';
 import { defineComponent, onMounted } from 'vue';
-import { logIn, logoGoogle } from 'ionicons/icons'
+import { body, logIn, logoGoogle } from 'ionicons/icons'
 import { useRoomStore } from '../stores/counter'
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth' //package for google login
 
@@ -60,15 +60,10 @@ export default defineComponent({
                 const response =  await GoogleAuth.signIn(); 
                 const idToken = response.authentication.idToken
                 /* console.log(idToken) */
+                counter.$state.idToken = idToken
                 counter.$state.familyName = response.familyName
                 counter.$state.firstName = response.givenName
                 counter.$state.email = response.email
-                /* const postRequestOptions = {
-                    method: "POST",
-                    Headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify({ token: idToken})
-                }
-                await fetch('10.94.168.231:8000/token_sign_in?user_agent=' + idToken , postRequestOptions) */
             } catch (e) {
                 console.log("error")
             }
@@ -76,6 +71,23 @@ export default defineComponent({
         return { logoGoogle, counter, logIn }
     },
     methods:{ 
+
+        async postData(url = "", data = {}) {
+            const response = await fetch(url, {
+                                    method: "POST",
+                                    headers: {
+                                        /* "Content-Type": "application/json", */
+                                        'Content-Type': 'application/x-www-form-urlencoded'
+                                    },
+                                    body: JSON.stringify(data)
+                                })
+                                return response.json()
+        },
+        doPost() {
+        this.postData("http://10.94.168.231:8000/token_sign_in", { idToken: this.counter.$state.idToken}).then((data)=> {
+            console.log(data)
+        })
+        },
         setParams(){
             this.passRequirements = this.counter.$state.firstName + "/" + this.counter.$state.familyName + "/" + this.counter.$state.email
             this.currentUserName = this.counter.$state.firstName + " " + this.counter.$state.familyName 
@@ -85,7 +97,7 @@ export default defineComponent({
             this.isSignedIn = true
         },
         doLogIn(){
-            this.logIn().then(this.setParams).then(this.ChangeToTrue)
+            this.logIn().then(this.setParams).then(this.doPost).then(this.ChangeToTrue)
         },
         /* sendPost() {
             const postRequestOptions = {
