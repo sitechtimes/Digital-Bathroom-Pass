@@ -3,5 +3,8 @@
   "integrations": {
     "capacitor": {}
   },
-  "type": "vue"
+  "type": "vue",
+  "ssl": true,
+  "sslKey": "ssl/key.pem",
+  "sslCert": "ssl/cert.pem"
 }
