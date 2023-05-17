@@ -9,7 +9,7 @@
                <!--  <ion-button v-if="!isSignedIn" id="loginButton" shape="round" @click="GoToPassOptions" :strong="true" >Take Out
                 <ion-ripple-effect></ion-ripple-effect> 
                 </ion-button> -->
-                <ion-button id="loginButton" v-if="!isSignedIn" @click="doLogIn"> test new Log In </ion-button>
+                <ion-button id="loginButton" v-if="!isSignedIn" @click="doLogIn"> Log In </ion-button>
             </div>
         </ion-content>
      </ion-page>
@@ -72,19 +72,20 @@ export default defineComponent({
     },
     methods:{ 
 
-        async postData(url = "", data = {}) {
+        async postData(url = "", data: string) {
+            console.log(JSON.stringify(data).replace(/"([^"]+)":/g, '$1:'))
             const response = await fetch(url, {
                                     method: "POST",
                                     headers: {
-                                        /* "Content-Type": "application/json", */
-                                        'Content-Type': 'application/x-www-form-urlencoded'
+                                        "Content-Type": "application/json",
+                                        /* 'Content-Type': 'application/x-www-form-urlencoded' */
                                     },
-                                    body: JSON.stringify(data)
+                                    body: JSON.stringify(data).replace(/"([^"]+)":/g, '$1:')
                                 })
                                 return response.json()
         },
         doPost() {
-        this.postData("http://10.94.168.231:8000/token_sign_in", { idToken: this.counter.$state.idToken}).then((data)=> {
+        this.postData("http://10.94.168.231:8000/token_sign_in", this.counter.$state.idToken).then((data)=> {
             console.log(data)
         })
         },
@@ -95,6 +96,9 @@ export default defineComponent({
         },
         ChangeToTrue() {
             this.isSignedIn = true
+        },
+        logIdToken() {
+            console.log(this.counter.$state.idToken)
         },
         doLogIn(){
             this.logIn().then(this.setParams).then(this.doPost).then(this.ChangeToTrue)
