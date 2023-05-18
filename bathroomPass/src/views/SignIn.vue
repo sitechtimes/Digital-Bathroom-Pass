@@ -72,15 +72,16 @@ export default defineComponent({
     },
     methods:{ 
 
-        async postData(url = "", data: string) {
-            console.log(JSON.stringify(data).replace(/"([^"]+)":/g, '$1:'))
+        async postData(url = "", data = {}) {
+            console.log(JSON.stringify(data))
             const response = await fetch(url, {
                                     method: "POST",
+                                    mode: "same-origin",
                                     headers: {
                                         "Content-Type": "application/json",
                                         /* 'Content-Type': 'application/x-www-form-urlencoded' */
                                     },
-                                    body: JSON.stringify(data).replace(/"([^"]+)":/g, '$1:')
+                                    body: JSON.stringify( data )
                                 })
                                 return response.json()
         },
