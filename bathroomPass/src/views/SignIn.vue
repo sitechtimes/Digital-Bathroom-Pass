@@ -71,22 +71,18 @@ export default defineComponent({
         return { logoGoogle, counter, logIn }
     },
     methods:{ 
-
-        async postData(url = "", data = {}) {
+        
+        async postData(url = "", data: object) {
             console.log(JSON.stringify(data))
             const response = await fetch(url, {
                                     method: "POST",
-                                    mode: "same-origin",
-                                    headers: {
-                                        "Content-Type": "application/json",
-                                        /* 'Content-Type': 'application/x-www-form-urlencoded' */
-                                    },
+                                    /* mode: "same-origin", */
                                     body: JSON.stringify( data )
                                 })
                                 return response.json()
         },
         doPost() {
-        this.postData("http://10.94.168.231:8000/token_sign_in", this.counter.$state.idToken).then((data)=> {
+        this.postData("http://100.101.68.32:8000/token_sign_in", {user_agent: this.counter.$state.idToken}).then((data)=> {
             console.log(data)
         })
         },
