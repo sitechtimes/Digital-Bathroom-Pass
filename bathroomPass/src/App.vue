@@ -25,7 +25,6 @@ export default defineComponent({
   setup() {
     const router = useRouter();
     App.addListener('appUrlOpen', function(event: URLOpenListenerEvent) {
-      // Example url: https://beerswift.app/tabs/tabs2
       // url: http:localhost:8100/home/122
       // roomNumber: 122
       // new url: http:localhost:8100/home

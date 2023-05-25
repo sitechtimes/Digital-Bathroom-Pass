@@ -79,13 +79,13 @@ export default defineComponent({
                                     headers: {
                                     "Content-Type": "application/json"
                                     },
-                                    mode: "no-cors",
+                                    mode: "cors",
                                     body: JSON.stringify(data)
                                 })
                                 return response.json()
         },
         doPost() {
-        this.postData("http://10.94.168.231:8000/token_sign_in", { "user_agent" : this.counter.$state.idToken}).then((data)=> {
+        this.postData("http://100.101.65.158:8000/token_sign_in", { "user_agent" : this.counter.$state.idToken}).then((data)=> {
             console.log(data)
         })
         },
