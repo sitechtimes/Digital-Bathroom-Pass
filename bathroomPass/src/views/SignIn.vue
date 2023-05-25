@@ -71,22 +71,22 @@ export default defineComponent({
         return { logoGoogle, counter, logIn }
     },
     methods:{ 
-        
-        async postData(url = "", data = {}) {
-            console.log(JSON.stringify(data))
+            async postData(url = "", data: string) {
+            console.log(data)
             const response = await fetch(url, {
                                     method: "POST",
                                     headers: {
-                                    "Content-Type": "application/json"
+                                    "user_agent": data
                                     },
                                     mode: "cors",
-                                    body: JSON.stringify(data)
                                 })
                                 return response.json()
         },
         doPost() {
-        this.postData("http://100.101.65.158:8000/token_sign_in", { "user_agent" : this.counter.$state.idToken}).then((data)=> {
+        this.postData("http://100.101.69.127:8000/token_sign_in", this.counter.$state.idToken).then((data)=> {
             console.log(data)
+            // 100.101.65.158:8000 arshmeets port
+            // 10.94.168.231:8000 school port
         })
         },
         setParams(){
