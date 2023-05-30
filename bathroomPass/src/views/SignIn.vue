@@ -76,14 +76,16 @@ export default defineComponent({
             const response = await fetch(url, {
                                     method: "POST",
                                     headers: {
-                                    "user_agent": data
+                                    /* "Content-Type": "application/json", */
+                                    "user_agent" : `${data}`
                                     },
+                                    /* body: JSON.stringify({data}), */
                                     mode: "cors",
                                 })
                                 return response.json()
         },
         doPost() {
-        this.postData("http://100.101.69.127:8000/token_sign_in", this.counter.$state.idToken).then((data)=> {
+        this.postData("http://10.94.168.231:8000/token_sign_in/", this.counter.$state.idToken).then((data)=> {
             console.log(data)
             // 100.101.65.158:8000 arshmeets port
             // 10.94.168.231:8000 school port
@@ -116,7 +118,7 @@ export default defineComponent({
         }, */
         async tryTakeOutPass() {
             const changePass = 'http://10.94.168.231:8000/change_status/'
-            const changeToFalse = changePass + "120" + "/false/" + this.passRequirements
+            const changeToFalse = changePass + "120" + "/false/" + this.passRequirements 
             const changeToTrue = changePass + "120" + "/true/" + this.passRequirements
             const fetchPass = 'http://10.94.168.231:8000/get_status/120'
             const fetchFunction = await fetch(fetchPass, {
