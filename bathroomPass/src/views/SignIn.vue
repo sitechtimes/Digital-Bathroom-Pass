@@ -21,6 +21,7 @@ import { defineComponent, onMounted } from 'vue';
 import { body, logIn, logoGoogle } from 'ionicons/icons'
 import { useRoomStore } from '../stores/counter'
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth' //package for google login
+import axios from 'axios'
 
 export default defineComponent({
     name: "SignIn",
@@ -42,7 +43,8 @@ export default defineComponent({
             lastUserName: "",
             allowTakePass: true,
             buttonText: "Take Out Pass",
-            roomNumber: ""
+            roomNumber: "",
+            tokenResponse: ""
         }
     },
     setup() {
@@ -71,25 +73,30 @@ export default defineComponent({
         return { logoGoogle, counter, logIn }
     },
     methods:{ 
-            async postData(url = "", data: string) {
-            console.log(data)
+            /* async postData(url = "", my_header: string) {
+            console.log(my_header)
             const response = await fetch(url, {
                                     method: "POST",
                                     headers: {
-                                    /* "Content-Type": "application/json", */
-                                    "user_agent" : `${data}`
+                                    "Content-Type": "application/json",
+                                    "Accept" : JSON.stringify({my_header})
                                     },
-                                    /* body: JSON.stringify({data}), */
-                                    mode: "cors",
+                                    body: JSON.stringify({my_header})
                                 })
                                 return response.json()
-        },
+        }, */
         doPost() {
-        this.postData("http://10.94.168.231:8000/token_sign_in/", this.counter.$state.idToken).then((data)=> {
+        /* this.postData("http://100.101.66.175:8000/token_sign_in/", this.counter.$state.idToken).then((data)=> {
             console.log(data)
             // 100.101.65.158:8000 arshmeets port
             // 10.94.168.231:8000 school port
-        })
+        }) */
+        const article = { Accept: this.counter.$state.idToken}
+        const headers = {
+            "authorization": "Bearer my-token",
+            "user_agent": `${article}`
+        }
+        axios.post("http://100.101.66.175:8000/token_sign_in/", article, { headers }).then(response => this.tokenResponse = response.data.id)
         },
         setParams(){
             this.passRequirements = this.counter.$state.firstName + "/" + this.counter.$state.familyName + "/" + this.counter.$state.email
