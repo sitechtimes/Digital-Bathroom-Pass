@@ -91,12 +91,12 @@ export default defineComponent({
             // 100.101.65.158:8000 arshmeets port
             // 10.94.168.231:8000 school port
         }) */
-        const article = { Accept: this.counter.$state.idToken}
+        const token = JSON.stringify(this.counter.$state.idToken)
         const headers = {
-            "authorization": "Bearer my-token",
-            "user_agent": `${article}`
+            "user_agent": `${token}`
         }
-        axios.post("http://100.101.66.175:8000/token_sign_in/", article, { headers }).then(response => this.tokenResponse = response.data.id)
+        console.log(token)
+        axios.post("http://10.94.168.235:8000/token_sign_in/", token, { headers }).then(response => this.tokenResponse = response.data.id)
         },
         setParams(){
             this.passRequirements = this.counter.$state.firstName + "/" + this.counter.$state.familyName + "/" + this.counter.$state.email
