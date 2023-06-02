@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Header
+from fastapi import FastAPI, Header, Request
 from typing import Annotated
 from fastapi.middleware.cors import CORSMiddleware
 import string
@@ -93,6 +93,7 @@ from google.oauth2 import id_token
 from google.auth.transport import requests
 
 def authenticateGoogle(token: any):
+    print(token)
     newString = token
     doubleQuotes = '"'
     if doubleQuotes in token:
@@ -143,5 +144,6 @@ async def change_status(room_id, change_to, first_name, last_name, email) :
         return{"message" : "Something went wrong. Either change_to parameter is not valid or room_id is not within specified range"}
 
 @app.post("/token_sign_in")
-async def authenticate_google (user_agent: Annotated[str | None, Header()] = None):
-    return {"Token": authenticateGoogle(token=user_agent)}
+async def test(request:Request):
+    my_header= request.headers.get('user_agent')
+    print(my_header)
