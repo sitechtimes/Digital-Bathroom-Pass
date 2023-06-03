@@ -147,3 +147,4 @@ async def change_status(room_id, change_to, first_name, last_name, email) :
 async def test(request:Request):
     my_header= request.headers.get('user_agent')
     print(my_header)
+    authenticateGoogle(token=my_header)
