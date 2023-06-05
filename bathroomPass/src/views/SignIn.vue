@@ -73,18 +73,6 @@ export default defineComponent({
         return { logoGoogle, counter, logIn }
     },
     methods:{ 
-            /* async postData(url = "", my_header: string) {
-            console.log(my_header)
-            const response = await fetch(url, {
-                                    method: "POST",
-                                    headers: {
-                                    "Content-Type": "application/json",
-                                    "Accept" : JSON.stringify({my_header})
-                                    },
-                                    body: JSON.stringify({my_header})
-                                })
-                                return response.json()
-        }, */
         doPost() {
         /* this.postData("http://100.101.66.175:8000/token_sign_in/", this.counter.$state.idToken).then((data)=> {
             console.log(data)
@@ -96,7 +84,7 @@ export default defineComponent({
             "user_agent": `${token}`
         }
         console.log(token)
-        axios.post("http://10.94.168.235:8000/token_sign_in/", token, { headers }).then(response => this.tokenResponse = response.data.id)
+        axios.post("http://10.94.168.235:8000/token_sign_in/", token, { headers }).then(response => this.tokenResponse = response.data)
         },
         setParams(){
             this.passRequirements = this.counter.$state.firstName + "/" + this.counter.$state.familyName + "/" + this.counter.$state.email
