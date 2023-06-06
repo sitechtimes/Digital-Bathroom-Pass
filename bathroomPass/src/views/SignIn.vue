@@ -74,17 +74,15 @@ export default defineComponent({
     },
     methods:{ 
         doPost() {
-        /* this.postData("http://100.101.66.175:8000/token_sign_in/", this.counter.$state.idToken).then((data)=> {
-            console.log(data)
+        /* 
             // 100.101.65.158:8000 arshmeets port
-            // 10.94.168.231:8000 school port
-        }) */
+            // 10.94.168.231:8000 school port */
         const token = JSON.stringify(this.counter.$state.idToken)
         const headers = {
             "user_agent": `${token}`
         }
         console.log(token)
-        axios.post("http://10.94.168.235:8000/token_sign_in/", token, { headers }).then(response => console.log(response))
+        axios.post("http://10.94.168.231:8000/token_sign_in/", token, { headers }).then(response => console.log(response))
         },
         setParams(){
             this.passRequirements = this.counter.$state.firstName + "/" + this.counter.$state.familyName + "/" + this.counter.$state.email
