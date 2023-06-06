@@ -93,7 +93,6 @@ from google.oauth2 import id_token
 from google.auth.transport import requests
 
 def authenticateGoogle(token: any):
-    print(token)
     newString = token
     doubleQuotes = '"'
     if doubleQuotes in token:
