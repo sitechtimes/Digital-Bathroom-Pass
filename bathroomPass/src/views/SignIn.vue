@@ -10,6 +10,7 @@
                 <ion-ripple-effect></ion-ripple-effect> 
                 </ion-button> -->
                 <ion-button id="loginButton" v-if="!isSignedIn" @click="doLogIn"> Log In </ion-button>
+                <ion-button @click="logResponse">clikc to ejkn</ion-button>
             </div>
         </ion-content>
      </ion-page>
@@ -44,7 +45,7 @@ export default defineComponent({
             allowTakePass: true,
             buttonText: "Take Out Pass",
             roomNumber: "",
-            tokenResponse: ""
+            tokenResponse: {}
         }
     },
     setup() {
@@ -81,13 +82,14 @@ export default defineComponent({
         const headers = {
             "user_agent": `${token}`
         }
-        console.log(token)
-        axios.post("http://10.94.168.231:8000/token_sign_in/", token, { headers }).then(response => console.log(response))
+        axios.post("http://100.101.71.140:8000/token_sign_in/", token, { headers }).then(response => this.counter.$state.response = response)
+        },
+        logResponse() {
+            console.log(this.counter.$state.response)
         },
         setParams(){
             this.passRequirements = this.counter.$state.firstName + "/" + this.counter.$state.familyName + "/" + this.counter.$state.email
             this.currentUserName = this.counter.$state.firstName + " " + this.counter.$state.familyName 
-            console.log( this.passRequirements, this.currentUserName)
         },
         ChangeToTrue() {
             this.isSignedIn = true
@@ -96,7 +98,7 @@ export default defineComponent({
             console.log(this.counter.$state.idToken)
         },
         doLogIn(){
-            this.logIn().then(this.setParams).then(this.doPost).then(this.ChangeToTrue)
+            this.logIn().then(this.setParams).then(this.doPost).then(this.ChangeToTrue).then(this.logResponse)
         },
         /* sendPost() {
             const postRequestOptions = {
