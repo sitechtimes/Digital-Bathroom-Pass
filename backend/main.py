@@ -146,5 +146,4 @@ async def change_status(room_id, change_to, first_name, last_name, email) :
 @app.post("/token_sign_in")
 async def test(request:Request):
     my_header= request.headers.get('user_agent')
-    print(my_header)
-    authenticateGoogle(token=my_header)
+    return {"message" : authenticateGoogle(token=my_header)}
