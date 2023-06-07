@@ -17,13 +17,15 @@
     "@capacitor/ios": "4.6.1",
     "@capacitor/keyboard": "4.1.0",
     "@capacitor/status-bar": "4.1.1",
+    "@codetrix-studio/capacitor-google-auth": "^3.2.2",
     "@ionic/vue": "^6.0.0",
     "@ionic/vue-router": "^6.0.0",
+    "axios": "^1.4.0",
     "core-js": "^3.6.5",
     "ionicons": "^6.0.3",
+    "pinia": "^2.0.33",
     "vue": "^3.2.21",
-    "vue-router": "^4.0.12",
-    "vue3-google-login": "^2.0.12"
+    "vue-router": "^4.0.12"
   },
   "devDependencies": {
     "@capacitor/cli": "^4.6.1",

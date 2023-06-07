@@ -1,76 +1,136 @@
 <template>
-  <ion-page>
-    <ion-header :translucent="true">
-      <ion-toolbar>
-        <ion-title>Blank</ion-title>
-      </ion-toolbar>
-    </ion-header>
-    
-    <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">Blank</ion-title>
-        </ion-toolbar>
-      </ion-header>
-    
+  <ion-page id="main">
+    <ion-content color="dark" id="main-container" :fullscreen="true">
       <div id="container">
-        <ion-button> Test </ion-button>
-        <ion-button @click="PushToScanner">Go To Scan</ion-button>
-        <strong>Ready to create an app?</strong>
-        <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+        <div id="card-wrapper">
+          <ion-title size="small" weight="strong" id="cardTitle">SITHS Bathroom Scanner</ion-title>
+          <p class="card-text">Pooping made easy</p>
+          </div>
+          <ion-button  on-button id="buttonText" shape="round" size="large" @click="PushToScanner" >
+          <ion-ripple-effect></ion-ripple-effect>Go To Scanner</ion-button>     
       </div>
     </ion-content>
   </ion-page>
 </template>
 
 <script lang="ts">
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton } from '@ionic/vue';
+import { IonContent, IonPage, IonTitle, IonButton, IonRippleEffect } from '@ionic/vue';
 import { defineComponent } from 'vue';
+import { useRoomStore } from '../stores/counter';
 
 export default defineComponent({
   name: 'HomePage',
   components: {
     IonContent,
-    IonHeader,
     IonPage,
     IonTitle,
-    IonToolbar,
-    IonButton
+    IonButton,
+    IonRippleEffect,
+  },
+  data() {
+    return {
+      roomNumber: ""
+    }
+  },
+  setup() {
+    const counter =  useRoomStore()
+    return {
+      counter
+    }
   },
   methods: {
+    doTest() {
+      this.counter.testNumber = this.roomNumber
+      console.log(this.counter.testNumber)
+    },
+    test() {
+      setTimeout(this.doTest, 10)
+    },
+    logValue() {
+      console.log(this.roomNumber)
+    },
     PushToScanner() {
-      this.$router.push({name: "ScannerPage" })
+      this.$router.push({
+        name: "SignIn",
+      })
     }
+  },
+  created() {
+    //
   }
 });
 </script>
 
 <style scoped>
+
 #container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
-  
   position: absolute;
   left: 0;
   right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 55%;
+  transform: translateY(-65%);
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+#main {
+  background-color: #000;
 }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
+#buttonText {
+  font-size: medium;
+}
+
+#cardTitle {
+  padding-top: 25%;
+}
+
+#card-wrapper {
+  background-color: #CABC71;
+  width: 50%;
+  display: flex;
+  border-radius: 2.5rem;
+  margin-bottom: 13%;
+  flex-direction: column;
+  padding-bottom: 14%;
+  left: 0;
+  right: 0;
+  top: 55%;
+  transform: translateY(25%);
+}
+
+p {
+  color: black;
+}
+
+ion-title {
+  color: #000;
+  font-size: 2em;
+}
+
+ion-button {
+  --background: #CABC71;
+  --background-activated: #CABC71;
   
-  color: #8c8c8c;
-  
-  margin: 0;
+  --color: #000; 
 }
 
-#container a {
-  text-decoration: none;
+@media screen and (min-width : 300px) and (max-width : 1200px) {
+  #card-wrapper{
+    background-color: #CABC71;
+  width: 86%;
+  display: flex;
+  border-radius: 2.5rem;
+  margin-bottom: 13%;
+  flex-direction: column;
+  padding-bottom: 14%;
+  left: 0;
+  right: 0;
+  top: 55%;
+  transform: translateY(-5%);
+  }
 }
+
 </style>
