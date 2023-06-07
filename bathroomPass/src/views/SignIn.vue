@@ -10,7 +10,6 @@
                 <ion-ripple-effect></ion-ripple-effect> 
                 </ion-button> -->
                 <ion-button id="loginButton" v-if="!isSignedIn" @click="doLogIn"> Log In </ion-button>
-                <ion-button @click="logResponse">clikc to ejkn</ion-button>
             </div>
         </ion-content>
      </ion-page>
@@ -19,7 +18,7 @@
 <script lang="ts">
 import{ IonPage, IonContent, IonTitle, IonButton, IonRippleEffect } from '@ionic/vue';
 import { defineComponent, onMounted } from 'vue';
-import { body, logIn, logoGoogle } from 'ionicons/icons'
+import { logoGoogle } from 'ionicons/icons'
 import { useRoomStore } from '../stores/counter'
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth' //package for google login
 import axios from 'axios'
@@ -64,9 +63,9 @@ export default defineComponent({
                 const idToken = response.authentication.idToken
                 /* console.log(idToken) */
                 counter.$state.idToken = idToken
-                counter.$state.familyName = response.familyName
+               /*  counter.$state.familyName = response.familyName
                 counter.$state.firstName = response.givenName
-                counter.$state.email = response.email
+                counter.$state.email = response.email */
             } catch (e) {
                 console.log("error")
             }
@@ -82,10 +81,15 @@ export default defineComponent({
         const headers = {
             "user_agent": `${token}`
         }
-        axios.post("http://100.101.71.140:8000/token_sign_in/", token, { headers }).then(response => console.log(response.data.message))
+        axios.post("http://100.101.66.113:8000/token_sign_in/", token, { headers }).then(response => this.counter.$state.response = response.data.message.toString())
         },
-        logResponse() {
-            console.log(this.counter.$state.response)
+        storeResponse() {
+            const splitStr = this.counter.$state.response.split(",")
+            const nameArr =  splitStr[1].toString()
+            const splitName = nameArr.split(" ")
+            this.counter.$state.email = splitStr[0].toString()
+            this.counter.$state.firstName = splitName[0]
+            this.counter.$state.familyName = splitName[1]
         },
         setParams(){
             this.passRequirements = this.counter.$state.firstName + "/" + this.counter.$state.familyName + "/" + this.counter.$state.email
@@ -98,24 +102,13 @@ export default defineComponent({
             console.log(this.counter.$state.idToken)
         },
         doLogIn(){
-            this.logIn().then(this.setParams).then(this.doPost).then(this.ChangeToTrue).then(this.logResponse)
+            this.logIn().then(this.doPost).then(this.storeResponse).then(this.setParams).then(this.ChangeToTrue)
         },
-        /* sendPost() {
-            const postRequestOptions = {
-                method: "POST",
-                headers: { "Content-Type": "application/json"},
-                body: JSON.stringify({ token: this.userToken })
-            };
-            console.log(postRequestOptions.body)
-            if(postRequestOptions.body) {
-                this.isSignedIn = true
-            }
-        }, */
         async tryTakeOutPass() {
-            const changePass = 'http://10.94.168.231:8000/change_status/'
+            const changePass = 'http://10.94.168.231:8001/change_status/'
             const changeToFalse = changePass + "120" + "/false/" + this.passRequirements 
             const changeToTrue = changePass + "120" + "/true/" + this.passRequirements
-            const fetchPass = 'http://10.94.168.231:8000/get_status/120'
+            const fetchPass = 'http://10.94.168.231:8001/get_status/120'
             const fetchFunction = await fetch(fetchPass, {
                 method: 'get',
                 mode: 'cors',

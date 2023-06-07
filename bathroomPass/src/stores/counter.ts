@@ -30,7 +30,7 @@ export const useRoomStore = defineStore('counter', {
         familyName: '',
         email: '',
         idToken: '',
-        response: {}
+        response: '',
      }),
     getters: {
         doubleCount: (state) => state.count * 2,
