@@ -62,6 +62,7 @@ export default defineComponent({
         const logIn = async () => {
             try {
                 const response =  await GoogleAuth.signIn()
+                console.log(response)
                 const idToken = response.authentication.idToken
                 /* console.log(idToken) */
                 counter.$state.idToken = idToken
@@ -106,10 +107,10 @@ export default defineComponent({
             this.logIn().then(this.doPost).then(this.storeResponse).then(this.setParams).then(this.ChangeToTrue)
         },
         async tryTakeOutPass() {
-            const changePass = 'http://10.94.168.231:8001/change_status/'
+            const changePass = 'http://localhost:8000/change_status/'
             const changeToFalse = changePass + "120" + "/false/" + this.passRequirements 
             const changeToTrue = changePass + "120" + "/true/" + this.passRequirements
-            const fetchPass = 'http://10.94.168.231:8001/get_status/121'
+            const fetchPass = 'http://localhost:8000/get_status/121'
             const fetchFunction = await fetch(fetchPass, {
                 method: 'get',
                 mode: 'cors',
