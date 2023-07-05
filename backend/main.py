@@ -93,11 +93,11 @@ from google.oauth2 import id_token
 from google.auth.transport import requests
 
 def authenticateGoogle(token: any):
-    print(token)
     newString = token
     doubleQuotes = '"'
     if doubleQuotes in token:
         newString = token.replace(doubleQuotes, "")
+        print(newString)
     try:
         # Specify the CLIENT_ID of the app that accesses the backend:
         idinfo = id_token.verify_oauth2_token(newString, requests.Request(), '712891238786-8aj99006i0o1jsecsg8ds9n0ff7ehtmq.apps.googleusercontent.com')

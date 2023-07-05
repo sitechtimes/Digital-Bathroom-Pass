@@ -81,7 +81,7 @@ export default defineComponent({
         const headers = {
             "user_agent": `${token}`
         }
-        axios.post("http://localhost:8000/token_sign_in/", token, { headers }).then(response => /* this.counter.$state.response = response.data.message.toString() */ console.log(response.data))
+        axios.post("http://localhost:8000/token_sign_in/", token, { headers }).then(response => /* this.counter.$state.response = response.data.message.toString() */ console.log(response))
         },
         storeResponse() {
             /* console.log(this.counter.$state.response) */
