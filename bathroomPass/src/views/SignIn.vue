@@ -22,7 +22,9 @@ import { logoGoogle } from 'ionicons/icons'
 import { useRoomStore } from '../stores/counter'
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth' //package for google login
 import axios from 'axios'
-
+        // to get on own port go into backend directory and in terminal paste
+        // python -m uvicorn main:app --reload 
+        // 10.94.168.231:8000 school port 
 export default defineComponent({
     name: "SignIn",
     components: {
@@ -59,7 +61,7 @@ export default defineComponent({
 
         const logIn = async () => {
             try {
-                const response =  await GoogleAuth.signIn(); 
+                const response =  await GoogleAuth.signIn()
                 const idToken = response.authentication.idToken
                 /* console.log(idToken) */
                 counter.$state.idToken = idToken
@@ -74,16 +76,14 @@ export default defineComponent({
     },
     methods:{ 
         doPost() {
-        /* 
-            // 100.101.65.158:8000 arshmeets port
-            // 10.94.168.231:8000 school port */
         const token = JSON.stringify(this.counter.$state.idToken)
         const headers = {
             "user_agent": `${token}`
         }
-        axios.post("http://100.101.66.113:8000/token_sign_in/", token, { headers }).then(response => this.counter.$state.response = response.data.message.toString())
+        axios.post("http://localhost:8000/token_sign_in/", token, { headers }).then(response => console.log(response))
         },
         storeResponse() {
+            console.log(this.counter.$state.response)
             const splitStr = this.counter.$state.response.split(",")
             const nameArr =  splitStr[1].toString()
             const splitName = nameArr.split(" ")
