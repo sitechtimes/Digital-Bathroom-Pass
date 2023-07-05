@@ -77,13 +77,14 @@ export default defineComponent({
     methods:{ 
         doPost() {
         const token = JSON.stringify(this.counter.$state.idToken)
+        console.log(token)
         const headers = {
             "user_agent": `${token}`
         }
-        axios.post("http://localhost:8000/token_sign_in/", token, { headers }).then(response => console.log(response))
+        axios.post("http://localhost:8000/token_sign_in/", token, { headers }).then(response => /* this.counter.$state.response = response.data.message.toString() */ console.log(response.data))
         },
         storeResponse() {
-            console.log(this.counter.$state.response)
+            /* console.log(this.counter.$state.response) */
             const splitStr = this.counter.$state.response.split(",")
             const nameArr =  splitStr[1].toString()
             const splitName = nameArr.split(" ")
