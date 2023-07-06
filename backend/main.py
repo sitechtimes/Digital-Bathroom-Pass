@@ -23,7 +23,7 @@ def checkUser(email: string) -> bool:
     if emailCell is None:
         # The user has not taken a pass out yet
         print("This user has not taken a pass out yet")
-        return False
+        return True
     else:
         # The user has already taken a pass out before, check if they are trying to take another pass out while they already have a pass
         print(emailCell.row)

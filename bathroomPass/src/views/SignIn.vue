@@ -54,6 +54,7 @@ export default defineComponent({
     setup() {
         const counter = useRoomStore()
         onMounted(()=> {
+            counter.$state.showUnavailable = false
             GoogleAuth.initialize({
             clientId: '712891238786-8aj99006i0o1jsecsg8ds9n0ff7ehtmq.apps.googleusercontent.com',
             scopes: ['profile', 'email'],
@@ -129,10 +130,10 @@ export default defineComponent({
             // console.log(this.isSignedIn)
         },
         async tryTakeOutPass() {
-            const changePass = 'http://10.94.168.231:8001/change_status/'
+            const changePass = 'http://100.101.65.32:8000/change_status/'
             const changeToFalse = changePass + "125" + "/false/" + this.passRequirements 
             const changeToTrue = changePass + "125" + "/true/" + this.passRequirements
-            const fetchPass = 'http://10.94.168.231:8001/get_status/125'
+            const fetchPass = 'http://100.101.65.32:8000/get_status/125'
             const fetchFunction = await fetch(fetchPass, {
                 method: 'get',
                 mode: 'cors',
