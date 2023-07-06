@@ -24,7 +24,6 @@ import { defineStore } from 'pinia'
 
 export const useRoomStore = defineStore('counter', {
     state: () => ({ 
-        count: 0,
         testNumber: '',
         firstName: '',
         familyName: '',
@@ -35,15 +34,10 @@ export const useRoomStore = defineStore('counter', {
         showUnavailable: false,
      }),
     getters: {
-        doubleCount: (state) => state.count * 2,
+       //
     },
     actions: {
-        increment() {
-            this.count++
-        },
-        decrement() {
-            this.count--
-        }
+       //
     },
     persist: true
 })
