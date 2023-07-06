@@ -3,11 +3,11 @@
     <ion-content color="dark" id="main-container" :fullscreen="true">
       <div id="container">
         <div id="card-wrapper">
-          <ion-title size="small" weight="strong" id="cardTitle">SITHS Bathroom Scanner</ion-title>
-          <p class="card-text">Pooping made easy</p>
-          </div>
-          <ion-button  on-button id="buttonText" shape="round" size="large" @click="PushToScanner" >
-          <ion-ripple-effect></ion-ripple-effect>Go To Scanner</ion-button>     
+          <ion-title size="small" weight="strong" id="card-title">SITHS Bathroom Scanner</ion-title>
+          <p class="card-text">"Pooping made easy"</p>
+        </div>
+        <ion-button on-button id="buttonText" shape="round" size="large" @click="PushToScanner">
+          <ion-ripple-effect></ion-ripple-effect>Go To Scanner</ion-button>
       </div>
     </ion-content>
   </ion-page>
@@ -33,7 +33,7 @@ export default defineComponent({
     }
   },
   setup() {
-    const counter =  useRoomStore()
+    const counter = useRoomStore()
     return {
       counter
     }
@@ -62,75 +62,49 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
 #container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 55%;
-  transform: translateY(-65%);
-}
-
-#main {
-  background-color: #000;
-}
-
-#buttonText {
-  font-size: medium;
-}
-
-#cardTitle {
-  padding-top: 25%;
+  justify-content: center;
+  min-height: 100vh;
 }
 
 #card-wrapper {
-  background-color: #CABC71;
-  width: 50%;
   display: flex;
-  border-radius: 2.5rem;
-  margin-bottom: 13%;
   flex-direction: column;
-  padding-bottom: 14%;
-  left: 0;
-  right: 0;
-  top: 55%;
-  transform: translateY(25%);
+  align-items: center;
+  justify-content: center;
+  width: 80vw;
+  padding-top: 10%;
 }
 
-p {
-  color: black;
+#card-title {
+  text-align: left;
+  width: 90%;
+  margin-left: auto;
+  font-size: 2.8rem;
 }
 
-ion-title {
-  color: #000;
-  font-size: 2em;
+.card-text {
+  font-size: 1.3rem;
 }
 
 ion-button {
   --background: #CABC71;
   --background-activated: #CABC71;
-  
-  --color: #000; 
+  --color: #000;
 }
 
 @media screen and (min-width : 300px) and (max-width : 1200px) {
-  #card-wrapper{
+  #card-wrapper {
     background-color: #CABC71;
-  width: 86%;
-  display: flex;
-  border-radius: 2.5rem;
-  margin-bottom: 13%;
-  flex-direction: column;
-  padding-bottom: 14%;
-  left: 0;
-  right: 0;
-  top: 55%;
-  transform: translateY(-5%);
+    width: 86%;
+    display: flex;
+    border-radius: 2.5rem;
+    margin-bottom: 13%;
+    flex-direction: column;
+    padding-bottom: 14%;
   }
 }
-
 </style>
