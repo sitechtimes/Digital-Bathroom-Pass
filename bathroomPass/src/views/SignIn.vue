@@ -2,6 +2,7 @@
     <ion-page id="main">
         <ion-content color="dark" id="main-container">
             <div id="container">
+                <img class="container-icon" src="/assets/icon/seagull.png" alt="seagull">
                 <ion-title v-if="counter.$state.isSignedIn && counter.$state.showUnavailable">The Pass is Not
                     Available</ion-title>
                 <ion-button v-if="counter.$state.isSignedIn && !counter.$state.showUnavailable" 
@@ -198,14 +199,14 @@ export default defineComponent({
     justify-content: center;
     width: 80vw;
     border-radius: 0.3rem;
-    height: 50vh;
+    height: 60vh;
     margin: auto;
     margin-top: 35%;
-    gap: 5rem;
     background-color: #3e4145;
 }
 
 .round-button {
+    margin-top: 3rem;
     width: 16rem;
     height: 6rem;
     font-size: 1.6rem;
@@ -218,6 +219,10 @@ ion-button {
     --background-activated: #CABC71;
     --color: #000;
     font-size: 1.7rem;
+}
+
+.container-icon {
+    height: 128px;
 }
 
 ion-title {
