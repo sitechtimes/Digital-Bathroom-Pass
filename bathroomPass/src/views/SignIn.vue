@@ -128,9 +128,9 @@ export default defineComponent({
         },
         async tryTakeOutPass() {
             const changePass = 'http://10.94.168.231:8001/change_status/'
-            const changeToFalse = changePass + "120" + "/false/" + this.passRequirements 
-            const changeToTrue = changePass + "120" + "/true/" + this.passRequirements
-            const fetchPass = 'http://10.94.168.231:8001/get_status/121'
+            const changeToFalse = changePass + "125" + "/false/" + this.passRequirements 
+            const changeToTrue = changePass + "125" + "/true/" + this.passRequirements
+            const fetchPass = 'http://10.94.168.231:8001/get_status/125'
             const fetchFunction = await fetch(fetchPass, {
                 method: 'get',
                 mode: 'cors',
