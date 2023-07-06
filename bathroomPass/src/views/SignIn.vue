@@ -10,6 +10,7 @@
                 <ion-ripple-effect></ion-ripple-effect> 
                 </ion-button> -->
                 <ion-button id="loginButton" v-if="!counter.$state.isSignedIn" @click="doLogIn"> Log In </ion-button>
+                <ion-button @click="logout">logout</ion-button>
             </div>
         </ion-content>
      </ion-page>
@@ -25,6 +26,7 @@ import axios from 'axios'
         // to get on own port go into backend directory and in terminal paste
         // python -m uvicorn main:app --reload 
         // 10.94.168.231:8000 school port 
+        // 10.94.168.231:8001
 export default defineComponent({
     name: "SignIn",
     components: {
@@ -82,7 +84,7 @@ export default defineComponent({
         const headers = {
             "user_agent": `${token}`
         }
-        axios.post("http://localhost:8000/token_sign_in/", token, { headers }).then(response =>
+        axios.post("http://100.101.65.32:8000/token_sign_in/", token, { headers }).then(response =>
          {
             console.log(response)
             this.counter.$state.response = response.data.message
@@ -172,6 +174,10 @@ export default defineComponent({
      doStuff() {
         console.log("doing Stuff")
      },
+     logout() {
+        this.counter.$state.showUnavailable = false
+        this.counter.$state.isSignedIn = false
+     }
     },
 })
 
