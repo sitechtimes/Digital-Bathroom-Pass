@@ -3,6 +3,7 @@
         <ion-content color="dark" id="main-container">
             <div id="container">
                 <ion-title v-if="counter.$state.isSignedIn && counter.$state.showUnavailable">The Pass is Not Available</ion-title>
+                    <ion-button v-if="counter.$state.isSignedIn && !counter.$state.showUnavailable" @click="tryTakeOutPass" size="large" shape="round" :strong="true" >
                         <ion-ripple-effect></ion-ripple-effect>
                         Take Out Pass</ion-button>
                <!--  <ion-button v-if="!isSignedIn" id="loginButton" shape="round" @click="GoToPassOptions" :strong="true" >Take Out
