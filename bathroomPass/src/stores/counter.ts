@@ -31,6 +31,8 @@ export const useRoomStore = defineStore('counter', {
         email: '',
         idToken: '',
         response: '',
+        isSignedIn: false,
+        showUnavailable: false,
      }),
     getters: {
         doubleCount: (state) => state.count * 2,
@@ -42,7 +44,8 @@ export const useRoomStore = defineStore('counter', {
         decrement() {
             this.count--
         }
-    }
+    },
+    persist: true
 })
 
 

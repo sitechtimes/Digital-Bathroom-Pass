@@ -2,14 +2,13 @@
      <ion-page id="main">
         <ion-content color="dark" id="main-container">
             <div id="container">
-                <ion-title v-if="isSignedIn && showUnavailable">The Pass is Not Available</ion-title>
-                    <ion-button v-if="isSignedIn && !showUnavailable" @click="tryTakeOutPass" size="large" shape="round" :strong="true" >
+                <ion-title v-if="counter.$state.isSignedIn && counter.$state.showUnavailable">The Pass is Not Available</ion-title>
                         <ion-ripple-effect></ion-ripple-effect>
                         Take Out Pass</ion-button>
                <!--  <ion-button v-if="!isSignedIn" id="loginButton" shape="round" @click="GoToPassOptions" :strong="true" >Take Out
                 <ion-ripple-effect></ion-ripple-effect> 
                 </ion-button> -->
-                <ion-button id="loginButton" v-if="!isSignedIn" @click="doLogIn"> Log In </ion-button>
+                <ion-button id="loginButton" v-if="!counter.$state.isSignedIn" @click="doLogIn"> Log In </ion-button>
             </div>
         </ion-content>
      </ion-page>
@@ -37,9 +36,9 @@ export default defineComponent({
     data() {
         return{
             userToken: "",
-            isSignedIn: false,
+            // isSignedIn: false,
             PassAvailability: "",
-            showUnavailable: false,
+            // showUnavailable: false,
             passRequirements: "",
             currentUserName: "",
             lastUserName: "",
@@ -68,41 +67,63 @@ export default defineComponent({
                /*  counter.$state.familyName = response.familyName
                 counter.$state.firstName = response.givenName
                 counter.$state.email = response.email */
+
             } catch (e) {
                 console.log("error")
             }
         }
         return { logoGoogle, counter, logIn }
     },
+
     methods:{ 
         doPost() {
         const token = JSON.stringify(this.counter.$state.idToken)
         const headers = {
             "user_agent": `${token}`
         }
-        axios.post("http://localhost:8000/token_sign_in/", token, { headers }).then(response => console.log(response))
+        axios.post("http://localhost:8000/token_sign_in/", token, { headers }).then(response =>
+         {
+            console.log(response)
+            this.counter.$state.response = response.data.message
+            console.log(this.counter.$state.response)
+            const splitStr = this.counter.$state.response
+            console.log("this is the splitstr", splitStr)
+            const nameArr =  splitStr[1].split(" ")
+            console.log("this is the name array", nameArr)
+            // const splitName = nameArr.split(" ")
+            this.counter.$state.email = splitStr[0]
+            this.counter.$state.firstName = nameArr[0]
+            this.counter.$state.familyName = nameArr[1]
+         })
         },
         storeResponse() {
             console.log(this.counter.$state.response)
-            const splitStr = this.counter.$state.response.split(",")
-            const nameArr =  splitStr[1].toString()
-            const splitName = nameArr.split(" ")
-            this.counter.$state.email = splitStr[0].toString()
-            this.counter.$state.firstName = splitName[0]
-            this.counter.$state.familyName = splitName[1]
+            // const splitStr = this.counter.$state.response
+            // console.log("this is the splitstr", splitStr)
+            // const nameArr =  splitStr[1].split(" ")
+            // console.log("this is the name array", nameArr)
+            // // const splitName = nameArr.split(" ")
+            // this.counter.$state.email = splitStr[0]
+            // this.counter.$state.firstName = nameArr[0]
+            // this.counter.$state.familyName = nameArr[1]
         },
         setParams(){
             this.passRequirements = this.counter.$state.firstName + "/" + this.counter.$state.familyName + "/" + this.counter.$state.email
             this.currentUserName = this.counter.$state.firstName + " " + this.counter.$state.familyName 
         },
         ChangeToTrue() {
-            this.isSignedIn = true
+            // this.isSignedIn = true
+            this.counter.$state.isSignedIn = true
         },
         logIdToken() {
             console.log(this.counter.$state.idToken)
         },
         doLogIn(){
-            this.logIn().then(this.doPost).then(this.storeResponse).then(this.setParams).then(this.ChangeToTrue)
+            this.logIn().then(this.doPost).then(this.storeResponse).then(() => {
+                // console.log(this.isSignedIn, this.showUnavailable)
+            }
+            ).then(this.setParams).then(this.ChangeToTrue)
+            // console.log(this.isSignedIn)
         },
         async tryTakeOutPass() {
             const changePass = 'http://10.94.168.231:8001/change_status/'
@@ -141,9 +162,10 @@ export default defineComponent({
             })
             fetchFunction
         } else {
-            console.log("before change", this.showUnavailable)
-            this.showUnavailable = true
-            console.log("after change", this.showUnavailable)
+            // console.log("before change", this.showUnavailable)
+            // this.showUnavailable = true
+            this.counter.$state.showUnavailable = true
+            // console.log("after change", this.showUnavailable)
         }
      },
      doStuff() {
