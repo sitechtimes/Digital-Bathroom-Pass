@@ -7,7 +7,8 @@
                     The pass is not available
                 </ion-card-title>
                 <ion-card-content>
-                    <ion-button v-if="counter.$state.isSignedIn && counter.$state.returnPass"
+                    <div v-if="counter.$state.isSignedIn" class="pass">
+                        <ion-button v-if="!counter.$state.returnPass"
                         class="round-button"
                         id="takeout-button"
                         @click="tryTakeOutPass"
@@ -17,7 +18,7 @@
                         <ion-ripple-effect></ion-ripple-effect>
                         Take Out Pass
                     </ion-button>
-                    <ion-button v-if="counter.$state.isSignedIn && !counter.$state.returnPass"
+                    <ion-button v-else
                         class="round-button"
                         id="takeout-button"
                         @click="tryTakeOutPass"
@@ -27,6 +28,7 @@
                         <ion-ripple-effect></ion-ripple-effect>
                         Return Pass
                     </ion-button>
+                    </div>
                     <ion-button 
                         class="round-button" 
                         id="login-button" 
@@ -88,6 +90,7 @@ export default defineComponent({
     },
     mounted() {
         this.getReturnStatus()
+        console.log(this.counter.$state.isSignedIn)
     },  
     setup() {
         const counter = useRoomStore()
@@ -123,7 +126,7 @@ export default defineComponent({
         const headers = {
             "user_agent": `${token}`
         }
-        axios.post("http://100.101.65.63:8000/token_sign_in/", token, { headers }).then(response =>
+        axios.post("http://192.168.1.11:8000/token_sign_in/", token, { headers }).then(response =>
          {
             console.log(response)
             this.counter.$state.response = response.data.message
@@ -170,10 +173,10 @@ export default defineComponent({
         async tryTakeOutPass() {    
             const currentUser = this.counter.$state.email
             const information = this.counter.$state.firstName + "/" + this.counter.$state.familyName + "/" + this.counter.$state.email
-            const changePass = 'http://100.101.65.63:8000/change_status/'
+            const changePass = 'http://192.168.1.11:8000/change_status/'
             const changeToFalse = changePass + "125" + "/false/" + information
             const changeToTrue = changePass + "125" + "/true/" + information
-            const fetchPass = 'http://100.101.65.63:8000/get_status/125'
+            const fetchPass = 'http://192.168.1.11:8000/get_status/125'
             const fetchFunction = await fetch(fetchPass, {
                 method: 'get',
                 mode: 'cors',
@@ -224,7 +227,7 @@ export default defineComponent({
         },
         async getReturnStatus() {
         try {
-            const fetchPass = 'http://100.101.65.63:8000/get_status/125'
+            const fetchPass = 'http://192.168.1.11:8000/get_status/125'
             const fetchFunction = await fetch(fetchPass, {
                 method: 'get',
                 mode: 'cors',
@@ -243,7 +246,7 @@ export default defineComponent({
             console.log(status, getEmail)
 
             if (this.counter.$state.email === getEmail) {
-                if (status === "True") {
+                if (status === "TRUE") {
                     this.counter.$state.returnPass = false
                 } else {
                     this.counter.$state.returnPass = true
@@ -251,6 +254,8 @@ export default defineComponent({
             } else {
                 this.counter.$state.returnPass = false
             }
+
+            console.log(this.counter.$state.returnPass)
 
         } catch (error) {
             console.log(error)
