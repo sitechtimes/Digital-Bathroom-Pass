@@ -67,7 +67,7 @@ export default defineComponent({
             // isSignedIn: false,
             PassAvailability: "",
             // showUnavailable: false,
-            passRequirements: "",
+            // passRequirements: "",
             currentUserName: "",
             lastUserName: "",
             allowTakePass: true,
@@ -104,13 +104,13 @@ export default defineComponent({
         return { logoGoogle, counter, logIn }
     },
 
-    methods: {
-        doPost() {
+    methods:{ 
+        AuthenticateToken() {
         const token = JSON.stringify(this.counter.$state.idToken)
         const headers = {
             "user_agent": `${token}`
         }
-        axios.post("http://0.0.0.0:8000/token_sign_in/", token, { headers }).then(response =>
+        axios.post("http://100.101.65.63:8000/token_sign_in/", token, { headers }).then(response =>
          {
             console.log(response)
             this.counter.$state.response = response.data.message
@@ -136,29 +136,30 @@ export default defineComponent({
             // this.counter.$state.firstName = nameArr[0]
             // this.counter.$state.familyName = nameArr[1]
         },
-        setParams() {
-            this.passRequirements = this.counter.$state.firstName + "/" + this.counter.$state.familyName + "/" + this.counter.$state.email
-            this.currentUserName = this.counter.$state.firstName + " " + this.counter.$state.familyName
-        },
         ChangeToTrue() {
             // this.isSignedIn = true
-            this.counter.$state.isSignedIn = true
+            const changeCondition = this.counter.$state.idToken
+            if(changeCondition !== ""){
+               this.counter.$state.isSignedIn = true 
+            } else {
+                console.log("err")
+            }
         },
         logIdToken() {
             console.log(this.counter.$state.idToken)
         },
-        doLogIn() {
-            this.logIn().then(this.doPost).then(this.storeResponse).then(() => {
+        doLogIn(){
+            this.logIn().then(this.AuthenticateToken).then(() => {
                 // console.log(this.isSignedIn, this.showUnavailable)
             }
-            ).then(this.setParams).then(this.ChangeToTrue)
-            // console.log(this.isSignedIn)
+            ).then(this.ChangeToTrue)
         },
-        async tryTakeOutPass() {
-            
+        async tryTakeOutPass() {    
+            const currentUser = this.counter.$state.firstName + " " + this.counter.$state.familyName 
+            const information = this.counter.$state.firstName + "/" + this.counter.$state.familyName + "/" + this.counter.$state.email
             const changePass = 'http://100.101.65.63:8000/change_status/'
-            const changeToFalse = changePass + "125" + "/false/" + this.passRequirements 
-            const changeToTrue = changePass + "125" + "/true/" + this.passRequirements
+            const changeToFalse = changePass + "125" + "/false/" + information
+            const changeToTrue = changePass + "125" + "/true/" + information
             const fetchPass = 'http://100.101.65.63:8000/get_status/125'
             const fetchFunction = await fetch(fetchPass, {
                 method: 'get',
@@ -170,10 +171,18 @@ export default defineComponent({
                 this.lastUserName = response.message[1]
                 this.PassAvailability = response.message[0]
                 console.log(this.PassAvailability)
-                console.log(this.currentUserName)
+                console.log(currentUser)
                 console.log(this.lastUserName)
             }).catch((error) => {
                 console.log('Error', error)
+            }) 
+            if(this.PassAvailability === "") {
+            fetchFunction
+        }
+        if(this.PassAvailability === "FALSE" && currentUser === this.lastUserName) {
+            await fetch(changeToTrue).then(res=>res.json()).then((response) => {
+                console.log({response})}).catch((error) => {
+                console.log("Error", error)
             })
             if (this.PassAvailability === "") {
                 fetchFunction
@@ -212,6 +221,11 @@ export default defineComponent({
             this.counter.$state.email = ""
             this.counter.$state.response = ""
         }
+     },
+     logout() {
+        this.counter.$state.showUnavailable = false
+        this.counter.$state.isSignedIn = false
+     }
     },
 })
 

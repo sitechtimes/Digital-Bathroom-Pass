@@ -46,13 +46,6 @@ export default defineComponent({
     }
   },
   methods: {
-    doTest() {
-      this.counter.testNumber = this.roomNumber
-      console.log(this.counter.testNumber)
-    },
-    test() {
-      setTimeout(this.doTest, 10)
-    },
     logValue() {
       console.log(this.roomNumber)
     },
