@@ -45,7 +45,9 @@ export const useRoomStore = defineStore('counter', {
             this.count--
         }
     },
-    persist: true
+    persist: {
+        storage: sessionStorage
+    }
 })
 
 

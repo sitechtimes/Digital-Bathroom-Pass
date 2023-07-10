@@ -25,6 +25,7 @@
                         Log In
                     </ion-button>
                     <ion-button 
+                        v-else
                         class="round-button" 
                         id="logout-button" 
                         @click="logout" 
@@ -154,10 +155,11 @@ export default defineComponent({
             // console.log(this.isSignedIn)
         },
         async tryTakeOutPass() {
-            const changePass = 'http://0.0.0.0:8000/change_status/'
+            
+            const changePass = 'http://100.101.65.63:8000/change_status/'
             const changeToFalse = changePass + "125" + "/false/" + this.passRequirements 
             const changeToTrue = changePass + "125" + "/true/" + this.passRequirements
-            const fetchPass = 'http://0.0.0.0:8000/get_status/127'
+            const fetchPass = 'http://100.101.65.63:8000/get_status/125'
             const fetchFunction = await fetch(fetchPass, {
                 method: 'get',
                 mode: 'cors',
@@ -204,6 +206,11 @@ export default defineComponent({
         logout() {
             this.counter.$state.showUnavailable = false
             this.counter.$state.isSignedIn = false
+            this.counter.$state.idToken = ""
+            this.counter.$state.familyName = ""
+            this.counter.$state.firstName = "" 
+            this.counter.$state.email = ""
+            this.counter.$state.response = ""
         }
     },
 })
