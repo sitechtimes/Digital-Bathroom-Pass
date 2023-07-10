@@ -77,9 +77,11 @@ export default defineComponent({
     },
     setup() {
         const counter = useRoomStore()
+
+        console.log(process.env.VUE_APP_GOOGLE_CLIENT_ID)
         onMounted(() => {
             GoogleAuth.initialize({
-                clientId: '712891238786-8aj99006i0o1jsecsg8ds9n0ff7ehtmq.apps.googleusercontent.com',
+                clientId: process.env.VUE_APP_GOOGLE_CLIENT_ID,
                 scopes: ['profile', 'email'],
                 grantOfflineAccess: true,
             });
@@ -89,7 +91,6 @@ export default defineComponent({
             try {
                 const response = await GoogleAuth.signIn()
                 const idToken = response.authentication.idToken
-                /* console.log(idToken) */
                 counter.$state.idToken = idToken
                 /*  counter.$state.familyName = response.familyName
                  counter.$state.firstName = response.givenName
@@ -124,14 +125,6 @@ export default defineComponent({
         },
         storeResponse() {
             console.log(this.counter.$state.response)
-            // const splitStr = this.counter.$state.response
-            // console.log("this is the splitstr", splitStr)
-            // const nameArr =  splitStr[1].split(" ")
-            // console.log("this is the name array", nameArr)
-            // // const splitName = nameArr.split(" ")
-            // this.counter.$state.email = splitStr[0]
-            // this.counter.$state.firstName = nameArr[0]
-            // this.counter.$state.familyName = nameArr[1]
         },
         setParams() {
             this.passRequirements = this.counter.$state.firstName + "/" + this.counter.$state.familyName + "/" + this.counter.$state.email
