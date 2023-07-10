@@ -159,7 +159,7 @@ export default defineComponent({
             const email = this.counter.email;
 
             async function fetchInfo() {
-                const response = await fetch("http://localhost:8000/get_status/125");
+                const response = await fetch(`http://localhost:8000/get_status/${roomId}`);
                 const content = await response.json();
                 console.log(content);
                 return content

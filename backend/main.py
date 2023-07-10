@@ -127,6 +127,7 @@ async def read_item(room_id):
     # message = backend.readDoc(room_id)
     # return {"message" : message}
     message = getStatus(room_id)
+
     return {"message" : message}
 
 @app.get("/change_status/")
