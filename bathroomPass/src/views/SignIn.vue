@@ -172,9 +172,6 @@ export default defineComponent({
             // console.log("after change", this.showUnavailable)
         }
      },
-     doStuff() {
-        console.log("doing Stuff")
-     },
      logout() {
         this.counter.$state.showUnavailable = false
         this.counter.$state.isSignedIn = false
