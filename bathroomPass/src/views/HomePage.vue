@@ -1,20 +1,27 @@
 <template>
   <ion-page id="main">
     <ion-content color="dark" id="main-container" :fullscreen="true">
-      <div id="container">
-        <div id="card-wrapper">
-          <ion-title size="small" weight="strong" id="card-title">SITHS Bathroom Scanner</ion-title>
-          <p class="card-text">"Pooping made easy"</p>
-        </div>
-        <ion-button on-button id="buttonText" shape="round" size="large" @click="PushToScanner">
-          <ion-ripple-effect></ion-ripple-effect>Go To Scanner</ion-button>
-      </div>
+      <ion-card>
+        <ion-card-title>
+          SITHS Bathroom Scanner
+        </ion-card-title>
+        <ion-card-subtitle>
+          "Pooping made easy"
+        </ion-card-subtitle>
+
+        <ion-card-content id="buttonText" shape="round" size="large" @click="pushToScanner">
+          <ion-button>
+            <ion-ripple-effect></ion-ripple-effect>
+            Go to scanner
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
     </ion-content>
   </ion-page>
 </template>
 
 <script lang="ts">
-import { IonContent, IonPage, IonTitle, IonButton, IonRippleEffect } from '@ionic/vue';
+import { IonContent, IonPage, IonCardTitle, IonCardContent, IonRippleEffect } from '@ionic/vue';
 import { defineComponent } from 'vue';
 import { useRoomStore } from '../stores/counter';
 
@@ -22,9 +29,9 @@ export default defineComponent({
   name: 'HomePage',
   components: {
     IonContent,
+    IonCardTitle,
+    IonCardContent,
     IonPage,
-    IonTitle,
-    IonButton,
     IonRippleEffect,
   },
   data() {
@@ -49,10 +56,8 @@ export default defineComponent({
     logValue() {
       console.log(this.roomNumber)
     },
-    PushToScanner() {
-      this.$router.push({
-        name: "SignIn",
-      })
+    pushToScanner() {
+      this.$router.push('/signin');
     }
   },
   created() {
@@ -62,49 +67,29 @@ export default defineComponent({
 </script>
 
 <style scoped>
-#container {
+
+ion-card-title {
+  font-size: 1.75rem;
+  --color: #fff;
+}
+
+ion-card-subtitle {
+  font-size: 1.15rem;
+}
+
+ion-card {
+  --background: #3e4145;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  min-height: 100vh;
-}
-
-#card-wrapper {
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  width: 80vw;
-  padding-top: 10%;
+  padding: 2rem;
+  text-align: center;
+  gap: 1.5rem;
 }
-
-#card-title {
-  text-align: left;
-  width: 90%;
-  margin-left: auto;
-  font-size: 2.8rem;
-}
-
-.card-text {
-  font-size: 1.3rem;
-}
-
 ion-button {
   --background: #CABC71;
   --background-activated: #CABC71;
   --color: #000;
-}
-
-@media screen and (min-width : 300px) and (max-width : 1200px) {
-  #card-wrapper {
-    background-color: #CABC71;
-    width: 86%;
-    display: flex;
-    border-radius: 2.5rem;
-    margin-bottom: 13%;
-    flex-direction: column;
-    padding-bottom: 14%;
-  }
 }
 </style>

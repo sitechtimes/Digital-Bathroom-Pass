@@ -1,24 +1,39 @@
 <template>
     <ion-page id="main">
         <ion-content color="dark" id="main-container">
-            <div id="container">
-                <img class="container-icon" src="/assets/icon/seagull.png" alt="seagull">
-                <ion-title v-if="counter.$state.isSignedIn && counter.$state.showUnavailable">The Pass is Not
-                    Available</ion-title>
-                <ion-button v-if="counter.$state.isSignedIn && !counter.$state.showUnavailable" 
-                    class="round-button"
-                    id="takeout-button"
-                    @click="tryTakeOutPass"
-                    size="default"
-                    shape="round" :strong="true">
-                    <ion-ripple-effect></ion-ripple-effect>
-                    Take Out Pass</ion-button>
-                <!--  <ion-button v-if="!isSignedIn" id="loginButton" shape="round" @click="GoToPassOptions" :strong="true" >Take Out
-                <ion-ripple-effect></ion-ripple-effect> 
-                </ion-button> -->
-                <ion-button class="round-button" id="login-button" v-if="!counter.$state.isSignedIn" @click="doLogIn" size="default" shape="round"> Log In </ion-button>
-                <ion-button class="round-button" id="logout-button" @click="logout" size="default" shape="round">Logout</ion-button>
-            </div>
+            <ion-card>
+                <img class="card-icon" src="/assets/icon/seagull.png" alt="seagull">
+                <ion-card-title v-if="counter.$state.isSignedIn && counter.$state.showUnavailable">
+                    The pass is not available
+                </ion-card-title>
+                <ion-card-content>
+                    <ion-button v-if="counter.$state.isSignedIn && !counter.$state.showUnavailable"
+                        class="round-button"
+                        id="takeout-button"
+                        @click="tryTakeOutPass"
+                        size="default"
+                        shape="round"
+                    >
+                        <ion-ripple-effect></ion-ripple-effect>
+                        Take Out Pass
+                    </ion-button>
+                    <ion-button 
+                        class="round-button" 
+                        id="login-button" 
+                        v-if="!counter.$state.isSignedIn" @click="doLogIn" size="default" 
+                        shape="round">
+                        Log In
+                    </ion-button>
+                    <ion-button 
+                        class="round-button" 
+                        id="logout-button" 
+                        @click="logout" 
+                        size="default" 
+                        shape="round">
+                        Logout
+                    </ion-button>
+                </ion-card-content>
+            </ion-card>
         </ion-content>
     </ion-page>
 </template>
@@ -39,7 +54,6 @@ export default defineComponent({
     components: {
         IonPage,
         IonContent,
-        IonTitle,
         IonButton,
         IonRippleEffect
     },
@@ -91,7 +105,7 @@ export default defineComponent({
             const headers = {
                 "user_agent": `${token}`
             }
-            axios.post("http://100.101.65.32:8000/token_sign_in/", token, { headers }).then(response => {
+            axios.post("http://100.101.65.62:8000/token_sign_in/", token, { headers }).then(response => {
                 console.log(response)
                 this.counter.$state.response = response.data.message
                 console.log(this.counter.$state.response)
@@ -135,10 +149,10 @@ export default defineComponent({
             // console.log(this.isSignedIn)
         },
         async tryTakeOutPass() {
-            const changePass = 'http://100.101.65.32:8000/change_status/'
+            const changePass = 'http://100.101.65.62:8000/change_status/'
             const changeToFalse = changePass + "125" + "/false/" + this.passRequirements
             const changeToTrue = changePass + "125" + "/true/" + this.passRequirements
-            const fetchPass = 'http://100.101.65.32:8000/get_status/125'
+            const fetchPass = 'http://100.101.65.62:8000/get_status/125'
             const fetchFunction = await fetch(fetchPass, {
                 method: 'get',
                 mode: 'cors',
@@ -192,19 +206,35 @@ export default defineComponent({
 </script>
 
 <style scoped>
-#container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 80vw;
-    border-radius: 0.3rem;
-    height: 60vh;
-    margin: auto;
-    margin-top: 35%;
-    background-color: #3e4145;
+ion-card {
+  --background: #3e4145;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  text-align: center;
 }
 
+ion-button {
+  --background: #CABC71;
+  --background-activated: #CABC71;
+  --color: #000;
+}
+
+ion-card-title {
+  --color: #fff;
+  font-size: 1.75rem;
+  padding-top: 1rem;
+}
+
+ion-card-subtitle {
+  font-size: 1.15rem;
+}
+
+ion-card > .card-icon {
+    width: 128px;
+}
 .round-button {
     margin-top: 3rem;
     width: 16rem;
@@ -213,20 +243,8 @@ export default defineComponent({
     font-weight: 600;
 }
 
-ion-button {
-    /* --ion-font-family: 'Monserrat', sans-serif; */
-    --background: #CABC71;
-    --background-activated: #CABC71;
-    --color: #000;
-    font-size: 1.7rem;
-}
-
 .container-icon {
     height: 128px;
 }
 
-ion-title {
-    width: 100%;
-    height: 3rem;
-}
 </style>

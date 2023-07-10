@@ -23,7 +23,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/TestPage',
-    name: 'TestPage',
+    name: 'testpage',
     component: TestPage,
     props: true
   }
