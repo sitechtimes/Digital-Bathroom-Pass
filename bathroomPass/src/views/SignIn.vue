@@ -13,6 +13,7 @@
                         @click="tryTakeOutPass"
                         size="default"
                         shape="round"
+                        :disabled="disableButton()"
                     >
                         <ion-ripple-effect></ion-ripple-effect>
                         Take Out Pass
@@ -42,6 +43,9 @@
                         size="default" 
                         shape="round">
                         Logout
+                    </ion-button>
+                    <ion-button
+                    @click="startButtonCooldown">
                     </ion-button>
                 </ion-card-content>
             </ion-card>
@@ -83,7 +87,8 @@ export default defineComponent({
             allowTakePass: true,
             buttonText: "Take Out Pass",
             roomNumber: "",
-            tokenResponse: {},
+            buttonTimer: 0,
+            buttonDisabled: false
         }
     },
     mounted() {
@@ -116,8 +121,11 @@ export default defineComponent({
         }
         return { logoGoogle, counter, logIn }
     },
-
     methods:{ 
+        logStates() {
+            console.log(this.counter.$state.isSignedIn, this.counter.$state.showUnavailable, this.counter.$state.email, this.counter.$state.firstName, this.counter.$state.familyName)
+            this.buttonTimer = 10000
+        },
         AuthenticateToken() {
         const token = JSON.stringify(this.counter.$state.idToken)
         const headers = {
@@ -126,9 +134,9 @@ export default defineComponent({
         axios.post("http://100.101.65.63:8000/token_sign_in/", token, { headers }).then(response =>
          {
             console.log(response)
-            this.counter.$state.response = response.data.message
-            console.log(this.counter.$state.response)
-            const splitStr = this.counter.$state.response
+            this.counter.response = response.data.message
+            console.log(this.counter.response)
+            const splitStr = this.counter.response
             console.log("this is the splitstr", splitStr)
             const nameArr =  splitStr[1].split(" ")
             console.log("this is the name array", nameArr)
@@ -137,17 +145,6 @@ export default defineComponent({
             this.counter.$state.firstName = nameArr[0]
             this.counter.$state.familyName = nameArr[1]
          })
-        },
-        storeResponse() {
-            console.log(this.counter.$state.response)
-            // const splitStr = this.counter.$state.response
-            // console.log("this is the splitstr", splitStr)
-            // const nameArr =  splitStr[1].split(" ")
-            // console.log("this is the name array", nameArr)
-            // // const splitName = nameArr.split(" ")
-            // this.counter.$state.email = splitStr[0]
-            // this.counter.$state.firstName = nameArr[0]
-            // this.counter.$state.familyName = nameArr[1]
         },
         ChangeToTrue() {
             // this.isSignedIn = true
@@ -159,7 +156,7 @@ export default defineComponent({
             }
         },
         logIdToken() {
-            console.log(this.counter.$state.idToken)
+            console.log(this.counter.idToken)
         },
         doLogIn(){
             this.logIn().then(this.AuthenticateToken).then(() => {
@@ -255,7 +252,21 @@ export default defineComponent({
         } catch (error) {
             console.log(error)
         }
-    }
+    },
+    disableButton() {
+        while(this.buttonTimer !== 0) {
+            return true
+        }
+     },
+     startButtonCooldown() {
+        this.buttonTimer = 100
+        for(let i = 0; i < this.buttonTimer; i++) {
+            while(this.buttonTimer !== 0) {
+                this.buttonTimer = this.buttonTimer - 1
+                console.log(this.buttonTimer)
+            }
+        }
+     }
      },
 
 
@@ -265,6 +276,7 @@ export default defineComponent({
     //     this.counter.$state.isSignedIn = false
     //  }
     },
+
 )
 
 </script>
