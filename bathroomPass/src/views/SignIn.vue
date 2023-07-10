@@ -21,7 +21,7 @@
                     <ion-button v-if="counter.$state.isSignedIn && !counter.$state.returnPass"
                         class="round-button"
                         id="takeout-button"
-                        @click="tryTakeOutPass"
+                        @click="takeOutPass"
                         size="default"
                         shape="round"
                     >
@@ -56,10 +56,10 @@
 <script lang="ts">
 import { IonPage, IonContent, IonCard, IonCardContent, IonCardTitle, IonButton, IonRippleEffect } from '@ionic/vue';
 import { defineComponent, onMounted } from 'vue';
-import { logoGoogle } from 'ionicons/icons'
-import { useRoomStore } from '../stores/counter'
-import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth' //package for google login
-import axios from 'axios'
+import { logoGoogle } from 'ionicons/icons';
+import { useRoomStore } from '../stores/counter';
+import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth'; //package for google login
+import axios from 'axios';
 // to get on own port go into backend directory and in terminal paste
 // python -m uvicorn main:app --reload 
 // 10.94.168.231:8000 school port 
@@ -96,10 +96,10 @@ export default defineComponent({
     },  
     setup() {
         const counter = useRoomStore()
-        onMounted(()=> {
-            counter.$state.showUnavailable = false
+        console.log(process.env.VUE_APP_GOOGLE_CLIENT_ID)
+        onMounted(() => {
             GoogleAuth.initialize({
-                clientId: '712891238786-8aj99006i0o1jsecsg8ds9n0ff7ehtmq.apps.googleusercontent.com',
+                clientId: process.env.VUE_APP_GOOGLE_CLIENT_ID,
                 scopes: ['profile', 'email'],
                 grantOfflineAccess: true,
             });
@@ -109,7 +109,6 @@ export default defineComponent({
             try {
                 const response = await GoogleAuth.signIn()
                 const idToken = response.authentication.idToken
-                /* console.log(idToken) */
                 counter.$state.idToken = idToken
                 /*  counter.$state.familyName = response.familyName
                  counter.$state.firstName = response.givenName
@@ -121,30 +120,33 @@ export default defineComponent({
         }
         return { logoGoogle, counter, logIn }
     },
-    methods:{ 
-        logStates() {
-            console.log(this.counter.$state.isSignedIn, this.counter.$state.showUnavailable, this.counter.$state.email, this.counter.$state.firstName, this.counter.$state.familyName)
-            this.buttonTimer = 10000
+
+    methods: {
+        doPost() {
+            const token = JSON.stringify(this.counter.$state.idToken)
+            const headers = {
+                "user_agent": `${token}`
+            }
+            axios.post("http://localhost:8000/token_sign_in/", token, { headers }).then(response => {
+                console.log(response)
+                this.counter.$state.response = response.data.message
+                console.log(this.counter.$state.response)
+                const splitStr = this.counter.$state.response
+                console.log("This is the split string:", splitStr)
+                const nameArr = splitStr[1].split(" ")
+                console.log("This is the name array:", nameArr)
+                // const splitName = nameArr.split(" ")
+                this.counter.$state.email = splitStr[0]
+                this.counter.$state.firstName = nameArr[0]
+                this.counter.$state.familyName = nameArr[1]
+            })
         },
-        AuthenticateToken() {
-        const token = JSON.stringify(this.counter.$state.idToken)
-        const headers = {
-            "user_agent": `${token}`
-        }
-        axios.post("http://100.101.65.63:8000/token_sign_in/", token, { headers }).then(response =>
-         {
-            console.log(response)
-            this.counter.response = response.data.message
-            console.log(this.counter.response)
-            const splitStr = this.counter.response
-            console.log("this is the splitstr", splitStr)
-            const nameArr =  splitStr[1].split(" ")
-            console.log("this is the name array", nameArr)
-            // const splitName = nameArr.split(" ")
-            this.counter.$state.email = splitStr[0]
-            this.counter.$state.firstName = nameArr[0]
-            this.counter.$state.familyName = nameArr[1]
-         })
+        storeResponse() {
+            console.log(this.counter.$state.response)
+        },
+        setParams() {
+            this.passRequirements = this.counter.$state.firstName + "/" + this.counter.$state.familyName + "/" + this.counter.$state.email
+            this.currentUserName = this.counter.$state.firstName + " " + this.counter.$state.familyName
         },
         ChangeToTrue() {
             // this.isSignedIn = true
@@ -164,52 +166,45 @@ export default defineComponent({
             }
             ).then(this.ChangeToTrue)
         },
-        async tryTakeOutPass() {    
-            const currentUser = this.counter.$state.email
-            const information = this.counter.$state.firstName + "/" + this.counter.$state.familyName + "/" + this.counter.$state.email
-            const changePass = 'http://100.101.65.63:8000/change_status/'
-            const changeToFalse = changePass + "125" + "/false/" + information
-            const changeToTrue = changePass + "125" + "/true/" + information
-            const fetchPass = 'http://100.101.65.63:8000/get_status/125'
-            const fetchFunction = await fetch(fetchPass, {
-                method: 'get',
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }).then(res=>res.json()).then((response) => {
-                this.lastUserName = response.message[1]
-                this.PassAvailability = response.message[0]
-                console.log(this.PassAvailability)
-                console.log(currentUser)
-                console.log(this.lastUserName)
-            }).catch((error) => {
-                console.log('Error', error)
-            }) 
+        async takeOutPass() {
+            let changeTo = null;
+            const roomId = 125;
+            const firstName = this.counter.firstName;
+            const lastName = this.counter.familyName;
+            const email = this.counter.email;
+
+            async function fetchInfo() {
+                const response = await fetch(`http://localhost:8000/get_status/${roomId}`);
+                const content = await response.json();
+                console.log(content);
+                return content
+            }
             if(this.PassAvailability === "") {
-            fetchFunction
-        }
-        if(this.PassAvailability === "FALSE" && currentUser === this.lastUserName) {
-            await fetch(changeToTrue).then(res=>res.json()).then((response) => {
-                console.log({response})}).catch((error) => {
-                console.log("Error", error)
-            })
-            fetchFunction
-        } else if(this.PassAvailability === "TRUE") {
-            await fetch(changeToFalse).then(res=>res.json()).then((response) => {
-                
-                console.log({response})}).catch((error) => {
-                console.log("Error", error)
-            })
-            fetchFunction
-        } else {
-            // console.log("before change", this.showUnavailable)
-            // this.showUnavailable = true
-            this.counter.$state.showUnavailable = true
-            // console.log("after change", this.showUnavailable)
-        }
-     },
-  
+                const info = await fetchInfo()
+                // getting the last user's name to compare with the current user
+                this.lastUserName = info.message[1];
+                this.PassAvailability = info.message[0];
+
+            }
+            if(this.PassAvailability === "FALSE" && this.currentUserName === this.lastUserName){
+                changeTo = "true";
+            }
+            else if(this.PassAvailability === "TRUE" && this.currentUserName){
+                changeTo = "false";
+            }
+            else {
+                this.counter.showUnavailable = true;
+            }
+            
+            const apiUrl = `http://localhost:8000/change_status/?room_id=${roomId}&change_to=${changeTo}&first_name=${firstName}&last_name=${lastName}&email=${email}`
+            console.log(apiUrl)
+            try {
+                const response = await axios.get(apiUrl);
+                console.log(response);
+            } catch (error) {
+                console.log("An error occured:", error);
+            }
+        },
         logout() {
             this.counter.$state.showUnavailable = false
             this.counter.$state.isSignedIn = false
@@ -311,16 +306,13 @@ ion-card-subtitle {
 ion-card > .card-icon {
     width: 128px;
 }
+
 .round-button {
     margin-top: 3rem;
     width: 16rem;
     height: 6rem;
     font-size: 1.6rem;
     font-weight: 600;
-}
-
-.container-icon {
-    height: 128px;
 }
 
 </style>

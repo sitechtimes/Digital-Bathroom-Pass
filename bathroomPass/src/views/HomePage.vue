@@ -80,6 +80,7 @@ ion-card {
   text-align: center;
   gap: 1.5rem;
 }
+
 ion-button {
   --background: #CABC71;
   --background-activated: #CABC71;
