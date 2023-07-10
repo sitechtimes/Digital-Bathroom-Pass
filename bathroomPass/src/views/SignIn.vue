@@ -148,7 +148,7 @@ export default defineComponent({
             ).then(this.ChangeToTrue)
         },
         async tryTakeOutPass() {    
-            const currentUser = this.counter.$state.firstName + " " + this.counter.$state.familyName 
+            const currentUser = this.counter.$state.email
             const information = this.counter.$state.firstName + "/" + this.counter.$state.familyName + "/" + this.counter.$state.email
             const changePass = 'http://100.101.65.63:8000/change_status/'
             const changeToFalse = changePass + "125" + "/false/" + information
@@ -194,6 +194,7 @@ export default defineComponent({
      },
      logout() {
         this.counter.$state.showUnavailable = false
+        this.counter.$state.isSignedIn = false
      }
     },
 })
