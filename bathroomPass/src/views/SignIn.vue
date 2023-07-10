@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts">
-import { IonPage, IonContent, IonTitle, IonButton, IonRippleEffect } from '@ionic/vue';
+import { IonPage, IonContent, IonCard, IonCardContent, IonCardTitle, IonButton, IonRippleEffect } from '@ionic/vue';
 import { defineComponent, onMounted } from 'vue';
 import { logoGoogle } from 'ionicons/icons'
 import { useRoomStore } from '../stores/counter'
@@ -53,6 +53,9 @@ export default defineComponent({
     name: "SignIn",
     components: {
         IonPage,
+        IonCard,
+        IonCardContent,
+        IonCardTitle,
         IonContent,
         IonButton,
         IonRippleEffect
