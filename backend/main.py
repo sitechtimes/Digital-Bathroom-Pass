@@ -3,8 +3,7 @@ from typing import Annotated
 from fastapi.middleware.cors import CORSMiddleware
 import string
 import gspread
-import datetime;
-
+import datetime
 
 
 gc = gspread.service_account(filename='credentials.json')
@@ -130,17 +129,29 @@ async def read_item(room_id):
     message = getStatus(room_id)
     return {"message" : message}
 
-@app.get("/change_status/{room_id}/{change_to}/{first_name}/{last_name}/{email}")
-async def change_status(room_id, change_to, first_name, last_name, email) :
-    if (change_to == "true" or change_to == "false")  and (100<int(room_id)<232):
-        if checkEmailValidity(email) == True:
-            #There is a valid value for room_id and change_to value
+@app.get("/change_status/")
+async def read_item(room_id: int, change_to: str, first_name: str, last_name: str, email: str):
+    if change_to and (100 < int(room_id) < 232):
+        is_valid_email = checkEmailValidity(email)
+        if is_valid_email == True:
             message = updateStatus(room_id, change_to, first_name, last_name, email)
-            return {"message" : message}
+            return {message}
         else:
-            return {"message" : "Email is not valid"}
+            return {"message": "The provided email address is invalid"}
     else:
-        return{"message" : "Something went wrong. Either change_to parameter is not valid or room_id is not within specified range"}
+        return {"message": "Something went wrong. Invalid change_to parameter or room_id"}
+
+# @app.get("/change_status/{room_id}/{change_to}/{first_name}/{last_name}/{email}")
+# async def change_status(room_id, change_to, first_name, last_name, email) :
+#     if (change_to == "true" or change_to == "false")  and (100<int(room_id)<232):
+#         if checkEmailValidity(email) == True:
+#             #There is a valid value for room_id and change_to value
+#             message = updateStatus(room_id, change_to, first_name, last_name, email)
+#             return {"message" : message}
+#         else:
+#             return {"message" : "Email is not valid"}
+#     else:
+#         return{"message" : "Something went wrong. Either change_to parameter is not valid or room_id is not within specified range"}
 
 @app.post("/token_sign_in")
 async def test(request:Request):
