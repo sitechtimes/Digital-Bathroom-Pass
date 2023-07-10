@@ -13,6 +13,7 @@
                         @click="tryTakeOutPass"
                         size="default"
                         shape="round"
+                        :disabled="disableButton()"
                     >
                         <ion-ripple-effect></ion-ripple-effect>
                         Take Out Pass
@@ -33,7 +34,7 @@
                         Logout
                     </ion-button>
                     <ion-button
-                    @click="logStates">
+                    @click="startButtonCooldown">
                     </ion-button>
                 </ion-card-content>
             </ion-card>
@@ -75,7 +76,8 @@ export default defineComponent({
             allowTakePass: true,
             buttonText: "Take Out Pass",
             roomNumber: "",
-            tokenResponse: {}
+            buttonTimer: 0,
+            buttonDisabled: false
         }
     },
     setup() {
@@ -104,10 +106,10 @@ export default defineComponent({
         }
         return { logoGoogle, counter, logIn }
     },
-
     methods:{ 
         logStates() {
             console.log(this.counter.$state.isSignedIn, this.counter.$state.showUnavailable, this.counter.$state.email, this.counter.$state.firstName, this.counter.$state.familyName)
+            this.buttonTimer = 10000
         },
         AuthenticateToken() {
         const token = JSON.stringify(this.counter.$state.idToken)
@@ -180,7 +182,6 @@ export default defineComponent({
             fetchFunction
         } else if(this.PassAvailability === "TRUE") {
             await fetch(changeToFalse).then(res=>res.json()).then((response) => {
-                
                 console.log({response})}).catch((error) => {
                 console.log("Error", error)
             })
@@ -195,8 +196,22 @@ export default defineComponent({
      logout() {
         this.counter.$state.showUnavailable = false
         this.counter.$state.isSignedIn = false
+     },
+     disableButton() {
+        while(this.buttonTimer !== 0) {
+            return true
+        }
+     },
+     startButtonCooldown() {
+        this.buttonTimer = 100
+        for(let i = 0; i < this.buttonTimer; i++) {
+            while(this.buttonTimer !== 0) {
+                this.buttonTimer = this.buttonTimer - 1
+                console.log(this.buttonTimer)
+            }
+        }
      }
-    },
+    }
 })
 
 </script>
