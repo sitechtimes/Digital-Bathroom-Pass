@@ -8,7 +8,6 @@
 import { IonApp, IonRouterOutlet } from '@ionic/vue';
 import { defineComponent } from 'vue';
 import { App, URLOpenListenerEvent } from '@capacitor/app';
-import Vue from 'vue';
 import { useRouter } from 'vue-router'
 
 export default defineComponent({
@@ -53,3 +52,13 @@ export default defineComponent({
   }
 });
 </script>
+
+<style>
+* {
+  font-family: 'Open Sans', sans-serif;
+}
+
+body {
+  background-color: #18191A;
+}
+</style>

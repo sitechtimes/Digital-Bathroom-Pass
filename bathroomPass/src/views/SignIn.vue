@@ -1,42 +1,67 @@
 <template>
-     <ion-page id="main">
+    <ion-page id="main">
         <ion-content color="dark" id="main-container">
-            <div id="container">
-                <ion-title v-if="counter.$state.isSignedIn && counter.$state.showUnavailable">The Pass is Not Available</ion-title>
-                    <ion-button v-if="counter.$state.isSignedIn && !counter.$state.showUnavailable" @click="tryTakeOutPass" size="large" shape="round" :strong="true" >
+            <ion-card>
+                <img class="card-icon" src="/assets/icon/seagull.png" alt="seagull">
+                <ion-card-title v-if="counter.$state.isSignedIn && counter.$state.showUnavailable">
+                    The pass is not available
+                </ion-card-title>
+                <ion-card-content>
+                    <ion-button v-if="counter.$state.isSignedIn && !counter.$state.showUnavailable"
+                        class="round-button"
+                        id="takeout-button"
+                        @click="tryTakeOutPass"
+                        size="default"
+                        shape="round"
+                    >
                         <ion-ripple-effect></ion-ripple-effect>
-                        Take Out Pass</ion-button>
-               <!--  <ion-button v-if="!isSignedIn" id="loginButton" shape="round" @click="GoToPassOptions" :strong="true" >Take Out
-                <ion-ripple-effect></ion-ripple-effect> 
-                </ion-button> -->
-                <ion-button id="loginButton" v-if="!counter.$state.isSignedIn" @click="doLogIn"> Log In </ion-button>
-            </div>
+                        Take Out Pass
+                    </ion-button>
+                    <ion-button 
+                        class="round-button" 
+                        id="login-button" 
+                        v-if="!counter.$state.isSignedIn" @click="doLogIn" size="default" 
+                        shape="round">
+                        Log In
+                    </ion-button>
+                    <ion-button 
+                        class="round-button" 
+                        id="logout-button" 
+                        @click="logout" 
+                        size="default" 
+                        shape="round">
+                        Logout
+                    </ion-button>
+                </ion-card-content>
+            </ion-card>
         </ion-content>
-     </ion-page>
+    </ion-page>
 </template>
 
 <script lang="ts">
-import{ IonPage, IonContent, IonTitle, IonButton, IonRippleEffect } from '@ionic/vue';
+import { IonPage, IonContent, IonCard, IonCardContent, IonCardTitle, IonButton, IonRippleEffect } from '@ionic/vue';
 import { defineComponent, onMounted } from 'vue';
 import { logoGoogle } from 'ionicons/icons'
 import { useRoomStore } from '../stores/counter'
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth' //package for google login
 import axios from 'axios'
-        // to get on own port go into backend directory and in terminal paste
-        // python -m uvicorn main:app --reload 
-        // 10.94.168.231:8000 school port 
-        // 10.94.168.231:8001
+// to get on own port go into backend directory and in terminal paste
+// python -m uvicorn main:app --reload 
+// 10.94.168.231:8000 school port 
+// 10.94.168.231:8001
 export default defineComponent({
     name: "SignIn",
     components: {
         IonPage,
+        IonCard,
+        IonCardContent,
+        IonCardTitle,
         IonContent,
-        IonTitle,
         IonButton,
         IonRippleEffect
     },
     data() {
-        return{
+        return {
             userToken: "",
             // isSignedIn: false,
             PassAvailability: "",
@@ -52,23 +77,23 @@ export default defineComponent({
     },
     setup() {
         const counter = useRoomStore()
-        onMounted(()=> {
+        onMounted(() => {
             GoogleAuth.initialize({
-            clientId: '712891238786-8aj99006i0o1jsecsg8ds9n0ff7ehtmq.apps.googleusercontent.com',
-            scopes: ['profile', 'email'],
-            grantOfflineAccess: true,
+                clientId: '712891238786-8aj99006i0o1jsecsg8ds9n0ff7ehtmq.apps.googleusercontent.com',
+                scopes: ['profile', 'email'],
+                grantOfflineAccess: true,
             });
         });
 
         const logIn = async () => {
             try {
-                const response =  await GoogleAuth.signIn()
+                const response = await GoogleAuth.signIn()
                 const idToken = response.authentication.idToken
                 /* console.log(idToken) */
                 counter.$state.idToken = idToken
-               /*  counter.$state.familyName = response.familyName
-                counter.$state.firstName = response.givenName
-                counter.$state.email = response.email */
+                /*  counter.$state.familyName = response.familyName
+                 counter.$state.firstName = response.givenName
+                 counter.$state.email = response.email */
 
             } catch (e) {
                 console.log("error")
@@ -182,36 +207,45 @@ export default defineComponent({
 </script>
 
 <style scoped>
-#container {   
+ion-card {
+  --background: #3e4145;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
   text-align: center;
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  transform: translateY(-60%);
-}
-
-#loginButton {
-    width: 16rem;
-    height: 2rem;
-    font-size: 14px;
 }
 
 ion-button {
-    width: 18rem;
-    height: 14rem;
-    font-size: 1.7rem;
-
-  --ion-font-family: 'Monserrat', sans-serif; 
-
   --background: #CABC71;
   --background-activated: #CABC71;
-  
-  --color: #000; 
+  --color: #000;
 }
 
-ion-title {
-    width: 100%;
-    height: 3rem;
+ion-card-title {
+  --color: #fff;
+  font-size: 1.75rem;
+  padding-top: 1rem;
 }
+
+ion-card-subtitle {
+  font-size: 1.15rem;
+}
+
+ion-card > .card-icon {
+    width: 128px;
+}
+.round-button {
+    margin-top: 3rem;
+    width: 16rem;
+    height: 6rem;
+    font-size: 1.6rem;
+    font-weight: 600;
+}
+
+.container-icon {
+    height: 128px;
+}
+
 </style>

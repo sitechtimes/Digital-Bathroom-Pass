@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
 import HomePage from '../views/HomePage.vue';
 import SignIn from '../views/SignIn.vue';
-import TestPage from '../views/TestPage.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -16,17 +15,11 @@ const routes: Array<RouteRecordRaw> = [
     props: true
   },
   {
-    path: '/SignIn',
+    path: '/signin',
     name: 'SignIn',
     component: SignIn,
     props: (route) => ({query: route.query.id}) 
   },
-  {
-    path: '/TestPage',
-    name: 'TestPage',
-    component: TestPage,
-    props: true
-  }
 ]
 
 const router = createRouter({
