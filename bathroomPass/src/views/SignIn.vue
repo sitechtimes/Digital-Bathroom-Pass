@@ -10,7 +10,7 @@
                 <ion-ripple-effect></ion-ripple-effect> 
                 </ion-button> -->
                 <ion-button id="loginButton" v-if="!counter.$state.isSignedIn" @click="doLogIn"> Log In </ion-button>
-                <ion-button @click="logout">logout</ion-button>
+                <ion-button v-else @click="logout">logout</ion-button>
             </div>
         </ion-content>
      </ion-page>
@@ -85,7 +85,7 @@ export default defineComponent({
         const headers = {
             "user_agent": `${token}`
         }
-        axios.post("http://100.101.65.32:8000/token_sign_in/", token, { headers }).then(response =>
+        axios.post("http://0.0.0.0:8000/token_sign_in/", token, { headers }).then(response =>
          {
             console.log(response)
             this.counter.$state.response = response.data.message
@@ -130,10 +130,10 @@ export default defineComponent({
             // console.log(this.isSignedIn)
         },
         async tryTakeOutPass() {
-            const changePass = 'http://100.101.65.32:8000/change_status/'
-            const changeToFalse = changePass + "125" + "/false/" + this.passRequirements 
-            const changeToTrue = changePass + "125" + "/true/" + this.passRequirements
-            const fetchPass = 'http://100.101.65.32:8000/get_status/125'
+            const changePass = 'http://0.0.0.0:8000/change_status/'
+            const changeToFalse = changePass + "127" + "/false/" + this.passRequirements 
+            const changeToTrue = changePass + "127" + "/true/" + this.passRequirements
+            const fetchPass = 'http://0.0.0.0:8000/get_status/127'
             const fetchFunction = await fetch(fetchPass, {
                 method: 'get',
                 mode: 'cors',
