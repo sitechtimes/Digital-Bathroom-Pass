@@ -16,7 +16,8 @@ room_range = range(100, 231)
 
 def getStatus(roomNumber: string):
     findCell = worksheet1.find(roomNumber)
-    return (worksheet1.cell(findCell.row, findCell.col + 1).value, worksheet1.cell(findCell.row, findCell.col + 2).value)
+    print(findCell.row, findCell.col)
+    return (worksheet1.cell(findCell.row, findCell.col + 1).value, worksheet1.cell(findCell.row, findCell.col + 3).value)
 
 def checkUser(email: string) -> bool:
     emailCell = worksheet1.find(email)

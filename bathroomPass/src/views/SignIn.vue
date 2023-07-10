@@ -7,7 +7,7 @@
                     The pass is not available
                 </ion-card-title>
                 <ion-card-content>
-                    <ion-button v-if="counter.$state.isSignedIn && !counter.$state.showUnavailable"
+                    <ion-button v-if="counter.$state.isSignedIn && counter.$state.returnPass"
                         class="round-button"
                         id="takeout-button"
                         @click="tryTakeOutPass"
@@ -16,6 +16,16 @@
                     >
                         <ion-ripple-effect></ion-ripple-effect>
                         Take Out Pass
+                    </ion-button>
+                    <ion-button v-if="counter.$state.isSignedIn && !counter.$state.returnPass"
+                        class="round-button"
+                        id="takeout-button"
+                        @click="tryTakeOutPass"
+                        size="default"
+                        shape="round"
+                    >
+                        <ion-ripple-effect></ion-ripple-effect>
+                        Return Pass
                     </ion-button>
                     <ion-button 
                         class="round-button" 
@@ -158,7 +168,7 @@ export default defineComponent({
             ).then(this.ChangeToTrue)
         },
         async tryTakeOutPass() {    
-            const currentUser = this.counter.$state.firstName + " " + this.counter.$state.familyName 
+            const currentUser = this.counter.$state.email
             const information = this.counter.$state.firstName + "/" + this.counter.$state.familyName + "/" + this.counter.$state.email
             const changePass = 'http://100.101.65.63:8000/change_status/'
             const changeToFalse = changePass + "125" + "/false/" + information
@@ -226,7 +236,22 @@ export default defineComponent({
             console.log(response.message)
             
 
-            console.log(this.counter.$state.firstName, this.counter.$state.familyName)
+            console.log(this.counter.$state.email)
+            const status = response.message[0]
+            const getEmail = response.message[1]
+
+            console.log(status, getEmail)
+
+            if (this.counter.$state.email === getEmail) {
+                if (status === "True") {
+                    this.counter.$state.returnPass = false
+                } else {
+                    this.counter.$state.returnPass = true
+                }
+            } else {
+                this.counter.$state.returnPass = false
+            }
+
         } catch (error) {
             console.log(error)
         }
