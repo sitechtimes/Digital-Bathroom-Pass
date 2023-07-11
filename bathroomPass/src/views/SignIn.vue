@@ -14,7 +14,7 @@
                         @click="tryTakeOutPass"
                         size="default"
                         shape="round"
-                        :disabled="disableButton()"
+                        :disabled="isDisabled()"
                     >
                         <ion-ripple-effect></ion-ripple-effect>
                         Take Out Pass
@@ -25,6 +25,7 @@
                         @click="tryTakeOutPass"
                         size="default"
                         shape="round"
+                        :disabled="isDisabled()"
                     >
                         <ion-ripple-effect></ion-ripple-effect>
                         Return Pass
@@ -92,6 +93,7 @@ export default defineComponent({
     },
     mounted() {
         this.getReturnStatus()
+        this.isDisabledonLoad()
         console.log(this.counter.$state.isSignedIn)
     },  
     setup() {
@@ -152,7 +154,7 @@ export default defineComponent({
             if(changeCondition !== ""){
                this.counter.$state.isSignedIn = true 
             } else {
-                console.log("err")
+                console.log("There was an error or user cancelled log in")
             }
         },
         logIdToken() {
@@ -165,8 +167,6 @@ export default defineComponent({
             ).then(this.ChangeToTrue)
         },
         async tryTakeOutPass() {
-            this.startButtonCooldown()
-
             const currentUser = this.counter.$state.email
             const information = this.counter.$state.firstName + "/" + this.counter.$state.familyName + "/" + this.counter.$state.email
             const changePass = 'http://100.101.65.56:8000/change_status/'
@@ -209,6 +209,7 @@ export default defineComponent({
             this.counter.$state.showUnavailable = true
             // console.log("after change", this.showUnavailable)
         }
+        this.startButtonCooldown()
         window.location.reload()
      },
   
@@ -223,7 +224,7 @@ export default defineComponent({
         },
         async getReturnStatus() {
         try {
-            const fetchPass = 'http://100.101.65.56:8000/get_status/127'
+            const fetchPass = 'http://100.101.65.56:8000/get_status/125'
             const fetchFunction = await fetch(fetchPass, {
                 method: 'get',
                 mode: 'cors',
@@ -257,17 +258,29 @@ export default defineComponent({
             console.log(error)
         }
     },
-    disableButton() {
-        while(this.buttonTimer !== 0) {
+    isDisabled() {
+        while(this.counter.buttonTimer !== 0) {
             return true
         }
      },
      startButtonCooldown() {
         try {
-            this.buttonTimer = 1
+            console.log(this.counter.buttonTimer)
+            this.counter.buttonTimer = 1
             setTimeout(() => {
-                this.buttonTimer = 0
-            }, 10000)
+                this.counter.buttonTimer = 0
+            }, 2000)
+        } catch {
+            console.log("error")
+        }
+     },
+     isDisabledonLoad() {
+        try {
+            if(this.counter.buttonTimer !== 0 ) {
+                setTimeout(() => {
+                    this.counter.buttonTimer = 0
+                }, 5000)
+            }
         } catch {
             console.log("error")
         }
