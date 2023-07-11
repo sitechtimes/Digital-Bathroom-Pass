@@ -274,6 +274,14 @@ ion-card {
   text-align: center;
 }
 
+ion-card-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.25rem;
+}
+
 ion-button {
   --background: #CABC71;
   --background-activated: #CABC71;
@@ -295,9 +303,8 @@ ion-card > .card-icon {
 }
 
 .round-button {
-    margin-top: 3rem;
     width: 16rem;
-    height: 6rem;
+    height: 5rem;
     font-size: 1.6rem;
     font-weight: 600;
 }
