@@ -126,7 +126,7 @@ export default defineComponent({
         const headers = {
             "user_agent": `${token}`
         }
-        axios.post("http://192.168.1.11:8000/token_sign_in/", token, { headers }).then(response =>
+        axios.post("http://100.101.65.56:8000/token_sign_in/", token, { headers }).then(response =>
          {
             console.log(response)
             this.counter.$state.response = response.data.message
@@ -173,10 +173,10 @@ export default defineComponent({
         async tryTakeOutPass() {    
             const currentUser = this.counter.$state.email
             const information = this.counter.$state.firstName + "/" + this.counter.$state.familyName + "/" + this.counter.$state.email
-            const changePass = 'http://192.168.1.11:8000/change_status/'
-            const changeToFalse = changePass + "125" + "/false/" + information
-            const changeToTrue = changePass + "125" + "/true/" + information
-            const fetchPass = 'http://192.168.1.11:8000/get_status/125'
+            const changePass = 'http://100.101.65.56:8000/change_status/'
+            const changeToFalse = changePass + "127" + "/false/" + information
+            const changeToTrue = changePass + "127" + "/true/" + information
+            const fetchPass = 'http://100.101.65.56:8000/get_status/127'
             const fetchFunction = await fetch(fetchPass, {
                 method: 'get',
                 mode: 'cors',
@@ -214,6 +214,7 @@ export default defineComponent({
             this.counter.$state.showUnavailable = true
             // console.log("after change", this.showUnavailable)
         }
+        window.location.reload()
      },
   
         logout() {
@@ -227,7 +228,7 @@ export default defineComponent({
         },
         async getReturnStatus() {
         try {
-            const fetchPass = 'http://192.168.1.11:8000/get_status/125'
+            const fetchPass = 'http://100.101.65.56:8000/get_status/127'
             const fetchFunction = await fetch(fetchPass, {
                 method: 'get',
                 mode: 'cors',
