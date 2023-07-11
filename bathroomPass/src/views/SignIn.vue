@@ -33,9 +33,6 @@
                         shape="round">
                         Logout
                     </ion-button>
-                    <ion-button
-                    @click="startButtonCooldown">
-                    </ion-button>
                 </ion-card-content>
             </ion-card>
         </ion-content>
@@ -84,7 +81,7 @@ export default defineComponent({
         const counter = useRoomStore()
         onMounted(() => {
             GoogleAuth.initialize({
-                clientId: '712891238786-8aj99006i0o1jsecsg8ds9n0ff7ehtmq.apps.googleusercontent.com',
+                clientId: process.env.VUE_APP_GOOGLE_CLIENT_ID,
                 scopes: ['profile', 'email'],
                 grantOfflineAccess: true,
             });
@@ -116,7 +113,7 @@ export default defineComponent({
         const headers = {
             "user_agent": `${token}`
         }
-        axios.post("http://100.101.65.63:8000/token_sign_in/", token, { headers }).then(response =>
+        axios.post("http://100.101.65.56:8000/token_sign_in/", token, { headers }).then(response =>
          {
             console.log(response)
             this.counter.response = response.data.message
@@ -149,13 +146,15 @@ export default defineComponent({
             }
             ).then(this.ChangeToTrue)
         },
-        async tryTakeOutPass() {    
+        async tryTakeOutPass() {
+            this.startButtonCooldown()
+
             const currentUser = this.counter.$state.email
             const information = this.counter.$state.firstName + "/" + this.counter.$state.familyName + "/" + this.counter.$state.email
-            const changePass = 'http://100.101.65.63:8000/change_status/'
+            const changePass = 'http://100.101.65.56:8000/change_status/'
             const changeToFalse = changePass + "125" + "/false/" + information
             const changeToTrue = changePass + "125" + "/true/" + information
-            const fetchPass = 'http://100.101.65.63:8000/get_status/125'
+            const fetchPass = 'http://100.101.65.56:8000/get_status/125'
             const fetchFunction = await fetch(fetchPass, {
                 method: 'get',
                 mode: 'cors',
@@ -203,12 +202,13 @@ export default defineComponent({
         }
      },
      startButtonCooldown() {
-        this.buttonTimer = 100
-        for(let i = 0; i < this.buttonTimer; i++) {
-            while(this.buttonTimer !== 0) {
-                this.buttonTimer = this.buttonTimer - 1
-                console.log(this.buttonTimer)
-            }
+        try {
+            this.buttonTimer = 1
+            setTimeout(() => {
+                this.buttonTimer = 0
+            }, 10000)
+        } catch {
+            console.log("error")
         }
      }
     }
