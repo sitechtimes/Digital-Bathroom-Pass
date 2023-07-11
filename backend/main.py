@@ -16,14 +16,15 @@ room_range = range(100, 231)
 
 def getStatus(roomNumber: string):
     findCell = worksheet1.find(roomNumber)
-    return (worksheet1.cell(findCell.row, findCell.col + 1).value, worksheet1.cell(findCell.row, findCell.col + 2).value)
+    print(findCell.row, findCell.col)
+    return (worksheet1.cell(findCell.row, findCell.col + 1).value, worksheet1.cell(findCell.row, findCell.col + 3).value)
 
 def checkUser(email: string) -> bool:
     emailCell = worksheet1.find(email)
     if emailCell is None:
         # The user has not taken a pass out yet
         print("This user has not taken a pass out yet")
-        return False
+        return True
     else:
         # The user has already taken a pass out before, check if they are trying to take another pass out while they already have a pass
         print(emailCell.row)
@@ -132,15 +133,24 @@ async def read_item(room_id):
 
 @app.get("/change_status/{room_id}/{change_to}/{first_name}/{last_name}/{email}")
 async def change_status(room_id, change_to, first_name, last_name, email) :
-    if (change_to == "true" or change_to == "false")  and (100<int(room_id)<232):
-        if checkEmailValidity(email) == True:
-            #There is a valid value for room_id and change_to value
+    if change_to and (100 < int(room_id) < 232):
+        is_valid_email = checkEmailValidity(email)
+        if is_valid_email == True:
             message = updateStatus(room_id, change_to, first_name, last_name, email)
-            return {"message" : message}
+            return {message}
         else:
-            return {"message" : "Email is not valid"}
+            return {"message" : "The provided email address is invalid"}
     else:
-        return{"message" : "Something went wrong. Either change_to parameter is not valid or room_id is not within specified range"}
+        return {"message": "Something went wrong. Invalid change_to parameter or room_id"}
+    # if (change_to == "true" or change_to == "false")  and (100<int(room_id)<232):
+    #     if checkEmailValidity(email) == True:
+    #         #There is a valid value for room_id and change_to value
+    #         message = updateStatus(room_id, change_to, first_name, last_name, email)
+    #         return {"message" : message}
+    #     else:
+    #         return {"message" : "Email is not valid"}
+    # else:
+    #     return{"message" : "Something went wrong. Either change_to parameter is not valid or room_id is not within specified range"}
 
 @app.post("/token_sign_in")
 async def test(request:Request):

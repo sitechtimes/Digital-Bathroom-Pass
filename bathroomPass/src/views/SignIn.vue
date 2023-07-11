@@ -7,7 +7,8 @@
                     The pass is not available
                 </ion-card-title>
                 <ion-card-content>
-                    <ion-button v-if="counter.$state.isSignedIn && !counter.$state.showUnavailable"
+                    <div v-if="counter.$state.isSignedIn" class="pass">
+                        <ion-button v-if="!counter.$state.returnPass"
                         class="round-button"
                         id="takeout-button"
                         @click="tryTakeOutPass"
@@ -18,6 +19,17 @@
                         <ion-ripple-effect></ion-ripple-effect>
                         Take Out Pass
                     </ion-button>
+                    <ion-button v-else
+                        class="round-button"
+                        id="takeout-button"
+                        @click="tryTakeOutPass"
+                        size="default"
+                        shape="round"
+                    >
+                        <ion-ripple-effect></ion-ripple-effect>
+                        Return Pass
+                    </ion-button>
+                    </div>
                     <ion-button 
                         class="round-button" 
                         id="login-button" 
@@ -26,6 +38,7 @@
                         Log In
                     </ion-button>
                     <ion-button 
+                        v-else
                         class="round-button" 
                         id="logout-button" 
                         @click="logout" 
@@ -77,9 +90,14 @@ export default defineComponent({
             buttonDisabled: false
         }
     },
+    mounted() {
+        this.getReturnStatus()
+        console.log(this.counter.$state.isSignedIn)
+    },  
     setup() {
         const counter = useRoomStore()
-        onMounted(() => {
+        onMounted(()=> {
+            counter.$state.showUnavailable = false
             GoogleAuth.initialize({
                 clientId: process.env.VUE_APP_GOOGLE_CLIENT_ID,
                 scopes: ['profile', 'email'],
@@ -191,12 +209,55 @@ export default defineComponent({
             this.counter.$state.showUnavailable = true
             // console.log("after change", this.showUnavailable)
         }
+        window.location.reload()
      },
-     logout() {
-        this.counter.$state.showUnavailable = false
-        this.counter.$state.isSignedIn = false
-     },
-     disableButton() {
+  
+        logout() {
+            this.counter.$state.showUnavailable = false
+            this.counter.$state.isSignedIn = false
+            this.counter.$state.idToken = ""
+            this.counter.$state.familyName = ""
+            this.counter.$state.firstName = "" 
+            this.counter.$state.email = ""
+            this.counter.$state.response = ""
+        },
+        async getReturnStatus() {
+        try {
+            const fetchPass = 'http://100.101.65.56:8000/get_status/127'
+            const fetchFunction = await fetch(fetchPass, {
+                method: 'get',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            const response = await fetchFunction.json()
+            console.log(response.message)
+            
+
+            console.log(this.counter.$state.email)
+            const status = response.message[0]
+            const getEmail = response.message[1]
+
+            console.log(status, getEmail)
+
+            if (this.counter.$state.email === getEmail) {
+                if (status === "TRUE") {
+                    this.counter.$state.returnPass = false
+                } else {
+                    this.counter.$state.returnPass = true
+                }
+            } else {
+                this.counter.$state.returnPass = false
+            }
+
+            console.log(this.counter.$state.returnPass)
+
+        } catch (error) {
+            console.log(error)
+        }
+    },
+    disableButton() {
         while(this.buttonTimer !== 0) {
             return true
         }
@@ -211,8 +272,9 @@ export default defineComponent({
             console.log("error")
         }
      }
-    }
-})
+     },
+    },
+)
 
 </script>
 
