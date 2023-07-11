@@ -7,10 +7,10 @@
                     The pass is not available
                 </ion-card-title>
                 <ion-card-content>
-                    <ion-button v-if="counter.$state.isSignedIn && counter.$state.returnPass"
+                    <ion-button v-if="counter.$state.isSignedIn && !counter.$state.returnPass"
                         class="round-button"
                         id="takeout-button"
-                        @click="tryTakeOutPass"
+                        @click="takeOutPass"
                         size="default"
                         shape="round"
                         :disabled="disableButton()"
@@ -18,7 +18,7 @@
                         <ion-ripple-effect></ion-ripple-effect>
                         Take Out Pass
                     </ion-button>
-                    <ion-button v-if="counter.$state.isSignedIn && !counter.$state.returnPass"
+                    <ion-button v-if="counter.$state.isSignedIn && counter.$state.returnPass"
                         class="round-button"
                         id="takeout-button"
                         @click="takeOutPass"
@@ -88,7 +88,8 @@ export default defineComponent({
             buttonText: "Take Out Pass",
             roomNumber: "",
             buttonTimer: 0,
-            buttonDisabled: false
+            buttonDisabled: false,
+            changeTo: "",
         }
     },
     mounted() {
@@ -96,7 +97,6 @@ export default defineComponent({
     },  
     setup() {
         const counter = useRoomStore()
-        console.log(process.env.VUE_APP_GOOGLE_CLIENT_ID)
         onMounted(() => {
             GoogleAuth.initialize({
                 clientId: process.env.VUE_APP_GOOGLE_CLIENT_ID,
@@ -122,12 +122,12 @@ export default defineComponent({
     },
 
     methods: {
-        doPost() {
+        AuthenticateToken() {
             const token = JSON.stringify(this.counter.$state.idToken)
             const headers = {
                 "user_agent": `${token}`
             }
-            axios.post("http://localhost:8000/token_sign_in/", token, { headers }).then(response => {
+            axios.post("http://100.101.65.56:8000/token_sign_in/", token, { headers }).then(response => {
                 console.log(response)
                 this.counter.$state.response = response.data.message
                 console.log(this.counter.$state.response)
@@ -140,13 +140,6 @@ export default defineComponent({
                 this.counter.$state.firstName = nameArr[0]
                 this.counter.$state.familyName = nameArr[1]
             })
-        },
-        storeResponse() {
-            console.log(this.counter.$state.response)
-        },
-        setParams() {
-            this.passRequirements = this.counter.$state.firstName + "/" + this.counter.$state.familyName + "/" + this.counter.$state.email
-            this.currentUserName = this.counter.$state.firstName + " " + this.counter.$state.familyName
         },
         ChangeToTrue() {
             // this.isSignedIn = true
@@ -167,40 +160,41 @@ export default defineComponent({
             ).then(this.ChangeToTrue)
         },
         async takeOutPass() {
-            let changeTo = null;
             const roomId = 125;
-            const firstName = this.counter.firstName;
-            const lastName = this.counter.familyName;
-            const email = this.counter.email;
+            const firstName = this.counter.$state.firstName;
+            const lastName = this.counter.$state.familyName;
+            const email = this.counter.$state.email;
 
             async function fetchInfo() {
-                const response = await fetch(`http://localhost:8000/get_status/${roomId}`);
+                const response = await fetch(`http://100.101.65.56:8000/get_status/${roomId}`);
                 const content = await response.json();
-                console.log(content);
+                console.log( content);
                 return content
             }
             if(this.PassAvailability === "") {
                 const info = await fetchInfo()
-                // getting the last user's name to compare with the current user
+                // getting the last user's email to compare with the current user
                 this.lastUserName = info.message[1];
                 this.PassAvailability = info.message[0];
 
+                console.log("pass avail", this.PassAvailability, "current user", this.counter.email, "last user", this.lastUserName)
+                if(this.PassAvailability === "FALSE" && this.counter.email === this.lastUserName){
+                    //checks if the pass is out, if it is then checks current email with last email to let them put it back in
+                this.changeTo = "TRUE";
+                }   else if(this.PassAvailability === "TRUE" && this.counter.email){
+                    //checks if pass is in, if it is then if the user has email it lets them take it out
+                this.changeTo = "FALSE";
+                }   else {
+                this.counter.showUnavailable = true; 
+                }
             }
-            if(this.PassAvailability === "FALSE" && this.currentUserName === this.lastUserName){
-                changeTo = "true";
-            }
-            else if(this.PassAvailability === "TRUE" && this.currentUserName){
-                changeTo = "false";
-            }
-            else {
-                this.counter.showUnavailable = true;
-            }
-            
-            const apiUrl = `http://localhost:8000/change_status/?room_id=${roomId}&change_to=${changeTo}&first_name=${firstName}&last_name=${lastName}&email=${email}`
+            let changeTo = this.changeTo
+            console.log("changeTo value", changeTo)
+            const apiUrl = `http://100.101.65.56:8000/change_status/?room_id=${roomId}&change_to=${changeTo}&first_name=${firstName}&last_name=${lastName}&email=${email}`
             console.log(apiUrl)
             try {
                 const response = await axios.get(apiUrl);
-                console.log(response);
+                console.log(response)
             } catch (error) {
                 console.log("An error occured:", error);
             }
@@ -216,7 +210,7 @@ export default defineComponent({
         },
         async getReturnStatus() {
         try {
-            const fetchPass = 'http://100.101.65.63:8000/get_status/125'
+            const fetchPass = 'http://100.101.65.56:8000/get_status/125'
             const fetchFunction = await fetch(fetchPass, {
                 method: 'get',
                 mode: 'cors',
@@ -263,13 +257,6 @@ export default defineComponent({
         }
      }
      },
-
-
-     
-    //  logout() {
-    //     this.counter.$state.showUnavailable = false
-    //     this.counter.$state.isSignedIn = false
-    //  }
     },
 
 )
