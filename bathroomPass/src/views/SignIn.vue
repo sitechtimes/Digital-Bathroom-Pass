@@ -10,7 +10,7 @@
                     <ion-button v-if="counter.$state.isSignedIn && counter.$state.returnPass"
                         class="round-button"
                         id="takeout-button"
-                        @click="tryTakeOutPass"
+                        @click="takeOutPass"
                         size="default"
                         shape="round"
                         :disabled="disableButton()"
@@ -122,7 +122,7 @@ export default defineComponent({
     },
 
     methods: {
-        doPost() {
+        AuthenticateToken() {
             const token = JSON.stringify(this.counter.$state.idToken)
             const headers = {
                 "user_agent": `${token}`
@@ -140,13 +140,6 @@ export default defineComponent({
                 this.counter.$state.firstName = nameArr[0]
                 this.counter.$state.familyName = nameArr[1]
             })
-        },
-        storeResponse() {
-            console.log(this.counter.$state.response)
-        },
-        setParams() {
-            this.passRequirements = this.counter.$state.firstName + "/" + this.counter.$state.familyName + "/" + this.counter.$state.email
-            this.currentUserName = this.counter.$state.firstName + " " + this.counter.$state.familyName
         },
         ChangeToTrue() {
             // this.isSignedIn = true
@@ -287,6 +280,14 @@ ion-card {
   text-align: center;
 }
 
+ion-card-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.25rem;
+}
+
 ion-button {
   --background: #CABC71;
   --background-activated: #CABC71;
@@ -308,9 +309,8 @@ ion-card > .card-icon {
 }
 
 .round-button {
-    margin-top: 3rem;
     width: 16rem;
-    height: 6rem;
+    height: 5rem;
     font-size: 1.6rem;
     font-weight: 600;
 }
