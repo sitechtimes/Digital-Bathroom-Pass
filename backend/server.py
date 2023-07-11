@@ -14,14 +14,14 @@ master_sheet = sheets.get_worksheet(0)
 allowed_email_sheet = sheets.get_worksheet(1)
 room_range = range(100, 231)
 
-def get_room_status(room_number: str):
-    cell = master_sheet.find(room_number)
+def get_room_status(room_number: int):
+    cell = master_sheet.find(str(room_number))
     print(f"Cell found at {cell.row}, {cell.col}")
     is_available = master_sheet.cell(cell.row, cell.col + 1).value
     user_email = master_sheet.cell(cell.row, cell.col + 3).value
     return {
-        isAvailable: is_available,
-        userEmail: user_email
+        "isAvailable": is_available,
+        "userEmail": user_email
     }
 
 def checkUserStatus(email: str) -> bool:
@@ -38,19 +38,20 @@ def checkUserStatus(email: str) -> bool:
             print("This user didn't take out a pass yet")
             return True
 
-def update_status(room_number: str, change_to: bool, first_name: str, last_name: str, email: str):
-    if eval(change_to) == False:
+
+def update_status(room_number: int, change_to: bool, first_name: str, last_name: str, email: str):
+    if change_to == False:
         if checkUserStatus(email=email) == False:
             return({
-                message: "The user has already taken a pass out",
-                isAvailable: False
+                "message": "The user has already taken a pass out",
+                "isAvailable": False
             })
     else:
         room_cell = master_sheet.find(room_number)
         is_available_value = master_sheet.cell(room_cell.row, room_cell.col + 1).value
         print(f"Changing the availibility of room {room_number} from {is_available_value} to {change_to}")
 
-        if is_available_value != eval(change_to):
+        if is_available_value != change_to:
            current_time = datetime.datetime.now()
            # Updating the values of the row associated with the room
            full_name = first_name + " " + last_name
@@ -66,7 +67,7 @@ def update_status(room_number: str, change_to: bool, first_name: str, last_name:
            room_worksheet.update_cell(status_cell, "available")
            
            return({
-            message: "Successfully updated bathroom pass log"
+            "message": "Successfully updated bathroom pass log"
            })
 
 def check_email_validity(email: str) -> bool:
@@ -82,8 +83,8 @@ def authenticate_google(token: any):
     try:
         id_info = id_token.verify_oauth2_token(new_token, requests.Request(), '712891238786-8aj99006i0o1jsecsg8ds9n0ff7ehtmq.apps.googleusercontent.com') 
         user_info = {
-            email: id_info["email"],
-            name: id_info["name"]
+            "email": id_info["email"],
+            "name": id_info["name"]
         }
         return user_info
     except ValueError:
@@ -106,15 +107,15 @@ app.add_middleware(
 )
 
 @app.get("/get_status/{room_id}")
-async def read_item(room_id):
+async def read_item(room_id: int):
     data = get_room_status(room_id)
     return data
 
 @app.get("/change_status/")
 async def read_item(room_id: int, change_to: bool, first_name: str, last_name: str, email: str):
     is_in_range = (100 < int(room_id) < 232)
-    if isinstance(eval(change_to), bool) and is_in_range:
-        is_valid_email = check_email_validity=(email)
+    if isinstance(change_to, bool) and is_in_range:
+        is_valid_email = check_email_validity(email)
         if is_valid_email == True:
             result = update_status(room_id, change_to, first_name, last_name, email)
             return result
@@ -131,5 +132,5 @@ async def read_item(room_id: int, change_to: bool, first_name: str, last_name: s
 async def login(request:Request):
     header = request.headers.get('user_agent')
     return {
-        message: authenticate_google(token=header)
+        "message": authenticate_google(token=header)
     }
