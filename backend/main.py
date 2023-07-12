@@ -1,116 +1,123 @@
 from fastapi import FastAPI, Header, Request
 from typing import Annotated
 from fastapi.middleware.cors import CORSMiddleware
-import string
 import gspread
 import datetime
+from google.oauth2 import id_token
+from google.auth.transport import requests
 
+google_account = gspread.service_account(filename="credentials.json")
+sheets = google_account.open("Bathroom Pass Testing")
 
-
-gc = gspread.service_account(filename='credentials.json')
-sh = gc.open("Bathroom Pass Testing")
-worksheet1 = sh.get_worksheet(0)
-worksheet2 = sh.get_worksheet(1)
-
+master_sheet = sheets.get_worksheet(0)
+allowed_email_sheet = sheets.get_worksheet(1)
 room_range = range(100, 231)
 
-def getStatus(roomNumber: string):
-    findCell = worksheet1.find(roomNumber)
-    print(findCell.row, findCell.col)
-    return (worksheet1.cell(findCell.row, findCell.col + 1).value, worksheet1.cell(findCell.row, findCell.col + 3).value)
+def get_room_status(room_number: int):
+    cell = master_sheet.find(str(room_number))
+    print(f"Cell found at {cell.row}, {cell.col}")
+    is_available = master_sheet.cell(cell.row, cell.col + 1).value
+    user_email = master_sheet.cell(cell.row, cell.col + 3).value
+    return {
+        "isAvailable": is_available,
+        "userEmail": user_email
+    }
 
-def checkUser(email: string) -> bool:
-    emailCell = worksheet1.find(email)
-    if emailCell is None:
-        # The user has not taken a pass out yet
-        print("This user has not taken a pass out yet")
+def checkUserStatus(email: str) -> bool:
+    email_cell = master_sheet.find(email)
+    if email_cell is None:
+        print("This user has not taken out a bathroom pass")
         return True
     else:
-        # The user has already taken a pass out before, check if they are trying to take another pass out while they already have a pass
-        print(emailCell.row)
-        print("email cell value = " + worksheet1.cell(emailCell.row, 2).value)
-        if worksheet1.cell(emailCell.row, 2).value == "FALSE":
-            # This user is trying to take another pass out
-            print("This user has already taken a pass out")
+        
+        pass_is_available = master_sheet.cell(email_cell.row, 2).value
+        print(f"Pass is available: {pass_is_available}")
+        if pass_is_available  == "FALSE":
+            print("This user has already taken a bathroom pass")
             return False
         else:
-            print("This user doesn't have an already taken pass")
+            print("This user didn't take out a pass yet")
             return True
 
-def updateStatus(roomNumber: string, changeTo: string, firstName: string, lastName: string, email: string):
-    if changeTo == "false":
-        #Check if this user already has a pass
-        if checkUser(email=email) == False:
-            # The user already has a pass from another room
-            return("User has already taken another pass out")
 
-    # Find the room the user wants to check the pass out from
-    findRoom_Main = worksheet1.find(roomNumber)
-    currentValue = worksheet1.cell(findRoom_Main.row, findRoom_Main.col + 1).value
-    print("changeToVal: " + currentValue)
-    print("changeTo: " + changeTo)
-
-    # Check if the change to value is equal to the already existing status of the room
-    if currentValue != changeTo.upper():
+def update_status(room_number: int, change_to: bool, first_name: str, last_name: str, email: str):
+    if change_to == False:
+        if checkUserStatus(email=email) == False:
+            return({
+                "message": "The user has already taken a pass out",
+                "isAvailable": False
+            })
+    # Preventing user from changing to same boolean value for the room status
+    current_status = str(change_to).upper()
+    room_cell = master_sheet.find(str(room_number))
+    is_available_value = master_sheet.cell(room_cell.row, room_cell.col + 1).value
+    
+    if is_available_value != current_status:
+        print(f"Changing the availibility of room {room_number} from {is_available_value} to {change_to}")
+        current_status = str(change_to).upper()
         current_time = datetime.datetime.now()
-        # Updating the values in the master sheet
-        worksheet1.update_cell(findRoom_Main.row, findRoom_Main.col + 1, changeTo)
-        worksheet1.update_cell(findRoom_Main.row, findRoom_Main.col + 2, firstName + " " + lastName)
-        worksheet1.update_cell(findRoom_Main.row, findRoom_Main.col + 3, email)
+        # Updating the values of the row associated with the room
+        full_name = first_name + " " + last_name
+        cell_list = master_sheet.range(f"B{room_cell.row}:D{room_cell.row}")
+        cell_values = [change_to, full_name, email]
+        
+        for i, value in enumerate(cell_values):
+            cell_list[i].value = value
+        
+        master_sheet.update_cells(cell_list)
+        
+    #    master_sheet.update(f"B{room_cell.row}:D{room_cell.row}", [change_to, full_name, email]) 
+        print("Updated master sheet")
+        # Update the sheet of the corresponding room for the room log
+        room_worksheet = sheets.worksheet(str(room_number))
+        print(room_worksheet)
+        status_cell = room_worksheet.find('available')
+        print(status_cell)
+        print(f"Status cell for room {room_number} found at {status_cell.row} {status_cell.col}")
 
-        # Aquire the individual sheet of the room of which the status is being changed to log the new entry
-        room_worksheet = sh.worksheet(roomNumber)
-        worksheet_find_cell = room_worksheet.find('available')
-        print(worksheet_find_cell.row, worksheet_find_cell.col)
-         
-        # Log the entry
-        room_worksheet.update_cell(worksheet_find_cell.row, worksheet_find_cell.col - 4, changeTo)
-        room_worksheet.update_cell(worksheet_find_cell.row, worksheet_find_cell.col - 3, firstName + " " + lastName)
-        room_worksheet.update_cell(worksheet_find_cell.row, worksheet_find_cell.col - 2, email)
-        room_worksheet.update_cell(worksheet_find_cell.row, worksheet_find_cell.col - 1, str(current_time))
-        room_worksheet.update_cell(worksheet_find_cell.row + 1, worksheet_find_cell.col, 'available')
-        room_worksheet.update_cell(worksheet_find_cell.row, worksheet_find_cell.col, 'unavailable')
-
-        return("Successful")
+        # Adding the entry into the log, then move the status cell down one row
+        log_cells = room_worksheet.range(f"A{status_cell.row}:E{status_cell.row}")
+        log_values = [change_to, full_name, email, str(current_time), "unavailable"]
+        
+        for i, value in enumerate(log_values):
+            log_cells[i].value = value
+        
+        room_worksheet.update_cells(log_cells)
+        print(status_cell.row)
+    #    room_worksheet.update(f"A{status_cell.row}:E{status_cell.row}", [change_to, full_name, email, str(current_time), "unavailable"])
+        room_worksheet.update_cell(status_cell.row + 1, status_cell.col, "available")
+        
+        return({
+            "message": "Successfully updated bathroom pass log"
+        })
     else:
-        return("Attempting to change the status to the same value")
+        return({
+            "message": "The bathroom pass is already in this state"
+        })
 
-def createEntry(roomNumber: string):
-    findCell = worksheet1.find(roomNumber)
-    worksheet1.update_cell(findCell.row, findCell.col + 1, "available")
-
-def checkEmailValidity(email: string) -> bool:
-    findCell = worksheet2.find(email)
-    if findCell is None:
+def check_email_validity(email: str) -> bool:
+    email_cell = allowed_email_sheet.find(email)
+    if email_cell is None:
         return False
     else:
         return True
 
-
-
-
-# MARK: - GOOGLE SIGN IN METHODS:
-from google.oauth2 import id_token
-from google.auth.transport import requests
-
-def authenticateGoogle(token: any):
-    newString = token
-    doubleQuotes = '"'
-    if doubleQuotes in token:
-        newString = token.replace(doubleQuotes, "")
+def authenticate_google(token: any):
+    #Removing the double quotes in the token
+    new_token = token.replace('"', "")
     try:
-        # Specify the CLIENT_ID of the app that accesses the backend:
-        idinfo = id_token.verify_oauth2_token(newString, requests.Request(), '712891238786-8aj99006i0o1jsecsg8ds9n0ff7ehtmq.apps.googleusercontent.com')
-        information = [idinfo['email'], idinfo['name']]
-        return (information)
+        id_info = id_token.verify_oauth2_token(new_token, requests.Request(), '712891238786-8aj99006i0o1jsecsg8ds9n0ff7ehtmq.apps.googleusercontent.com') 
+        user_info = {
+            "email": id_info["email"],
+            "name": id_info["name"]
+        }
+        return user_info
     except ValueError:
-        # Invalid token
-        return ("Invalid Token")
-
+        return "Invalid token provided"
 
 app = FastAPI()
 
-origins = [
+allowed_origins = [
     "http://localhost",
     "http://localhost:8100",
     "http://localhost:8101",
@@ -118,41 +125,38 @@ origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 @app.get("/get_status/{room_id}")
-async def read_item(room_id):
-    # message = backend.readDoc(room_id)
-    # return {"message" : message}
-    message = getStatus(room_id)
-    return {"message" : message}
+async def read_item(room_id: int):
+    data = get_room_status(room_id)
+    return data
 
-@app.get("/change_status/{room_id}/{change_to}/{first_name}/{last_name}/{email}")
-async def change_status(room_id, change_to, first_name, last_name, email) :
-    if change_to and (100 < int(room_id) < 232):
-        is_valid_email = checkEmailValidity(email)
+@app.get("/change_status/")
+async def read_item(room_id: int, change_to: bool, first_name: str, last_name: str, email: str):
+    is_in_range = (100 < room_id < 232)
+    if isinstance(change_to, bool) and is_in_range:
+        is_valid_email = check_email_validity(email)
         if is_valid_email == True:
-            message = updateStatus(room_id, change_to, first_name, last_name, email)
-            return {message}
+            print("Email is valid")
+            result = update_status(room_id, change_to, first_name, last_name, email)
+            return result
         else:
-            return {"message" : "The provided email address is invalid"}
+            return {
+                "message": "The provided email address is invalid"
+            }
     else:
-        return {"message": "Something went wrong. Invalid change_to parameter or room_id"}
-    # if (change_to == "true" or change_to == "false")  and (100<int(room_id)<232):
-    #     if checkEmailValidity(email) == True:
-    #         #There is a valid value for room_id and change_to value
-    #         message = updateStatus(room_id, change_to, first_name, last_name, email)
-    #         return {"message" : message}
-    #     else:
-    #         return {"message" : "Email is not valid"}
-    # else:
-    #     return{"message" : "Something went wrong. Either change_to parameter is not valid or room_id is not within specified range"}
+        return {
+            "message": "Something went wrong. Invalid change_to parameter or room_id"
+        }
 
 @app.post("/token_sign_in")
-async def test(request:Request):
-    my_header= request.headers.get('user_agent')
-    return {"message" : authenticateGoogle(token=my_header)}
+async def login(request:Request):
+    header = request.headers.get('user_agent')
+    return {
+        "message": authenticate_google(token=header)
+    }

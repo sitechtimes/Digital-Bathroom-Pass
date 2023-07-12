@@ -3,7 +3,7 @@
         <ion-content color="dark" id="main-container">
             <ion-card>
                 <img class="card-icon" src="/assets/icon/seagull.png" alt="seagull">
-                <ion-card-title v-if="counter.$state.isSignedIn && counter.$state.showUnavailable">
+                <ion-card-title v-if="counter.isSignedIn && counter.showUnavailable">
                     The pass is not available
                 </ion-card-title>
                 <ion-card-content>
@@ -11,7 +11,7 @@
                         <ion-button v-if="!counter.$state.returnPass"
                         class="round-button"
                         id="takeout-button"
-                        @click="tryTakeOutPass"
+                        @click="takeOutPass"
                         size="default"
                         shape="round"
                         :disabled="isDisabled()"
@@ -22,7 +22,7 @@
                     <ion-button v-else
                         class="round-button"
                         id="takeout-button"
-                        @click="tryTakeOutPass"
+                        @click="takeOutPass"
                         size="default"
                         shape="round"
                         :disabled="isDisabled()"
@@ -34,7 +34,7 @@
                     <ion-button 
                         class="round-button" 
                         id="login-button" 
-                        v-if="!counter.$state.isSignedIn" @click="doLogIn" size="default" 
+                        v-if="!counter.isSignedIn" @click="doLogIn" size="default" 
                         shape="round">
                         Log In
                     </ion-button>
@@ -71,10 +71,10 @@
 <script lang="ts">
 import { IonPage, IonContent, IonCard, IonCardContent, IonCardTitle, IonButton, IonRippleEffect, IonModal } from '@ionic/vue';
 import { defineComponent, onMounted } from 'vue';
-import { logoGoogle } from 'ionicons/icons'
-import { useRoomStore } from '../stores/counter'
-import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth' //package for google login
-import axios from 'axios'
+import { logoGoogle } from 'ionicons/icons';
+import { useRoomStore } from '../stores/counter';
+import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth'; //package for google login
+import axios from 'axios';
 // to get on own port go into backend directory and in terminal paste
 // python -m uvicorn main:app --reload 
 // 10.94.168.231:8000 school port 
@@ -105,7 +105,8 @@ export default defineComponent({
             roomNumber: "",
             buttonTimer: 0,
             buttonDisabled: false,
-            isOpen: false
+            isOpen: false,
+            changeTo: "",
         }
     },
     mounted() {
@@ -115,8 +116,7 @@ export default defineComponent({
     },  
     setup() {
         const counter = useRoomStore()
-        onMounted(()=> {
-            counter.$state.showUnavailable = false
+        onMounted(() => {
             GoogleAuth.initialize({
                 clientId: process.env.VUE_APP_GOOGLE_CLIENT_ID,
                 scopes: ['profile', 'email'],
@@ -128,7 +128,6 @@ export default defineComponent({
             try {
                 const response = await GoogleAuth.signIn()
                 const idToken = response.authentication.idToken
-                /* console.log(idToken) */
                 counter.$state.idToken = idToken
                 /*  counter.$state.familyName = response.familyName
                  counter.$state.firstName = response.givenName
@@ -140,30 +139,28 @@ export default defineComponent({
         }
         return { logoGoogle, counter, logIn }
     },
-    methods:{ 
-        logStates() {
-            console.log(this.counter.$state.isSignedIn, this.counter.$state.showUnavailable, this.counter.$state.email, this.counter.$state.firstName, this.counter.$state.familyName)
-            this.buttonTimer = 10000
-        },
+
+    methods: {
         AuthenticateToken() {
-        const token = JSON.stringify(this.counter.$state.idToken)
-        const headers = {
-            "user_agent": `${token}`
-        }
-        axios.post("http://100.101.65.56:8000/token_sign_in/", token, { headers }).then(response =>
-         {
-            console.log(response)
-            this.counter.response = response.data.message
-            console.log(this.counter.response)
-            const splitStr = this.counter.response
-            console.log("this is the splitstr", splitStr)
-            const nameArr =  splitStr[1].split(" ")
-            console.log("this is the name array", nameArr)
-            // const splitName = nameArr.split(" ")
-            this.counter.$state.email = splitStr[0]
-            this.counter.$state.firstName = nameArr[0]
-            this.counter.$state.familyName = nameArr[1]
-         })
+            const token = JSON.stringify(this.counter.$state.idToken)
+            const headers = {
+                "user_agent": `${token}`
+            }
+            axios.post("http://localhost:8000/token_sign_in/", token, { headers }).then(response => {
+                // console.log("131",response)
+                // this.counter.$state.response = response.data.message
+                // console.log(this.counter.$state.response)
+                // const splitStr = this.counter.$state.response
+                // console.log("This is the split string:", splitStr)
+                const nameArr = response.data.message.name.split(" ")
+                console.log("This is the name array:", nameArr)
+                // const splitName = nameArr.split(" ")
+                this.counter.$state.email = response.data.message.email
+                this.counter.$state.firstName = nameArr[0]
+                this.counter.$state.familyName = nameArr[1]
+
+                console.log(this.counter.email, this.counter.firstName, this.counter.familyName)
+            })
         },
         ChangeToTrue() {
             // this.isSignedIn = true
@@ -183,54 +180,47 @@ export default defineComponent({
             }
             ).then(this.ChangeToTrue)
         },
-        async tryTakeOutPass() {
-            const currentUser = this.counter.$state.email
-            const information = this.counter.$state.firstName + "/" + this.counter.$state.familyName + "/" + this.counter.$state.email
-            const changePass = 'http://100.101.65.56:8000/change_status/'
-            const changeToFalse = changePass + "125" + "/false/" + information
-            const changeToTrue = changePass + "125" + "/true/" + information
-            const fetchPass = 'http://100.101.65.56:8000/get_status/125'
+        async takeOutPass() {
+            const roomId = 125;
+            const firstName = this.counter.$state.firstName;
+            const lastName = this.counter.$state.familyName;
+            const email = this.counter.$state.email;
 
-            const fetchFunction = await fetch(fetchPass, {
-                method: 'get',
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }).then(res=>res.json()).then((response) => {
-                this.lastUserName = response.message[1]
-                this.PassAvailability = response.message[0]
-                console.log(this.PassAvailability)
-                console.log(currentUser)
-                console.log(this.lastUserName)
-            }).catch((error) => {
-                console.log('Error', error)
-            }) 
-
+            async function fetchInfo() {
+                const response = await fetch(`http://localhost:8000/get_status/${roomId}`);
+                const content = await response.json();
+                console.log( content);
+                return content
+            }
             if(this.PassAvailability === "") {
-            fetchFunction
-        }
+                const info = await fetchInfo()
+                console.log("178",info)
+                // getting the last user's email to compare with the current user
+                this.lastUserName = info.userEmail
+                this.PassAvailability = info.isAvailable;
 
-        if(this.PassAvailability === "FALSE" && currentUser === this.lastUserName) {
-            await fetch(changeToTrue).then(res=>res.json()).then((response) => {
-                console.log({response})}).catch((error) => {
-                console.log("Error", error)
-            })
-            fetchFunction
-        } else if(this.PassAvailability === "TRUE") {
-            await fetch(changeToFalse).then(res=>res.json()).then((response) => {
-                console.log({response})}).catch((error) => {
-                console.log("Error", error)
-            })
-            fetchFunction
-        } else {
-            this.counter.$state.showUnavailable = true
-        }
-        if(this.counter.returnPass == true) {
-            this.setOpen(true)
-        } 
-        this.startButtonCooldown()
-        window.location.reload()
+                console.log("pass avail", this.PassAvailability, "current user", this.counter.email, "last user", this.lastUserName)
+                if(this.PassAvailability === "FALSE" && this.counter.email === this.lastUserName){
+                    //checks if the pass is out, if it is then checks current email with last email to let them put it back in
+                this.changeTo = "TRUE";
+                }   else if(this.PassAvailability === "TRUE" && this.counter.email){
+                    //checks if pass is in, if it is then if the user has email it lets them take it out
+                this.changeTo = "FALSE";
+                }   else {
+                this.counter.showUnavailable = true; 
+                }
+            }
+            let changeTo = this.changeTo
+            console.log("changeTo value", changeTo)
+            const apiUrl = `http://localhost:8000/change_status/?room_id=${roomId}&change_to=${changeTo}&first_name=${firstName}&last_name=${lastName}&email=${email}`
+            console.log(apiUrl)
+            try {
+                const response = await axios.get(apiUrl);
+                console.log(response)
+            } catch (error) {
+                console.log("An error occured:", error);
+            }
+            window.location.reload();
         },
         logout() {
             this.counter.$state.showUnavailable = false
@@ -243,7 +233,7 @@ export default defineComponent({
         },
         async getReturnStatus() {
         try {
-            const fetchPass = 'http://100.101.65.56:8000/get_status/125'
+            const fetchPass = 'http://localhost:8000/get_status/125'
             const fetchFunction = await fetch(fetchPass, {
                 method: 'get',
                 mode: 'cors',
@@ -252,14 +242,14 @@ export default defineComponent({
                 }
             })
             const response = await fetchFunction.json()
-            console.log(response.message)
+            console.log("222",response)
             
 
             console.log(this.counter.$state.email)
-            const status = response.message[0]
-            const getEmail = response.message[1]
+            const status = response.isAvailable
+            const getEmail = response.userEmail
 
-            console.log(status, getEmail)
+            console.log("233",status, getEmail)
 
             if (this.counter.$state.email === getEmail) {
                 if (status === "TRUE") {
@@ -271,14 +261,12 @@ export default defineComponent({
                 this.counter.$state.returnPass = false
             }
 
-            console.log(this.counter.$state.returnPass)
-
         } catch (error) {
             console.log(error)
         }
     },
     isDisabled() {
-        while(this.counter.buttonTimer !== 0) {
+        while(this.buttonTimer !== 0) {
             return true
         }
      },
@@ -309,6 +297,7 @@ export default defineComponent({
      }
      },
     },
+
 )
 
 </script>
@@ -322,6 +311,14 @@ ion-card {
   align-items: center;
   padding: 2rem;
   text-align: center;
+}
+
+ion-card-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.25rem;
 }
 
 ion-button {
@@ -343,10 +340,10 @@ ion-card-subtitle {
 ion-card > .card-icon {
     width: 128px;
 }
+
 .round-button {
-    margin-top: 3rem;
     width: 16rem;
-    height: 6rem;
+    height: 5rem;
     font-size: 1.6rem;
     font-weight: 600;
 }
