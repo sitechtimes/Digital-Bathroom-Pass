@@ -3,11 +3,11 @@
         <ion-content color="dark" id="main-container">
             <ion-card>
                 <img class="card-icon" src="/assets/icon/seagull.png" alt="seagull">
-                <ion-card-title v-if="counter.$state.isSignedIn && counter.$state.showUnavailable">
+                <ion-card-title v-if="counter.isSignedIn && counter.showUnavailable">
                     The pass is not available
                 </ion-card-title>
                 <ion-card-content>
-                    <ion-button v-if="counter.$state.isSignedIn && !counter.$state.returnPass"
+                    <ion-button v-if="counter.isSignedIn && !counter.returnPass"
                         class="round-button"
                         id="takeout-button"
                         @click="takeOutPass"
@@ -18,7 +18,7 @@
                         <ion-ripple-effect></ion-ripple-effect>
                         Take Out Pass
                     </ion-button>
-                    <ion-button v-if="counter.$state.isSignedIn && counter.$state.returnPass"
+                    <ion-button v-if="counter.isSignedIn && counter.returnPass"
                         class="round-button"
                         id="takeout-button"
                         @click="takeOutPass"
@@ -31,7 +31,7 @@
                     <ion-button 
                         class="round-button" 
                         id="login-button" 
-                        v-if="!counter.$state.isSignedIn" @click="doLogIn" size="default" 
+                        v-if="!counter.isSignedIn" @click="doLogIn" size="default" 
                         shape="round">
                         Log In
                     </ion-button>
