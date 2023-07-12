@@ -48,13 +48,23 @@
                         Logout
                     </ion-button>
                 </ion-card-content>
+                <ion-modal :is-open="isOpen">
+                    <ion-header>
+                        <ion-toolbar>
+                            <ion-title>Confirmation</ion-title>
+                            <ion-buttons slot="end">
+                                <ion-button @click="setOpen(false)">Close</ion-button>
+                            </ion-buttons>
+                        </ion-toolbar>
+                    </ion-header>
+                </ion-modal>
             </ion-card>
         </ion-content>
     </ion-page>
 </template>
 
 <script lang="ts">
-import { IonPage, IonContent, IonCard, IonCardContent, IonCardTitle, IonButton, IonRippleEffect } from '@ionic/vue';
+import { IonPage, IonContent, IonCard, IonCardContent, IonCardTitle, IonButton, IonRippleEffect, IonButtons, IonToolbar, IonModal, IonHeader } from '@ionic/vue';
 import { defineComponent, onMounted } from 'vue';
 import { logoGoogle } from 'ionicons/icons'
 import { useRoomStore } from '../stores/counter'
@@ -73,7 +83,11 @@ export default defineComponent({
         IonCardTitle,
         IonContent,
         IonButton,
-        IonRippleEffect
+        IonRippleEffect,
+        IonButtons,
+        IonToolbar,
+        IonModal,
+        IonHeader
     },
     data() {
         return {
@@ -88,7 +102,8 @@ export default defineComponent({
             buttonText: "Take Out Pass",
             roomNumber: "",
             buttonTimer: 0,
-            buttonDisabled: false
+            buttonDisabled: false,
+            isOpen: false
         }
     },
     mounted() {
@@ -173,6 +188,7 @@ export default defineComponent({
             const changeToFalse = changePass + "125" + "/false/" + information
             const changeToTrue = changePass + "125" + "/true/" + information
             const fetchPass = 'http://100.101.65.56:8000/get_status/125'
+
             const fetchFunction = await fetch(fetchPass, {
                 method: 'get',
                 mode: 'cors',
@@ -188,9 +204,11 @@ export default defineComponent({
             }).catch((error) => {
                 console.log('Error', error)
             }) 
+
             if(this.PassAvailability === "") {
             fetchFunction
         }
+
         if(this.PassAvailability === "FALSE" && currentUser === this.lastUserName) {
             await fetch(changeToTrue).then(res=>res.json()).then((response) => {
                 console.log({response})}).catch((error) => {
@@ -204,15 +222,14 @@ export default defineComponent({
             })
             fetchFunction
         } else {
-            // console.log("before change", this.showUnavailable)
-            // this.showUnavailable = true
             this.counter.$state.showUnavailable = true
-            // console.log("after change", this.showUnavailable)
         }
+      /*   if(this.counter.returnPass = true) {
+            this.setOpen(true)
+        } */
         this.startButtonCooldown()
         window.location.reload()
-     },
-  
+        },
         logout() {
             this.counter.$state.showUnavailable = false
             this.counter.$state.isSignedIn = false
@@ -284,6 +301,9 @@ export default defineComponent({
         } catch {
             console.log("error")
         }
+     },
+     setOpen(isOpen: boolean) {
+        this.isOpen = isOpen
      }
      },
     },
