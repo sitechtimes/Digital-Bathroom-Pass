@@ -112,7 +112,6 @@ export default defineComponent({
     mounted() {
         this.getReturnStatus()
         this.isDisabledonLoad()
-        console.log(this.counter.$state.isSignedIn)
     },  
     setup() {
         const counter = useRoomStore()
@@ -266,17 +265,13 @@ export default defineComponent({
         }
     },
     isDisabled() {
-        while(this.buttonTimer !== 0) {
+        while(this.counter.buttonTimer !== 0) {
             return true
         }
      },
      startButtonCooldown() {
         try {
-            console.log(this.counter.buttonTimer)
             this.counter.buttonTimer = 1
-            setTimeout(() => {
-                this.counter.buttonTimer = 0
-            }, 2000)
         } catch {
             console.log("error")
         }
