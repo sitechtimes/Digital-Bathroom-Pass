@@ -101,10 +101,7 @@ export default defineComponent({
     data() {
         return {
             userToken: "",
-            // isSignedIn: false,
             PassAvailability: "",
-            // showUnavailable: false,
-            // passRequirements: "",
             currentUserName: "",
             lastUserName: "",
             allowTakePass: true,
