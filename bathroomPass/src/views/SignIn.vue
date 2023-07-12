@@ -14,6 +14,7 @@
                         @click="takeOutPass"
                         size="default"
                         shape="round"
+                        :disabled="isDisabled()"
                     >
                         <ion-ripple-effect></ion-ripple-effect>
                         Take Out Pass
@@ -195,7 +196,6 @@ export default defineComponent({
             }
             if(this.PassAvailability === "") {
                 const info = await fetchInfo()
-                console.log("178",info)
                 // getting the last user's email to compare with the current user
                 this.lastUserName = info.userEmail
                 this.PassAvailability = info.isAvailable;
@@ -221,7 +221,18 @@ export default defineComponent({
             } catch (error) {
                 console.log("An error occured:", error);
             }
+            let returnOpen = this.counter.returnPass
+            if(returnOpen == true) {
+                this.setOpen(true)
+                setTimeout(() => {
+                    this.startButtonCooldown()
             window.location.reload();
+                })
+            }  else {
+                this.startButtonCooldown()
+            window.location.reload();
+            }
+        
         },
         logout() {
             this.counter.$state.showUnavailable = false
@@ -243,14 +254,11 @@ export default defineComponent({
                 }
             })
             const response = await fetchFunction.json()
-            console.log("222",response)
-            
 
             console.log(this.counter.$state.email)
             const status = response.isAvailable
             const getEmail = response.userEmail
 
-            console.log("233",status, getEmail)
 
             if (this.counter.$state.email === getEmail) {
                 if (status === "TRUE") {
@@ -267,17 +275,13 @@ export default defineComponent({
         }
     },
     isDisabled() {
-        while(this.buttonTimer !== 0) {
+        while(this.counter.buttonTimer != 0) {
             return true
         }
      },
      startButtonCooldown() {
         try {
-            console.log(this.counter.buttonTimer)
             this.counter.buttonTimer = 1
-            setTimeout(() => {
-                this.counter.buttonTimer = 0
-            }, 2000)
         } catch {
             console.log("error")
         }
