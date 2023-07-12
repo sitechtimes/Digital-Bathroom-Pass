@@ -22,7 +22,7 @@
                     <ion-button v-else
                         class="round-button"
                         id="takeout-button"
-                        @click="takeOutPass"
+                        @click="setOpen(true)"
                         size="default"
                         shape="round"
                         :disabled="isDisabled()"
@@ -53,16 +53,23 @@
                 :backdrop-dismiss="false"
                 >
                     <ion-title>Confirmation</ion-title>
-                            <ion-button 
-                            class="small-round-button" 
-                            id="modal-button" 
-                            @click="setOpen(false)"
-                            size="small"
-                            shape="round">
-                            Close
-                            </ion-button>
+                        <ion-button
+                        class="small-round-button"
+                        id="modal-no-button"
+                        @click="takeOutPass"
+                        size="small"
+                        shape="round">
+                        Yes
+                        </ion-button>
+                        <ion-button 
+                        class="small-round-button" 
+                        id="modal-yes-button" 
+                        @click="setOpen(false)"
+                        size="small"
+                        shape="round">
+                        No
+                        </ion-button>
                 </ion-modal> 
-                    <ion-button @click="setOpen(true)"></ion-button>
             </ion-card>
         </ion-content>
     </ion-page>
@@ -145,8 +152,8 @@ export default defineComponent({
             const headers = {
                 "user_agent": `${token}`
             }
-            axios.post("http://localhost:8000/token_sign_in/", token, { headers }).then(response => {
-                // console.log("131",response)
+            axios.post("http://100.101.65.70:8000/token_sign_in/", token, { headers }).then(response => {
+                console.log("131",response)
                 // this.counter.$state.response = response.data.message
                 // console.log(this.counter.$state.response)
                 // const splitStr = this.counter.$state.response
@@ -186,7 +193,7 @@ export default defineComponent({
             const email = this.counter.$state.email;
 
             async function fetchInfo() {
-                const response = await fetch(`http://localhost:8000/get_status/${roomId}`);
+                const response = await fetch(`http://100.101.65.70:8000/get_status/${roomId}`);
                 const content = await response.json();
                 console.log( content);
                 return content
@@ -211,7 +218,7 @@ export default defineComponent({
             }
             let changeTo = this.changeTo
             console.log("changeTo value", changeTo)
-            const apiUrl = `http://localhost:8000/change_status/?room_id=${roomId}&change_to=${changeTo}&first_name=${firstName}&last_name=${lastName}&email=${email}`
+            const apiUrl = `http://100.101.65.70:8000/change_status/?room_id=${roomId}&change_to=${changeTo}&first_name=${firstName}&last_name=${lastName}&email=${email}`
             console.log(apiUrl)
             try {
                 const response = await axios.get(apiUrl);
@@ -219,6 +226,8 @@ export default defineComponent({
             } catch (error) {
                 console.log("An error occured:", error);
             }
+            this.setOpen(false)
+            this.startButtonCooldown()
             window.location.reload();
         },
         logout() {
@@ -232,7 +241,7 @@ export default defineComponent({
         },
         async getReturnStatus() {
         try {
-            const fetchPass = 'http://localhost:8000/get_status/125'
+            const fetchPass = 'http://100.101.65.70:8000/get_status/125'
             const fetchFunction = await fetch(fetchPass, {
                 method: 'get',
                 mode: 'cors',
