@@ -24,6 +24,7 @@
                         @click="takeOutPass"
                         size="default"
                         shape="round"
+                        :disabled="isDisabled()"
                     >
                         <ion-ripple-effect></ion-ripple-effect>
                         Return Pass
@@ -45,17 +46,24 @@
                         shape="round">
                         Logout
                     </ion-button>
-                    <ion-button
-                    @click="startButtonCooldown">
-                    </ion-button>
                 </ion-card-content>
+                <ion-modal :is-open="isOpen">
+                    <ion-header>
+                        <ion-toolbar>
+                            <ion-title>Confirmation</ion-title>
+                            <ion-buttons slot="end">
+                                <ion-button @click="setOpen(false)">Close</ion-button>
+                            </ion-buttons>
+                        </ion-toolbar>
+                    </ion-header>
+                </ion-modal>
             </ion-card>
         </ion-content>
     </ion-page>
 </template>
 
 <script lang="ts">
-import { IonPage, IonContent, IonCard, IonCardContent, IonCardTitle, IonButton, IonRippleEffect } from '@ionic/vue';
+import { IonPage, IonContent, IonCard, IonCardContent, IonCardTitle, IonButton, IonRippleEffect, IonButtons, IonToolbar, IonModal, IonHeader } from '@ionic/vue';
 import { defineComponent, onMounted } from 'vue';
 import { logoGoogle } from 'ionicons/icons';
 import { useRoomStore } from '../stores/counter';
@@ -74,7 +82,11 @@ export default defineComponent({
         IonCardTitle,
         IonContent,
         IonButton,
-        IonRippleEffect
+        IonRippleEffect,
+        IonButtons,
+        IonToolbar,
+        IonModal,
+        IonHeader
     },
     data() {
         return {
@@ -91,10 +103,13 @@ export default defineComponent({
             buttonTimer: 0,
             buttonDisabled: false,
             changeTo: "",
+            isOpen: false
         }
     },
     mounted() {
         this.getReturnStatus()
+        this.isDisabledonLoad()
+        console.log(this.counter.$state.isSignedIn)
     },  
     setup() {
         const counter = useRoomStore()
@@ -123,6 +138,10 @@ export default defineComponent({
     },
 
     methods: {
+        logStates() {
+            console.log(this.counter.$state.isSignedIn, this.counter.$state.showUnavailable, this.counter.$state.email, this.counter.$state.firstName, this.counter.$state.familyName)
+            this.buttonTimer = 10000
+        },
         AuthenticateToken() {
             const token = JSON.stringify(this.counter.$state.idToken)
             const headers = {
@@ -150,7 +169,7 @@ export default defineComponent({
             if(changeCondition !== ""){
                this.counter.$state.isSignedIn = true 
             } else {
-                console.log("err")
+                console.log("There was an error or user cancelled log in")
             }
         },
         logIdToken() {
@@ -247,19 +266,35 @@ export default defineComponent({
             console.log(error)
         }
     },
-    disableButton() {
+    isDisabled() {
         while(this.buttonTimer !== 0) {
             return true
         }
      },
      startButtonCooldown() {
-        this.buttonTimer = 100
-        for(let i = 0; i < this.buttonTimer; i++) {
-            while(this.buttonTimer !== 0) {
-                this.buttonTimer = this.buttonTimer - 1
-                console.log(this.buttonTimer)
-            }
+        try {
+            console.log(this.counter.buttonTimer)
+            this.counter.buttonTimer = 1
+            setTimeout(() => {
+                this.counter.buttonTimer = 0
+            }, 2000)
+        } catch {
+            console.log("error")
         }
+     },
+     isDisabledonLoad() {
+        try {
+            if(this.counter.buttonTimer !== 0 ) {
+                setTimeout(() => {
+                    this.counter.buttonTimer = 0
+                }, 5000)
+            }
+        } catch {
+            console.log("error")
+        }
+     },
+     setOpen(isOpen: boolean) {
+        this.isOpen = isOpen
      }
      },
     },
