@@ -48,23 +48,28 @@
                         Logout
                     </ion-button>
                 </ion-card-content>
-                <ion-modal :is-open="isOpen">
-                    <ion-header>
-                        <ion-toolbar>
-                            <ion-title>Confirmation</ion-title>
-                            <ion-buttons slot="end">
-                                <ion-button @click="setOpen(false)">Close</ion-button>
-                            </ion-buttons>
-                        </ion-toolbar>
-                    </ion-header>
-                </ion-modal>
+                <ion-modal 
+                :is-open="isOpen"
+                :backdrop-dismiss="false"
+                >
+                    <ion-title>Confirmation</ion-title>
+                            <ion-button 
+                            class="small-round-button" 
+                            id="modal-button" 
+                            @click="setOpen(false)"
+                            size="small"
+                            shape="round">
+                            Close
+                            </ion-button>
+                </ion-modal> 
+                    <ion-button @click="setOpen(true)"></ion-button>
             </ion-card>
         </ion-content>
     </ion-page>
 </template>
 
 <script lang="ts">
-import { IonPage, IonContent, IonCard, IonCardContent, IonCardTitle, IonButton, IonRippleEffect, IonButtons, IonToolbar, IonModal, IonHeader } from '@ionic/vue';
+import { IonPage, IonContent, IonCard, IonCardContent, IonCardTitle, IonButton, IonRippleEffect, IonModal } from '@ionic/vue';
 import { defineComponent, onMounted } from 'vue';
 import { logoGoogle } from 'ionicons/icons'
 import { useRoomStore } from '../stores/counter'
@@ -84,10 +89,7 @@ export default defineComponent({
         IonContent,
         IonButton,
         IonRippleEffect,
-        IonButtons,
-        IonToolbar,
-        IonModal,
-        IonHeader
+        IonModal
     },
     data() {
         return {
@@ -224,9 +226,9 @@ export default defineComponent({
         } else {
             this.counter.$state.showUnavailable = true
         }
-      /*   if(this.counter.returnPass = true) {
+        if(this.counter.returnPass == true) {
             this.setOpen(true)
-        } */
+        } 
         this.startButtonCooldown()
         window.location.reload()
         },
@@ -349,6 +351,13 @@ ion-card > .card-icon {
     font-weight: 600;
 }
 
+.small-round-button {
+    margin-top: 1rem;
+    width: 10rem;
+    height: 3rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
 .container-icon {
     height: 128px;
 }
