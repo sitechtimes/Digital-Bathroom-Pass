@@ -76,7 +76,7 @@
 </template>
 
 <script lang="ts">
-import { IonPage, IonContent, IonCard, IonCardContent, IonCardTitle, IonButton, IonRippleEffect, IonModal } from '@ionic/vue';
+import { IonPage, IonContent, IonCard, IonCardContent, IonCardTitle, IonButton, IonRippleEffect, IonModal, IonTitle } from '@ionic/vue';
 import { defineComponent, onMounted } from 'vue';
 import { logoGoogle } from 'ionicons/icons';
 import { useRoomStore } from '../stores/counter';
@@ -96,7 +96,8 @@ export default defineComponent({
         IonContent,
         IonButton,
         IonRippleEffect,
-        IonModal
+        IonModal, 
+        IonTitle
     },
     data() {
         return {
@@ -149,7 +150,7 @@ export default defineComponent({
             const headers = {
                 "user_agent": `${token}`
             }
-            axios.post("http://100.101.65.70:8000/token_sign_in/", token, { headers }).then(response => {
+            axios.post("http://100.101.65.72:8000/token_sign_in/", token, { headers }).then(response => {
                 console.log("131",response)
                 // this.counter.$state.response = response.data.message
                 // console.log(this.counter.$state.response)
@@ -190,7 +191,7 @@ export default defineComponent({
             const email = this.counter.$state.email;
 
             async function fetchInfo() {
-                const response = await fetch(`http://100.101.65.70:8000/get_status/${roomId}`);
+                const response = await fetch(`http://100.101.65.72:8000/get_status/${roomId}`);
                 const content = await response.json();
                 console.log( content);
                 return content
@@ -215,7 +216,7 @@ export default defineComponent({
             }
             let changeTo = this.changeTo
             console.log("changeTo value", changeTo)
-            const apiUrl = `http://100.101.65.70:8000/change_status/?room_id=${roomId}&change_to=${changeTo}&first_name=${firstName}&last_name=${lastName}&email=${email}`
+            const apiUrl = `http://100.101.65.72:8000/change_status/?room_id=${roomId}&change_to=${changeTo}&first_name=${firstName}&last_name=${lastName}&email=${email}`
             console.log(apiUrl)
             try {
                 const response = await axios.get(apiUrl);
@@ -238,7 +239,7 @@ export default defineComponent({
         },
         async getReturnStatus() {
         try {
-            const fetchPass = 'http://100.101.65.70:8000/get_status/125'
+            const fetchPass = 'http://100.101.65.72:8000/get_status/125'
             const fetchFunction = await fetch(fetchPass, {
                 method: 'get',
                 mode: 'cors',
@@ -339,7 +340,19 @@ ion-card-subtitle {
 }
 
 ion-card > .card-icon {
-    width: 128px;
+  width: 128px;
+}
+
+ion-modal {
+  --color: #fff;
+  --border-radius: 2rem;
+  --height: 35%;
+  padding: 2rem;
+  text-align: center;
+}
+
+modal-wrapper {
+    border-radius: 2rem;
 }
 
 .round-button {
@@ -356,8 +369,8 @@ ion-card > .card-icon {
     font-size: 1.2rem;
     font-weight: 600;
 }
+
 .container-icon {
     height: 128px;
 }
-
 </style>
