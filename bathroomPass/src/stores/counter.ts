@@ -12,6 +12,7 @@ export const useRoomStore = defineStore('counter', {
         roomid: 0,
         returnPass: false,
         buttonTimer: 0,
+        roomNumber: "",
      }),
     persist:
       {

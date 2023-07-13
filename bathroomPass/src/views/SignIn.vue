@@ -3,34 +3,7 @@
         <ion-content color="dark" id="main-container">
             <ion-card>
                 <img class="card-icon" src="/assets/icon/seagull.png" alt="seagull">
-                <ion-card-title v-if="counter.isSignedIn && counter.showUnavailable">
-                    The pass is not available
-                </ion-card-title>
                 <ion-card-content>
-                    <div v-if="counter.$state.isSignedIn" class="pass">
-                        <ion-button v-if="!counter.$state.returnPass"
-                        class="round-button"
-                        id="takeout-button"
-                        @click="takeOutPass"
-                        size="default"
-                        shape="round"
-                        :disabled="isDisabled()"
-                    >
-                        <ion-ripple-effect></ion-ripple-effect>
-                        Take Out Pass
-                    </ion-button>
-                    <ion-button v-else
-                        class="round-button"
-                        id="takeout-button"
-                        @click="takeOutPass"
-                        size="default"
-                        shape="round"
-                        :disabled="isDisabled()"
-                    >
-                        <ion-ripple-effect></ion-ripple-effect>
-                        Return Pass
-                    </ion-button>
-                    </div>
                     <ion-button 
                         class="round-button" 
                         id="login-button" 
@@ -48,28 +21,20 @@
                         Logout
                     </ion-button>
                 </ion-card-content>
-                <ion-modal :is-open="isOpen">
-                    <ion-header>
-                        <ion-toolbar>
-                            <ion-title>Confirmation</ion-title>
-                            <ion-buttons slot="end">
-                                <ion-button @click="setOpen(false)">Close</ion-button>
-                            </ion-buttons>
-                        </ion-toolbar>
-                    </ion-header>
-                </ion-modal>
             </ion-card>
         </ion-content>
     </ion-page>
 </template>
 
 <script lang="ts">
-import { IonPage, IonContent, IonCard, IonCardContent, IonCardTitle, IonButton, IonRippleEffect, IonButtons, IonToolbar, IonModal, IonHeader } from '@ionic/vue';
+import { IonPage, IonContent, IonCard, IonCardContent, IonButton } from '@ionic/vue';
 import { defineComponent, onMounted } from 'vue';
 import { logoGoogle } from 'ionicons/icons';
 import { useRoomStore } from '../stores/counter';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth'; //package for google login
 import axios from 'axios';
+import { useRouter } from 'vue-router';
+import router from '@/router';
 // to get on own port go into backend directory and in terminal paste
 // python -m uvicorn main:app --reload 
 // 10.94.168.231:8000 school port 
@@ -80,14 +45,14 @@ export default defineComponent({
         IonPage,
         IonCard,
         IonCardContent,
-        IonCardTitle,
+        // IonCardTitle,
         IonContent,
         IonButton,
-        IonRippleEffect,
-        IonButtons,
-        IonToolbar,
-        IonModal,
-        IonHeader
+        // IonRippleEffect,
+        // IonButtons,
+        // IonToolbar,
+        // IonModal,
+        // IonHeader
     },
     data() {
         return {
@@ -111,6 +76,7 @@ export default defineComponent({
         this.getReturnStatus()
         this.isDisabledonLoad()
         console.log(this.counter.$state.isSignedIn)
+        console.log("68 signin", this.counter.roomNumber)
     },  
     setup() {
         const counter = useRoomStore()
@@ -120,6 +86,7 @@ export default defineComponent({
                 scopes: ['profile', 'email'],
                 grantOfflineAccess: true,
             });
+            const router = useRouter()
         });
 
         const logIn = async () => {
@@ -127,6 +94,9 @@ export default defineComponent({
                 const response = await GoogleAuth.signIn()
                 const idToken = response.authentication.idToken
                 counter.$state.idToken = idToken
+
+                router.push(`/classroom/${counter.roomNumber}`)
+
                 /*  counter.$state.familyName = response.familyName
                  counter.$state.firstName = response.givenName
                  counter.$state.email = response.email */
