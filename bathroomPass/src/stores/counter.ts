@@ -12,11 +12,10 @@ export const useRoomStore = defineStore('counter', {
         returnPass: false,
         buttonTimer: 0
      }),
-    persist: 
-     {
-        //paths: ['firstName, familyName, emial, idToken, isSignedIn, showUnavailable'],
+    persist: false 
+    /*  {
         storage: sessionStorage
-    } 
+    } */ 
 })
 
 
