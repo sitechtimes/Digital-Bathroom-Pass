@@ -138,6 +138,7 @@ export default defineComponent({
   },
   setup() {
     const counter = useRoomStore();
+    
     onMounted(() => {
       GoogleAuth.initialize({
         clientId: process.env.VUE_APP_GOOGLE_CLIENT_ID,
@@ -151,10 +152,11 @@ export default defineComponent({
         counter.showUnavailable = false;
         console.log("2343353");
       }
-      counter.$state.roomNumber = router.params.id;
+
+      counter.roomNumber = router.params.id.toString();
       console.log(
         "ClassRoom.vue mounted",
-        router.params.id,
+        router.params,
         counter.roomNumber
       );
       // counter.showUnavailable = false
