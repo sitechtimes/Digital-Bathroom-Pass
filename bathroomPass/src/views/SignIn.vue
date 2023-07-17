@@ -110,7 +110,7 @@ export default defineComponent({
             roomNumber: "",
             buttonTimer: 0,
             buttonDisabled: false,
-            isOpen: false,
+            isOpen: true,
             changeTo: "",
         }
     },
