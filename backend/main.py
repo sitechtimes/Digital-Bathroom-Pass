@@ -105,8 +105,9 @@ def check_email_validity(email: str) -> bool:
 def authenticate_google(token: any):
     #Removing the double quotes in the token
     new_token = token.replace('"', "")
+    
     try:
-        id_info = id_token.verify_oauth2_token(new_token, requests.Request(), '712891238786-8aj99006i0o1jsecsg8ds9n0ff7ehtmq.apps.googleusercontent.com') 
+        id_info = id_token.verify_oauth2_token(new_token, requests.Request(), '970810655131-49b3ktgaaf0jdm7f8gqvsab9hm4ri5bj.apps.googleusercontent.com') 
         user_info = {
             "email": id_info["email"],
             "name": id_info["name"]

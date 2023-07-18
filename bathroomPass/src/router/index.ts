@@ -20,6 +20,12 @@ const routes: Array<RouteRecordRaw> = [
     component: SignIn,
     props: (route) => ({query: route.query.id}) 
   },
+  {
+    path: '/classroom/:id',
+    name: 'ClassRoom',
+    component: () => import('../views/ClassRoom.vue'),
+    // props: (route) => ({query: route.query.id}) 
+  },
 ]
 
 const router = createRouter({

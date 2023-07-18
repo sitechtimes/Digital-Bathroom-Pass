@@ -3,7 +3,39 @@
     <ion-content color="dark" id="main-container">
       <ion-card>
         <img class="card-icon" src="/assets/icon/seagull.png" alt="seagull" />
+        <ion-card-title v-if="counter.isSignedIn && counter.showUnavailable">
+          The pass is not available
+        </ion-card-title>
+        <ion-card-title v-if="counter.isSignedIn && counter.returnPass">
+          You have the pass for room {{ counter.roomNumber }}
+        </ion-card-title>
         <ion-card-content>
+          <div v-if="counter.$state.isSignedIn" class="pass">
+            <ion-button
+              v-if="!counter.$state.returnPass"
+              class="round-button"
+              id="takeout-button"
+              @click="takeOutPass"
+              size="default"
+              shape="round"
+              :disabled="isDisabled()"
+            >
+              <ion-ripple-effect></ion-ripple-effect>
+              Take Out Pass
+            </ion-button>
+            <ion-button
+              v-else
+              class="round-button"
+              id="takeout-button"
+              @click="takeOutPass"
+              size="default"
+              shape="round"
+              :disabled="isDisabled()"
+            >
+              <ion-ripple-effect></ion-ripple-effect>
+              Return Pass
+            </ion-button>
+          </div>
           <ion-button
             class="round-button"
             id="login-button"
@@ -25,6 +57,16 @@
             Logout
           </ion-button>
         </ion-card-content>
+        <ion-modal :is-open="isOpen">
+          <ion-header>
+            <ion-toolbar>
+              <ion-title>Confirmation</ion-title>
+              <ion-buttons slot="end">
+                <ion-button @click="setOpen(false)">Close</ion-button>
+              </ion-buttons>
+            </ion-toolbar>
+          </ion-header>
+        </ion-modal>
       </ion-card>
     </ion-content>
   </ion-page>
@@ -36,14 +78,20 @@ import {
   IonContent,
   IonCard,
   IonCardContent,
+  IonCardTitle,
   IonButton,
+  IonRippleEffect,
+  IonButtons,
+  IonToolbar,
+  IonModal,
+  IonHeader,
 } from "@ionic/vue";
 import { defineComponent, onMounted } from "vue";
 import { logoGoogle } from "ionicons/icons";
 import { useRoomStore } from "../stores/counter";
 import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth"; //package for google login
 import axios from "axios";
-import { useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import router from "@/router";
 // to get on own port go into backend directory and in terminal paste
 // python -m uvicorn main:app --reload
@@ -55,19 +103,22 @@ export default defineComponent({
     IonPage,
     IonCard,
     IonCardContent,
-    // IonCardTitle,
+    IonCardTitle,
     IonContent,
     IonButton,
-    // IonRippleEffect,
-    // IonButtons,
-    // IonToolbar,
-    // IonModal,
-    // IonHeader
+    IonRippleEffect,
+    IonButtons,
+    IonToolbar,
+    IonModal,
+    IonHeader,
   },
   data() {
     return {
       userToken: "",
+      // isSignedIn: false,
       PassAvailability: "",
+      // showUnavailable: false,
+      // passRequirements: "",
       currentUserName: "",
       lastUserName: "",
       allowTakePass: true,
@@ -83,17 +134,41 @@ export default defineComponent({
     this.getReturnStatus();
     this.isDisabledonLoad();
     console.log(this.counter.$state.isSignedIn);
-    console.log("68 signin", this.counter.roomNumber);
+
+    if (!this.counter.$state.isSignedIn) {
+      router.push("/signin");
+    }
   },
   setup() {
     const counter = useRoomStore();
+    
     onMounted(() => {
       GoogleAuth.initialize({
         clientId: process.env.VUE_APP_GOOGLE_CLIENT_ID,
         scopes: ["profile", "email"],
         grantOfflineAccess: true,
       });
-      const router = useRouter();
+
+      //
+      const router = useRoute();
+      if (counter.$state.roomNumber !== router.params.id) {
+        counter.showUnavailable = false;
+        console.log("2343353");
+      }
+
+      counter.roomNumber = router.params.id.toString();
+      console.log(
+        "ClassRoom.vue mounted",
+        router.params,
+        counter.roomNumber
+      );
+      // counter.showUnavailable = false
+      if (counter.$state.roomNumber !== router.params.id) {
+        counter.showUnavailable = false;
+        console.log("2343353");
+      }
+
+      console.log("139", counter.showUnavailable);
     });
 
     const logIn = async () => {
@@ -101,9 +176,6 @@ export default defineComponent({
         const response = await GoogleAuth.signIn();
         const idToken = response.authentication.idToken;
         counter.$state.idToken = idToken;
-
-        router.push(`/classroom/${counter.roomNumber}`);
-
         /*  counter.$state.familyName = response.familyName
                  counter.$state.firstName = response.givenName
                  counter.$state.email = response.email */
@@ -131,9 +203,9 @@ export default defineComponent({
         user_agent: `${token}`,
       };
       axios
-        .post("http://100.101.65.72:8000/token_sign_in/", token, { headers })
+        .post("http://localhost:8000/token_sign_in/", token, { headers })
         .then((response) => {
-          console.log("131", response);
+          // console.log("131",response)
           // this.counter.$state.response = response.data.message
           // console.log(this.counter.$state.response)
           // const splitStr = this.counter.$state.response
@@ -173,14 +245,15 @@ export default defineComponent({
         .then(this.ChangeToTrue);
     },
     async takeOutPass() {
-      const roomId = 125;
+      const roomId = this.counter.$state.roomNumber;
+      console.log("room id", roomId);
       const firstName = this.counter.$state.firstName;
       const lastName = this.counter.$state.familyName;
       const email = this.counter.$state.email;
 
       async function fetchInfo() {
         const response = await fetch(
-          `http://100.101.65.72:8000/get_status/${roomId}`
+          `http://localhost:8000/get_status/${roomId}`
         );
         const content = await response.json();
         console.log(content);
@@ -215,7 +288,7 @@ export default defineComponent({
       }
       let changeTo = this.changeTo;
       console.log("changeTo value", changeTo);
-      const apiUrl = `http://100.101.65.72:8000/change_status/?room_id=${roomId}&change_to=${changeTo}&first_name=${firstName}&last_name=${lastName}&email=${email}`;
+      const apiUrl = `http://localhost:8000/change_status/?room_id=${roomId}&change_to=${changeTo}&first_name=${firstName}&last_name=${lastName}&email=${email}`;
       console.log(apiUrl);
       try {
         const response = await axios.get(apiUrl);
@@ -243,10 +316,11 @@ export default defineComponent({
       this.counter.$state.firstName = "";
       this.counter.$state.email = "";
       this.counter.$state.response = "";
+      this.counter.roomNumber = "";
     },
     async getReturnStatus() {
       try {
-        const fetchPass = "http://localhost:8000/get_status/125";
+        const fetchPass = `http://localhost:8000/get_status/${this.counter.$state.roomNumber}`;
         const fetchFunction = await fetch(fetchPass, {
           method: "get",
           mode: "cors",
@@ -342,34 +416,14 @@ ion-card > .card-icon {
   width: 128px;
 }
 
-ion-modal {
-  --color: #fff;
-  --border-radius: 2rem;
-  --height: 35%;
-  padding: 2rem;
-  text-align: center;
-}
-
-modal-wrapper {
-  border-radius: 2rem;
-}
-
 .round-button {
   width: 16rem;
   height: 5rem;
   font-size: 1.6rem;
   font-weight: 600;
 }
-
-.small-round-button {
-  margin-top: 1rem;
-  width: 10rem;
-  height: 3rem;
-  font-size: 1.2rem;
-  font-weight: 600;
-}
-
-.container-icon {
-  height: 128px;
-}
 </style>
+
+
+
+
