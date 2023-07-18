@@ -12,10 +12,10 @@ export const useRoomStore = defineStore('counter', {
         returnPass: false,
         buttonTimer: 0
      }),
-    persist: false 
-    /*  {
+    persist:  
+     {
         storage: sessionStorage
-    } */ 
+    } 
 })
 
 
