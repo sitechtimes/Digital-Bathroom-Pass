@@ -1,31 +1,33 @@
 <template>
   <ion-page id="main">
     <ion-content color="dark" id="main-container">
-      <ion-card>
-        <img class="card-icon" src="/assets/icon/seagull.png" alt="seagull" />
-        <ion-card-content>
-          <ion-button
-            class="round-button"
-            id="login-button"
-            v-if="!counter.isSignedIn"
-            @click="doLogIn"
-            size="default"
-            shape="round"
-          >
-            Log In
-          </ion-button>
-          <ion-button
-            v-else
-            class="round-button"
-            id="logout-button"
-            @click="logout"
-            size="default"
-            shape="round"
-          >
-            Logout
-          </ion-button>
-        </ion-card-content>
-      </ion-card>
+      <div class="container-wrapper">
+        <ion-card>
+          <img class="card-icon" src="/assets/icon/seagull.png" alt="seagull" />
+          <ion-card-content>
+            <ion-button
+              class="round-button"
+              id="login-button"
+              v-if="!counter.isSignedIn"
+              @click="doLogIn"
+              size="default"
+              shape="round"
+            >
+              Log In
+            </ion-button>
+            <ion-button
+              v-else
+              class="round-button"
+              id="logout-button"
+              @click="logout"
+              size="default"
+              shape="round"
+            >
+              Logout
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      </div>
     </ion-content>
   </ion-page>
 </template>
@@ -80,9 +82,8 @@ export default defineComponent({
     };
   },
   mounted() {
-    this.getReturnStatus();
-    this.isDisabledonLoad();
-    console.log(this.counter.$state.isSignedIn);
+    /* this.getReturnStatus(); */
+    console.log(this.counter.isSignedIn);
     console.log("68 signin", this.counter.roomNumber);
   },
   setup() {
@@ -103,10 +104,6 @@ export default defineComponent({
         counter.$state.idToken = idToken;
 
         router.push(`/classroom/${counter.roomNumber}`);
-
-        /*  counter.$state.familyName = response.familyName
-                 counter.$state.firstName = response.givenName
-                 counter.$state.email = response.email */
       } catch (e) {
         console.log("error");
       }
@@ -115,36 +112,20 @@ export default defineComponent({
   },
 
   methods: {
-    logStates() {
-      console.log(
-        this.counter.$state.isSignedIn,
-        this.counter.$state.showUnavailable,
-        this.counter.$state.email,
-        this.counter.$state.firstName,
-        this.counter.$state.familyName
-      );
-      this.buttonTimer = 10000;
-    },
     AuthenticateToken() {
       const token = JSON.stringify(this.counter.$state.idToken);
       const headers = {
         user_agent: `${token}`,
       };
       axios
-        .post("http://100.101.65.72:8000/token_sign_in/", token, { headers })
+        .post("http://100.101.65.49:8000/token_sign_in/", token, { headers })
         .then((response) => {
           console.log("131", response);
-          // this.counter.$state.response = response.data.message
-          // console.log(this.counter.$state.response)
-          // const splitStr = this.counter.$state.response
-          // console.log("This is the split string:", splitStr)
           const nameArr = response.data.message.name.split(" ");
           console.log("This is the name array:", nameArr);
-          // const splitName = nameArr.split(" ")
           this.counter.$state.email = response.data.message.email;
           this.counter.$state.firstName = nameArr[0];
           this.counter.$state.familyName = nameArr[1];
-
           console.log(
             this.counter.email,
             this.counter.firstName,
@@ -156,13 +137,10 @@ export default defineComponent({
       // this.isSignedIn = true
       const changeCondition = this.counter.$state.idToken;
       if (changeCondition !== "") {
-        this.counter.$state.isSignedIn = true;
+        this.counter.isSignedIn = true;
       } else {
         console.log("There was an error or user cancelled log in");
       }
-    },
-    logIdToken() {
-      console.log(this.counter.idToken);
     },
     doLogIn() {
       this.logIn()
@@ -172,69 +150,6 @@ export default defineComponent({
         })
         .then(this.ChangeToTrue);
     },
-    async takeOutPass() {
-      const roomId = 125;
-      const firstName = this.counter.$state.firstName;
-      const lastName = this.counter.$state.familyName;
-      const email = this.counter.$state.email;
-
-      async function fetchInfo() {
-        const response = await fetch(
-          `http://100.101.65.72:8000/get_status/${roomId}`
-        );
-        const content = await response.json();
-        console.log(content);
-        return content;
-      }
-      if (this.PassAvailability === "") {
-        const info = await fetchInfo();
-        // getting the last user's email to compare with the current user
-        this.lastUserName = info.userEmail;
-        this.PassAvailability = info.isAvailable;
-
-        console.log(
-          "pass avail",
-          this.PassAvailability,
-          "current user",
-          this.counter.email,
-          "last user",
-          this.lastUserName
-        );
-        if (
-          this.PassAvailability === "FALSE" &&
-          this.counter.email === this.lastUserName
-        ) {
-          //checks if the pass is out, if it is then checks current email with last email to let them put it back in
-          this.changeTo = "TRUE";
-        } else if (this.PassAvailability === "TRUE" && this.counter.email) {
-          //checks if pass is in, if it is then if the user has email it lets them take it out
-          this.changeTo = "FALSE";
-        } else {
-          this.counter.showUnavailable = true;
-        }
-      }
-      let changeTo = this.changeTo;
-      console.log("changeTo value", changeTo);
-      const apiUrl = `http://100.101.65.72:8000/change_status/?room_id=${roomId}&change_to=${changeTo}&first_name=${firstName}&last_name=${lastName}&email=${email}`;
-      console.log(apiUrl);
-      try {
-        const response = await axios.get(apiUrl);
-        console.log(response);
-      } catch (error) {
-        console.log("An error occured:", error);
-      }
-      let returnOpen = this.counter.returnPass;
-      if (returnOpen == true) {
-        this.setOpen(true);
-        setTimeout(() => {
-          this.startButtonCooldown();
-          window.location.reload();
-        });
-      } else {
-        this.startButtonCooldown();
-        window.location.reload();
-      }
-    },
     logout() {
       this.counter.$state.showUnavailable = false;
       this.counter.$state.isSignedIn = false;
@@ -243,61 +158,6 @@ export default defineComponent({
       this.counter.$state.firstName = "";
       this.counter.$state.email = "";
       this.counter.$state.response = "";
-    },
-    async getReturnStatus() {
-      try {
-        const fetchPass = "http://localhost:8000/get_status/125";
-        const fetchFunction = await fetch(fetchPass, {
-          method: "get",
-          mode: "cors",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        const response = await fetchFunction.json();
-
-        console.log(this.counter.$state.email);
-        const status = response.isAvailable;
-        const getEmail = response.userEmail;
-
-        if (this.counter.$state.email === getEmail) {
-          if (status === "TRUE") {
-            this.counter.$state.returnPass = false;
-          } else {
-            this.counter.$state.returnPass = true;
-          }
-        } else {
-          this.counter.$state.returnPass = false;
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    isDisabled() {
-      while (this.counter.buttonTimer != 0) {
-        return true;
-      }
-    },
-    startButtonCooldown() {
-      try {
-        this.counter.buttonTimer = 1;
-      } catch {
-        console.log("error");
-      }
-    },
-    isDisabledonLoad() {
-      try {
-        if (this.counter.buttonTimer !== 0) {
-          setTimeout(() => {
-            this.counter.buttonTimer = 0;
-          }, 5000);
-        }
-      } catch {
-        console.log("error");
-      }
-    },
-    setOpen(isOpen: boolean) {
-      this.isOpen = isOpen;
     },
   },
 });
@@ -312,6 +172,7 @@ ion-card {
   align-items: center;
   padding: 2rem;
   text-align: center;
+  gap: 1.5rem;
 }
 
 ion-card-content {
@@ -342,18 +203,6 @@ ion-card > .card-icon {
   width: 128px;
 }
 
-ion-modal {
-  --color: #fff;
-  --border-radius: 2rem;
-  --height: 35%;
-  padding: 2rem;
-  text-align: center;
-}
-
-modal-wrapper {
-  border-radius: 2rem;
-}
-
 .round-button {
   width: 16rem;
   height: 5rem;
@@ -361,15 +210,10 @@ modal-wrapper {
   font-weight: 600;
 }
 
-.small-round-button {
-  margin-top: 1rem;
-  width: 10rem;
-  height: 3rem;
-  font-size: 1.2rem;
-  font-weight: 600;
-}
-
-.container-icon {
-  height: 128px;
+.container-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 13.6rem 0rem 0rem 0rem;
 }
 </style>
