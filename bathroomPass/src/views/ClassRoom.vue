@@ -317,6 +317,8 @@ export default defineComponent({
       this.counter.$state.email = "";
       this.counter.$state.response = "";
       this.counter.roomNumber = "";
+
+      this.$router.push("/signin")
     },
     async getReturnStatus() {
       try {
