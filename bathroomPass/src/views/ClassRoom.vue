@@ -6,6 +6,9 @@
         <ion-card-title v-if="counter.isSignedIn && counter.showUnavailable">
           The pass is not available
         </ion-card-title>
+        <ion-card-title v-if="counter.isSignedIn && counter.returnPass">
+          You have the pass for room {{ counter.roomNumber }}
+        </ion-card-title>
         <ion-card-content>
           <div v-if="counter.$state.isSignedIn" class="pass">
             <ion-button
