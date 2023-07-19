@@ -6,7 +6,6 @@
           <img class="card-icon" src="/assets/icon/seagull.png" alt="seagull" />
           <ion-card-title> SITHS Bathroom Scanner </ion-card-title>
           <ion-card-subtitle> "Pooping made easy" </ion-card-subtitle>
-          <!--        <img class="card-icon" src="/assets/icon/seagull.png" alt="seagull" /> -->
           <ion-card-content
             id="buttonText"
             shape="round"

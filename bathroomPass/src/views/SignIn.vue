@@ -3,8 +3,15 @@
     <ion-content color="dark" id="main-container">
       <div class="container-wrapper">
         <ion-card>
-          <img class="card-icon" src="/assets/icon/seagull.png" alt="seagull" />
           <ion-card-content>
+            <img
+              class="card-icon"
+              src="/assets/icon/seagull.png"
+              alt="seagull"
+            />
+            <ion-card-title> SITHS Bathroom Scanner </ion-card-title>
+            <ion-card-subtitle> "Pooping made easy" </ion-card-subtitle>
+            <ion-title v-if="counter.isSignedIn"> Room Not Detected </ion-title>
             <ion-button
               class="round-button"
               id="login-button"
@@ -140,6 +147,11 @@ export default defineComponent({
 </script>
 
 <style scoped>
+ion-title {
+  font-size: 1.75rem;
+  --color: #fff;
+}
+
 ion-card {
   --background: #3e4145;
   display: flex;
@@ -190,6 +202,6 @@ ion-card > .card-icon {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 13.6rem 0rem 0rem 0rem;
+  padding: 5rem 0rem 0rem 0rem;
 }
 </style>

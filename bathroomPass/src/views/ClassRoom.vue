@@ -1,4 +1,3 @@
-100.101.65.52
 <template>
   <ion-page id="main">
     <ion-content color="dark" id="main-container">
@@ -12,9 +11,9 @@
             You have the pass for room {{ counter.roomNumber }}
           </ion-card-title>
           <ion-card-content>
-            <div v-if="counter.$state.isSignedIn" class="pass">
+            <div v-if="counter.isSignedIn" class="pass">
               <ion-button
-                v-if="!counter.$state.returnPass"
+                v-if="!counter.returnPass && !counter.showUnavailable"
                 class="round-button"
                 id="takeout-button"
                 @click="takeOutPass"
@@ -26,7 +25,7 @@
                 Take Out Pass
               </ion-button>
               <ion-button
-                v-else
+                v-if="counter.returnPass && !counter.showUnavailable"
                 class="round-button"
                 id="takeout-button"
                 @click="setOpen(true)"
@@ -65,9 +64,10 @@
               <ion-button
                 class="small-round-button"
                 id="modal-no-button"
-                @click="takeOutPass"
+                @click="returnPass"
                 size="small"
                 shape="round"
+                :disabled="isDisabled()"
               >
                 Yes
               </ion-button>
@@ -106,10 +106,6 @@ import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth"; //package f
 import axios from "axios";
 import { useRoute } from "vue-router";
 import router from "@/router";
-// to get on own port go into backend directory and in terminal paste
-// python -m uvicorn main:app --reload
-// 10.94.168.231:8000 school port
-// 10.94.168.231:8001
 export default defineComponent({
   name: "SignIn",
   components: {
@@ -143,9 +139,8 @@ export default defineComponent({
   mounted() {
     this.getReturnStatus();
     this.isDisabledonLoad();
-    console.log(this.counter.$state.isSignedIn, "signed in??");
 
-    if (!this.counter.$state.isSignedIn) {
+    if (!this.counter.isSignedIn) {
       router.push("/signin");
     }
   },
@@ -324,7 +319,7 @@ export default defineComponent({
       this.counter.$state.response = "";
       this.counter.roomNumber = "";
 
-      this.$router.push("/signin")
+      this.$router.push("/signin");
     },
     async getReturnStatus() {
       try {
@@ -380,6 +375,11 @@ export default defineComponent({
     },
     setOpen(isOpen: boolean) {
       this.isOpen = isOpen;
+    },
+    returnPass() {
+      this.takeOutPass().then(() => {
+        this.counter.roomNumber == "";
+      });
     },
   },
 });
