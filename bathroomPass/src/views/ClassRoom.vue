@@ -1,73 +1,89 @@
+100.101.65.52
 <template>
   <ion-page id="main">
     <ion-content color="dark" id="main-container">
-      <ion-card>
-        <img class="card-icon" src="/assets/icon/seagull.png" alt="seagull" />
-        <ion-card-title v-if="counter.isSignedIn && counter.showUnavailable">
-          The pass is not available
-        </ion-card-title>
-        <ion-card-title v-if="counter.isSignedIn && counter.returnPass">
-          You have the pass for room {{ counter.roomNumber }}
-        </ion-card-title>
-        <ion-card-content>
-          <div v-if="counter.$state.isSignedIn" class="pass">
+      <div class="container-wrapper">
+        <ion-card>
+          <img class="card-icon" src="/assets/icon/seagull.png" alt="seagull" />
+          <ion-card-title v-if="counter.isSignedIn && counter.showUnavailable">
+            The pass is not available
+          </ion-card-title>
+          <ion-card-title v-if="counter.isSignedIn && counter.returnPass">
+            You have the pass for room {{ counter.roomNumber }}
+          </ion-card-title>
+          <ion-card-content>
+            <div v-if="counter.$state.isSignedIn" class="pass">
+              <ion-button
+                v-if="!counter.$state.returnPass"
+                class="round-button"
+                id="takeout-button"
+                @click="takeOutPass"
+                size="default"
+                shape="round"
+                :disabled="isDisabled()"
+              >
+                <ion-ripple-effect></ion-ripple-effect>
+                Take Out Pass
+              </ion-button>
+              <ion-button
+                v-else
+                class="round-button"
+                id="takeout-button"
+                @click="setOpen(true)"
+                size="default"
+                shape="round"
+                :disabled="isDisabled()"
+              >
+                <ion-ripple-effect></ion-ripple-effect>
+                Return Pass
+              </ion-button>
+            </div>
             <ion-button
-              v-if="!counter.$state.returnPass"
               class="round-button"
-              id="takeout-button"
-              @click="takeOutPass"
+              id="login-button"
+              v-if="!counter.isSignedIn"
+              @click="doLogIn"
               size="default"
               shape="round"
-              :disabled="isDisabled()"
             >
-              <ion-ripple-effect></ion-ripple-effect>
-              Take Out Pass
+              Log In
             </ion-button>
             <ion-button
               v-else
               class="round-button"
-              id="takeout-button"
-              @click="takeOutPass"
+              id="logout-button"
+              @click="logout"
               size="default"
               shape="round"
-              :disabled="isDisabled()"
             >
-              <ion-ripple-effect></ion-ripple-effect>
-              Return Pass
+              Logout
             </ion-button>
-          </div>
-          <ion-button
-            class="round-button"
-            id="login-button"
-            v-if="!counter.isSignedIn"
-            @click="doLogIn"
-            size="default"
-            shape="round"
-          >
-            Log In
-          </ion-button>
-          <ion-button
-            v-else
-            class="round-button"
-            id="logout-button"
-            @click="logout"
-            size="default"
-            shape="round"
-          >
-            Logout
-          </ion-button>
-        </ion-card-content>
-        <ion-modal :is-open="isOpen">
-          <ion-header>
-            <ion-toolbar>
+          </ion-card-content>
+          <ion-modal :is-open="isOpen" :backdrop-dismiss="false">
+            <div class="modal-container">
               <ion-title>Confirmation</ion-title>
-              <ion-buttons slot="end">
-                <ion-button @click="setOpen(false)">Close</ion-button>
-              </ion-buttons>
-            </ion-toolbar>
-          </ion-header>
-        </ion-modal>
-      </ion-card>
+              <ion-button
+                class="small-round-button"
+                id="modal-no-button"
+                @click="takeOutPass"
+                size="small"
+                shape="round"
+              >
+                Yes
+              </ion-button>
+              <ion-button
+                class="small-round-button"
+                id="modal-yes-button"
+                @click="setOpen(false)"
+                size="small"
+                shape="round"
+              >
+                No
+              </ion-button>
+            </div>
+          </ion-modal>
+        </ion-card>
+      </div>
     </ion-content>
   </ion-page>
 </template>
@@ -81,10 +97,7 @@ import {
   IonCardTitle,
   IonButton,
   IonRippleEffect,
-  IonButtons,
-  IonToolbar,
   IonModal,
-  IonHeader,
 } from "@ionic/vue";
 import { defineComponent, onMounted } from "vue";
 import { logoGoogle } from "ionicons/icons";
@@ -107,10 +120,7 @@ export default defineComponent({
     IonContent,
     IonButton,
     IonRippleEffect,
-    IonButtons,
-    IonToolbar,
     IonModal,
-    IonHeader,
   },
   data() {
     return {
@@ -133,7 +143,7 @@ export default defineComponent({
   mounted() {
     this.getReturnStatus();
     this.isDisabledonLoad();
-    console.log(this.counter.$state.isSignedIn);
+    console.log(this.counter.$state.isSignedIn, "signed in??");
 
     if (!this.counter.$state.isSignedIn) {
       router.push("/signin");
@@ -141,7 +151,7 @@ export default defineComponent({
   },
   setup() {
     const counter = useRoomStore();
-    
+
     onMounted(() => {
       GoogleAuth.initialize({
         clientId: process.env.VUE_APP_GOOGLE_CLIENT_ID,
@@ -157,11 +167,7 @@ export default defineComponent({
       }
 
       counter.roomNumber = router.params.id.toString();
-      console.log(
-        "ClassRoom.vue mounted",
-        router.params,
-        counter.roomNumber
-      );
+      console.log("ClassRoom.vue mounted", router.params, counter.roomNumber);
       // counter.showUnavailable = false
       if (counter.$state.roomNumber !== router.params.id) {
         counter.showUnavailable = false;
@@ -203,7 +209,7 @@ export default defineComponent({
         user_agent: `${token}`,
       };
       axios
-        .post("http://localhost:8000/token_sign_in/", token, { headers })
+        .post("http://100.101.65.52:8000/token_sign_in/", token, { headers })
         .then((response) => {
           // console.log("131",response)
           // this.counter.$state.response = response.data.message
@@ -253,7 +259,7 @@ export default defineComponent({
 
       async function fetchInfo() {
         const response = await fetch(
-          `http://localhost:8000/get_status/${roomId}`
+          `http://100.101.65.52:8000/get_status/${roomId}`
         );
         const content = await response.json();
         console.log(content);
@@ -288,7 +294,7 @@ export default defineComponent({
       }
       let changeTo = this.changeTo;
       console.log("changeTo value", changeTo);
-      const apiUrl = `http://localhost:8000/change_status/?room_id=${roomId}&change_to=${changeTo}&first_name=${firstName}&last_name=${lastName}&email=${email}`;
+      const apiUrl = `http://100.101.65.52:8000/change_status/?room_id=${roomId}&change_to=${changeTo}&first_name=${firstName}&last_name=${lastName}&email=${email}`;
       console.log(apiUrl);
       try {
         const response = await axios.get(apiUrl);
@@ -320,7 +326,7 @@ export default defineComponent({
     },
     async getReturnStatus() {
       try {
-        const fetchPass = `http://localhost:8000/get_status/${this.counter.$state.roomNumber}`;
+        const fetchPass = `http://100.101.65.52:8000/get_status/${this.counter.$state.roomNumber}`;
         const fetchFunction = await fetch(fetchPass, {
           method: "get",
           mode: "cors",
@@ -386,6 +392,7 @@ ion-card {
   align-items: center;
   padding: 2rem;
   text-align: center;
+  gap: 1.5rem;
 }
 
 ion-card-content {
@@ -416,14 +423,45 @@ ion-card > .card-icon {
   width: 128px;
 }
 
+ion-modal {
+  --color: #fff;
+  --border-radius: 2rem;
+  --height: 35%;
+  --backdrop-opacity: 60%;
+  padding: 2rem;
+  text-align: center;
+}
+
+modal-wrapper {
+  border-radius: 2rem;
+}
+
 .round-button {
   width: 16rem;
   height: 5rem;
   font-size: 1.6rem;
   font-weight: 600;
 }
+
+.container-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 9rem 0rem 0rem 0rem;
+}
+
+.small-round-button {
+  margin-top: 1rem;
+  width: 10rem;
+  height: 3rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+.modal-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3.4rem 0 0 0;
+}
 </style>
-
-
-
-

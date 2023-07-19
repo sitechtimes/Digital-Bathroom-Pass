@@ -15,16 +15,6 @@
             >
               Log In
             </ion-button>
-            <ion-button
-              v-else
-              class="round-button"
-              id="logout-button"
-              @click="logout"
-              size="default"
-              shape="round"
-            >
-              Logout
-            </ion-button>
           </ion-card-content>
         </ion-card>
       </div>
@@ -118,7 +108,7 @@ export default defineComponent({
         user_agent: `${token}`,
       };
       axios
-        .post("http://100.101.65.49:8000/token_sign_in/", token, { headers })
+        .post("http://100.101.65.52:8000/token_sign_in/", token, { headers })
         .then((response) => {
           console.log("131", response);
           const nameArr = response.data.message.name.split(" ");
@@ -134,30 +124,16 @@ export default defineComponent({
         });
     },
     ChangeToTrue() {
-      // this.isSignedIn = true
-      const changeCondition = this.counter.$state.idToken;
-      if (changeCondition !== "") {
-        this.counter.isSignedIn = true;
-      } else {
-        console.log("There was an error or user cancelled log in");
-      }
+      setTimeout(() => {
+        if (this.counter.idToken !== "" && this.counter.email !== "") {
+          this.counter.isSignedIn = true;
+        } else {
+          console.log("There was an error or user cancelled log in");
+        }
+      }, 500);
     },
     doLogIn() {
-      this.logIn()
-        .then(this.AuthenticateToken)
-        .then(() => {
-          // console.log(this.isSignedIn, this.showUnavailable)
-        })
-        .then(this.ChangeToTrue);
-    },
-    logout() {
-      this.counter.$state.showUnavailable = false;
-      this.counter.$state.isSignedIn = false;
-      this.counter.$state.idToken = "";
-      this.counter.$state.familyName = "";
-      this.counter.$state.firstName = "";
-      this.counter.$state.email = "";
-      this.counter.$state.response = "";
+      this.logIn().then(this.AuthenticateToken).then(this.ChangeToTrue);
     },
   },
 });
