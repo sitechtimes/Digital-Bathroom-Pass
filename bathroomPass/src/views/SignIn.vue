@@ -115,7 +115,7 @@ export default defineComponent({
         user_agent: `${token}`,
       };
       axios
-        .post("http://100.101.65.52:8000/token_sign_in/", token, { headers })
+        .post("http://localhost:8000/token_sign_in/", token, { headers })
         .then((response) => {
           console.log("131", response);
           const nameArr = response.data.message.name.split(" ");

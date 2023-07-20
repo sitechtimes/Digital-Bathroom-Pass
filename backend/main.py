@@ -1,8 +1,8 @@
-from fastapi import FastAPI, Header, Request
-from typing import Annotated
-from fastapi.middleware.cors import CORSMiddleware
 import gspread
 import datetime
+from typing import Annotated
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, Header, Request
 from google.oauth2 import id_token
 from google.auth.transport import requests
 
