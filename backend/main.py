@@ -1,10 +1,14 @@
 import gspread
 import datetime
+import os
+from dotenv import load_dotenv
 from typing import Annotated
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Header, Request
 from google.oauth2 import id_token
 from google.auth.transport import requests
+
+load_dotenv()
 
 google_account = gspread.service_account(filename="credentials.json")
 sheets = google_account.open("Bathroom Pass Testing")
@@ -107,7 +111,7 @@ def authenticate_google(token: any):
     new_token = token.replace('"', "")
     
     try:
-        id_info = id_token.verify_oauth2_token(new_token, requests.Request(), '970810655131-49b3ktgaaf0jdm7f8gqvsab9hm4ri5bj.apps.googleusercontent.com') 
+        id_info = id_token.verify_oauth2_token(new_token, requests.Request(), os.getenv('VUE_APP_GOOGLE_CLIENT_ID')) 
         user_info = {
             "email": id_info["email"],
             "name": id_info["name"]

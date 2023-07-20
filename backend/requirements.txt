@@ -142,3 +142,4 @@ websockets==10.3
 Werkzeug==2.2.2
 widgetsnbextension==4.0.3
 qrcode==7.4.2
+python-dotenv==1.0.0
