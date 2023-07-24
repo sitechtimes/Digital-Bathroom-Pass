@@ -1,10 +1,22 @@
 from fastapi import FastAPI, Header, Request
 from typing import Annotated
 from fastapi.middleware.cors import CORSMiddleware
+<<<<<<< Updated upstream
 import string
 import gspread
 import datetime
 
+=======
+from fastapi import FastAPI, Header, Request
+from google.oauth2 import id_token
+from google.auth.transport import requests
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+google_account = gspread.service_account(filename="credentials.json")
+sheets = google_account.open("Bathroom Pass Testing")
+>>>>>>> Stashed changes
 
 gc = gspread.service_account(filename='credentials.json')
 sh = gc.open("Bathroom Pass Testing")
@@ -97,10 +109,19 @@ def authenticateGoogle(token: any):
     if doubleQuotes in token:
         newString = token.replace(doubleQuotes, "")
     try:
+<<<<<<< Updated upstream
         # Specify the CLIENT_ID of the app that accesses the backend:
         idinfo = id_token.verify_oauth2_token(newString, requests.Request(), '712891238786-8aj99006i0o1jsecsg8ds9n0ff7ehtmq.apps.googleusercontent.com')
         information = [idinfo['email'], idinfo['name']]
         return (information)
+=======
+        id_info = id_token.verify_oauth2_token(new_token, requests.Request(), os.getenv("GOOGLE_OAUTH_CLIENT_ID")) 
+        user_info = {
+            "email": id_info["email"],
+            "name": id_info["name"]
+        }
+        return user_info
+>>>>>>> Stashed changes
     except ValueError:
         # Invalid token
         return ("Invalid Token")

@@ -50,6 +50,7 @@ import axios from 'axios';
 // 10.94.168.231:8000 school port 
 // 10.94.168.231:8001
 export default defineComponent({
+<<<<<<< Updated upstream
     name: "SignIn",
     components: {
         IonPage,
@@ -59,6 +60,88 @@ export default defineComponent({
         IonContent,
         IonButton,
         IonRippleEffect
+=======
+  name: "SignIn",
+  components: {
+    IonPage,
+    IonCard,
+    IonCardContent,
+    // IonCardTitle,
+    IonContent,
+    IonButton,
+    // IonRippleEffect,
+    // IonButtons,
+    // IonToolbar,
+    // IonModal,
+    // IonHeader
+  },
+  data() {
+    return {
+      userToken: "",
+      PassAvailability: "",
+      currentUserName: "",
+      lastUserName: "",
+      allowTakePass: true,
+      buttonText: "Take Out Pass",
+      roomNumber: "",
+      buttonTimer: 0,
+      buttonDisabled: false,
+      changeTo: "",
+      isOpen: false,
+    };
+  },
+  mounted() {
+    /* this.getReturnStatus(); */
+    console.log(this.counter.isSignedIn);
+    console.log("68 signin", this.counter.roomNumber);
+  },
+  setup() {
+    const counter = useRoomStore();
+    onMounted(() => {
+      GoogleAuth.initialize({
+        clientId: process.env.VUE_APP_GOOGLE_OAUTH_CLIENT_ID,
+        scopes: ["profile", "email"],
+        grantOfflineAccess: true,
+      });
+      const router = useRouter();
+    });
+
+    const logIn = async () => {
+      try {
+        const response = await GoogleAuth.signIn();
+        const idToken = response.authentication.idToken;
+        counter.$state.idToken = idToken;
+
+        router.push(`/classroom/${counter.roomNumber}`);
+      } catch (e) {
+        console.log("error");
+      }
+    };
+    return { logoGoogle, counter, logIn };
+  },
+
+  methods: {
+    AuthenticateToken() {
+      const token = JSON.stringify(this.counter.$state.idToken);
+      const headers = {
+        user_agent: `${token}`,
+      };
+      axios
+        .post("http://localhost:8000/token_sign_in/", token, { headers })
+        .then((response) => {
+          console.log("131", response);
+          const nameArr = response.data.message.name.split(" ");
+          console.log("This is the name array:", nameArr);
+          this.counter.$state.email = response.data.message.email;
+          this.counter.$state.firstName = nameArr[0];
+          this.counter.$state.familyName = nameArr[1];
+          console.log(
+            this.counter.email,
+            this.counter.firstName,
+            this.counter.familyName
+          );
+        });
+>>>>>>> Stashed changes
     },
     data() {
         return {
@@ -276,4 +359,18 @@ ion-card > .card-icon {
     font-weight: 600;
 }
 
+<<<<<<< Updated upstream
 </style>
+=======
+.container-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5rem 0rem 0rem 0rem;
+}
+
+.card-icon {
+  width: 60%;
+}
+</style>
+>>>>>>> Stashed changes
