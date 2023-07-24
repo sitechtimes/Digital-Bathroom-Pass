@@ -12,6 +12,7 @@ sh3 = google_account.open_by_key(os.getenv('BATHROOM_PASS_THIRD_FLOOR_KEY'))
 
 room_range=range(71)
 
+testsheet = shb.worksheet("Test")
 
 # room_worksheet = sh1.worksheet(str(100))
 # status_cell = room_worksheet.find('available')
@@ -25,3 +26,10 @@ room_range=range(71)
 # else:
 #     room_worksheet.update_cell(status_cell.row, status_cell.col, "unavailable")
 #     room_worksheet.update_cell(status_cell.row + 1, status_cell.col, "available")
+
+print(len(testsheet.col_values(1)))
+empty_row = len(testsheet.col_values(1)) + 1
+testsheet.update_cell( empty_row, '1', "asadsfjf")
+
+# worksheet.update_acell("A{}".format(next_row), "dfa")
+# worksheet.update_acell("{}".format(next_row), "dfa")

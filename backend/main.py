@@ -15,7 +15,12 @@ sheets = google_account.open("Bathroom Pass Testing")
 
 master_sheet = sheets.get_worksheet(0)
 allowed_email_sheet = sheets.get_worksheet(1)
+currently_out_sheet = sheets.get_worksheet(2)
 room_range = range(100, 231)
+
+# def next_available_row(worksheet): 
+#     str_list = list(filter(None, worksheet.col.values(1)))
+#     return str(len(str_list)+1)
 
 def get_room_status(room_number: int):
     cell = master_sheet.find(str(room_number))
@@ -57,6 +62,7 @@ def update_status(room_number: int, change_to: bool, first_name: str, last_name:
     is_available_value = master_sheet.cell(room_cell.row, room_cell.col + 1).value
     
     if is_available_value != current_status:
+
         print(f"Changing the availibility of room {room_number} from {is_available_value} to {change_to}")
         current_status = str(change_to).upper()
         current_time = datetime.datetime.now()
@@ -70,8 +76,10 @@ def update_status(room_number: int, change_to: bool, first_name: str, last_name:
         
         master_sheet.update_cells(cell_list)
         
+
     #    master_sheet.update(f"B{room_cell.row}:D{room_cell.row}", [change_to, full_name, email]) 
-        print("Updated master sheet")
+        print("Updated master sheet")    
+
         # Update the sheet of the corresponding room for the room log
         room_worksheet = sheets.worksheet(str(room_number))
         print(room_worksheet)
@@ -91,6 +99,16 @@ def update_status(room_number: int, change_to: bool, first_name: str, last_name:
     #    room_worksheet.update(f"A{status_cell.row}:E{status_cell.row}", [change_to, full_name, email, str(current_time), "unavailable"])
         room_worksheet.update_cell(status_cell.row + 1, status_cell.col, "available")
         
+        if change_to == False: 
+            next_row = len(currently_out_sheet.col_values(1)) + 1
+            print(next_row)
+            print(currently_out_sheet.get)
+            currently_out_sheet.update_cell(next_row, 1, full_name)
+            currently_out_sheet.update_cell(next_row, 2, email)
+            currently_out_sheet.update_cell(next_row, 3, current_time)
+            currently_out_sheet.update_cell(next_row, 4, str(room_number))
+
+            print("goes to emergency sheet")   
         return({
             "message": "Successfully updated bathroom pass log"
         })
@@ -111,7 +129,7 @@ def authenticate_google(token: any):
     new_token = token.replace('"', "")
     
     try:
-        id_info = id_token.verify_oauth2_token(new_token, requests.Request(), os.getenv('VUE_APP_GOOGLE_CLIENT_ID')) 
+        id_info = id_token.verify_oauth2_token(new_token, requests.Request(), os.getenv('VUE_APP_OAUTH_GOOGLE_CLIENT_ID')) 
         user_info = {
             "email": id_info["email"],
             "name": id_info["name"]

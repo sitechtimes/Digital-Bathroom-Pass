@@ -43,7 +43,6 @@ import { useRoomStore } from "../stores/counter";
 import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth"; //package for google login
 import axios from "axios";
 import { useRouter } from "vue-router";
-import router from "@/router";
 // to get on own port go into backend directory and in terminal paste
 // python -m uvicorn main:app --reload
 // 10.94.168.231:8000 school port
@@ -54,14 +53,8 @@ export default defineComponent({
     IonPage,
     IonCard,
     IonCardContent,
-    // IonCardTitle,
     IonContent,
     IonButton,
-    // IonRippleEffect,
-    // IonButtons,
-    // IonToolbar,
-    // IonModal,
-    // IonHeader
   },
   data() {
     return {
@@ -85,13 +78,13 @@ export default defineComponent({
   },
   setup() {
     const counter = useRoomStore();
+    const router = useRouter();
     onMounted(() => {
       GoogleAuth.initialize({
-        clientId: process.env.VUE_APP_GOOGLE_CLIENT_ID,
+        clientId: process.env.VUE_APP_GOOGLE_OAUTH_CLIENT_ID,
         scopes: ["profile", "email"],
         grantOfflineAccess: true,
       });
-      const router = useRouter();
     });
 
     const logIn = async () => {
@@ -105,7 +98,7 @@ export default defineComponent({
         console.log("error");
       }
     };
-    return { logoGoogle, counter, logIn };
+    return { logoGoogle, counter, logIn, router };
   },
 
   methods: {
@@ -115,7 +108,7 @@ export default defineComponent({
         user_agent: `${token}`,
       };
       axios
-        .post("http://localhost:8000/token_sign_in/", token, { headers })
+        .post("http://100.101.65.53:8000/token_sign_in/", token, { headers })
         .then((response) => {
           console.log("131", response);
           const nameArr = response.data.message.name.split(" ");
