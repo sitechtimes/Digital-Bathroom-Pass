@@ -17,9 +17,13 @@ floor1_sheets = google_account.open_by_key(os.getenv('BATHROOM_PASS_FIRST_FLOOR_
 floor2_sheets = google_account.open_by_key(os.getenv('BATHROOM_PASS_SECOND_FLOOR_KEY'))
 floor3_sheets = google_account.open_by_key(os.getenv('BATHROOM_PASS_THIRD_FLOOR_KEY'))
 
-master_sheet = main_sheets.get_worksheet(0)
+main_master_sheet = main_sheets.get_worksheet(0)
 allowed_email_sheet = main_sheets.get_worksheet(1)
 currently_out_sheet = main_sheets.get_worksheet(2)
+basement_master_sheet = basement_sheets.get_worksheet(0)
+floor1_master_sheet = floor1_sheets.get_worksheet(0)
+floor2_master_sheet = floor2_sheets.get_worksheet(0)
+floor3_master_sheet = floor3_sheets.get_worksheet(0)
 
 room_range = range(100, 231) #using for now
 
@@ -34,23 +38,23 @@ third_floor_range = range(300, 359)
 #     return str(len(str_list)+1)
 
 def get_room_status(room_number: int):
-    cell = master_sheet.find(str(room_number))
+    cell = main_master_sheet.find(str(room_number))
     print(f"Cell found at {cell.row}, {cell.col}")
-    is_available = master_sheet.cell(cell.row, cell.col + 1).value
-    user_email = master_sheet.cell(cell.row, cell.col + 3).value
+    is_available = main_master_sheet.cell(cell.row, cell.col + 1).value
+    user_email = main_master_sheet.cell(cell.row, cell.col + 3).value
     return {
         "isAvailable": is_available,
         "userEmail": user_email
     }
 
 def checkUserStatus(email: str) -> bool:
-    email_cell = master_sheet.find(email)
+    email_cell = main_master_sheet.find(email)
     if email_cell is None:
         print("This user has not taken out a bathroom pass")
         return True
     else:
         
-        pass_is_available = master_sheet.cell(email_cell.row, 2).value
+        pass_is_available = main_master_sheet.cell(email_cell.row, 2).value
         print(f"Pass is available: {pass_is_available}")
         if pass_is_available  == "FALSE":
             print("This user has already taken a bathroom pass")
@@ -59,8 +63,27 @@ def checkUserStatus(email: str) -> bool:
             print("This user didn't take out a pass yet")
             return True
 
-
 def update_status(room_number: int, change_to: bool, first_name: str, last_name: str, email: str):
+    # def update_masters(floor_master):
+    #     master_cell = floor_master.find(str(room_number))
+    #     floor_master.range(f"B{master_cell.row}:D{master_cell.row}")
+    #     print("updating floor masters")
+    def update_sheets(room_worksheet):
+            status_cell = room_worksheet.find('available')
+            print(f"Status cell for {room_number} found at {status_cell.row} {status_cell.col}")
+            # Adding the entry into the log, then move the status cell down one row
+            log_cells = room_worksheet.range(f"A{status_cell.row}:E{status_cell.row}")
+            test_log_values = [change_to, full_name, email, str(current_time), "unavailable"]
+            for i, value in enumerate(test_log_values):
+                log_cells[i].value = value
+
+            if status_cell.row == room_worksheet.row_count:
+                room_worksheet.add_rows(1)
+                room_worksheet.update_cells(log_cells)
+                room_worksheet.update_cell(status_cell.row + 1, status_cell.col, "available")
+            else:
+                room_worksheet.update_cells(log_cells)
+                room_worksheet.update_cell(status_cell.row + 1, status_cell.col, "available")
     if change_to == False:
         if checkUserStatus(email=email) == False:
             return({
@@ -69,8 +92,8 @@ def update_status(room_number: int, change_to: bool, first_name: str, last_name:
             })
     # Preventing user from changing to same boolean value for the room status
     current_status = str(change_to).upper()
-    room_cell = master_sheet.find(str(room_number))
-    is_available_value = master_sheet.cell(room_cell.row, room_cell.col + 1).value
+    room_cell = main_master_sheet.find(str(room_number))
+    is_available_value = main_master_sheet.cell(room_cell.row, room_cell.col + 1).value
     
     if is_available_value != current_status:
 
@@ -79,49 +102,49 @@ def update_status(room_number: int, change_to: bool, first_name: str, last_name:
         current_time = datetime.datetime.now()
         # Updating the values of the row associated with the room
         full_name = first_name + " " + last_name
-        cell_list = master_sheet.range(f"B{room_cell.row}:D{room_cell.row}")
+        cell_list = main_master_sheet.range(f"B{room_cell.row}:D{room_cell.row}")
         cell_values = [change_to, full_name, email]
         
         for i, value in enumerate(cell_values):
             cell_list[i].value = value
         
-        master_sheet.update_cells(cell_list)
+        main_master_sheet.update_cells(cell_list)
         
 
     #    master_sheet.update(f"B{room_cell.row}:D{room_cell.row}", [change_to, full_name, email]) 
         print("Updated master sheet")    
 
-        # Update the sheet of the corresponding room for the room log
+    #   Update the sheet of the corresponding room for the room log
         if room_number in basement_range:
-            room_test_worksheet = basement_sheets.worksheet(str(room_number))
-            print("this number is in basement range", room_test_worksheet)
+            room_worksheet = basement_sheets.worksheet(str(room_number))
+            update_sheets(room_worksheet)
         if room_number in first_floor_range:
-            room_test_worksheet = floor1_sheets.worksheet(str(room_number))
-            print("this number is in first floor range", room_test_worksheet)
+            room_worksheet = floor1_sheets.worksheet(str(room_number))
+            update_sheets(room_worksheet)
         if room_number in second_floor_range: 
-            room_test_worksheet = floor2_sheets.worksheet(str(room_number))
-            print("this number is in second floor range", room_test_worksheet)
+            room_worksheet = floor2_sheets.worksheet(str(room_number))
+            update_sheets(room_worksheet)
         if room_number in third_floor_range:
-            room_test_worksheet = floor3_sheets.worksheet(str(room_number))
-            print("this number is in third floor range", room_test_worksheet)
+            room_worksheet = floor3_sheets.worksheet(str(room_number))
+            update_sheets(room_worksheet)
         
-        room_worksheet = main_sheets.worksheet(str(room_number))
-        print(room_worksheet)
-        status_cell = room_worksheet.find('available')
-        print(status_cell)
-        print(f"Status cell for room {room_number} found at {status_cell.row} {status_cell.col}")
+    #     room_worksheet = main_sheets.worksheet(str(room_number))
+    #     print(room_worksheet)
+    #     status_cell = room_worksheet.find('available')
+    #     print(status_cell)
+    #     print(f"Status cell for room {room_number} found at {status_cell.row} {status_cell.col}")
 
-        # Adding the entry into the log, then move the status cell down one row
-        log_cells = room_worksheet.range(f"A{status_cell.row}:E{status_cell.row}")
-        log_values = [change_to, full_name, email, str(current_time), "unavailable"]
+    #     # Adding the entry into the log, then move the status cell down one row
+    #     log_cells = room_worksheet.range(f"A{status_cell.row}:E{status_cell.row}")
+    #     log_values = [change_to, full_name, email, str(current_time), "unavailable"]
         
-        for i, value in enumerate(log_values):
-            log_cells[i].value = value
+    #     for i, value in enumerate(log_values):
+    #         log_cells[i].value = value
         
-        room_worksheet.update_cells(log_cells)
-        print(status_cell.row)
-    #    room_worksheet.update(f"A{status_cell.row}:E{status_cell.row}", [change_to, full_name, email, str(current_time), "unavailable"])
-        room_worksheet.update_cell(status_cell.row + 1, status_cell.col, "available")
+    #     room_worksheet.update_cells(log_cells)
+    #     print(status_cell.row)
+    #     # room_worksheet.update(f"A{status_cell.row}:E{status_cell.row}", [change_to, full_name, email, str(current_time), "unavailable"])
+    #     room_worksheet.update_cell(status_cell.row + 1, status_cell.col, "available")
         
         if change_to == False: 
             next_row = len(currently_out_sheet.col_values(1)) + 1
@@ -184,7 +207,7 @@ async def read_item(room_id: int):
 
 @app.get("/change_status/")
 async def read_item(room_id: int, change_to: bool, first_name: str, last_name: str, email: str):
-    is_in_range = (100 < room_id < 232)
+    is_in_range =  (0 <= room_id < 359)
     if isinstance(change_to, bool) and is_in_range:
         is_valid_email = check_email_validity(email)
         if is_valid_email == True:

@@ -9,7 +9,6 @@ export const useRoomStore = defineStore('counter', {
         response: '',
         isSignedIn: false,
         showUnavailable: false,
-        roomid: 0,
         returnPass: false,
         buttonTimer: 0,
         roomNumber: "",
