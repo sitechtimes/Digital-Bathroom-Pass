@@ -37,7 +37,7 @@ import {
   IonRippleEffect,
 } from "@ionic/vue";
 import { defineComponent } from "vue";
-import { useRoomStore } from "../stores/counter";
+import { useRoomStore } from "../stores/room";
 
 export default defineComponent({
   name: "HomePage",
@@ -66,10 +66,7 @@ export default defineComponent({
     pushToScanner() {
       this.$router.push("/signin");
     },
-  },
-  created() {
-    //
-  },
+  }
 });
 </script>
 
@@ -111,5 +108,9 @@ ion-button {
   justify-content: center;
   align-items: center;
   padding: 5.6rem 0rem 0rem 0rem;
+}
+
+.card-icon {
+  width: 40%;
 }
 </style>

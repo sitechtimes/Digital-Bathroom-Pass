@@ -10,7 +10,7 @@ from google.auth.transport import requests
 
 load_dotenv()
 
-google_account = gspread.service_account(filename="sheets_credentials.json")
+google_account = gspread.service_account(filename="credentials.json")
 main_sheets = google_account.open_by_key(os.getenv('BATHROOM_PASS_MAIN_SHEET_KEY'))
 basement_sheets = google_account.open_by_key(os.getenv('BATHROOM_PASS_BASEMENT_KEY'))
 floor1_sheets = google_account.open_by_key(os.getenv('BATHROOM_PASS_FIRST_FLOOR_KEY'))
@@ -152,7 +152,7 @@ def authenticate_google(token: any):
     new_token = token.replace('"', "")
     
     try:
-        id_info = id_token.verify_oauth2_token(new_token, requests.Request(), os.getenv('VUE_APP_OAUTH_GOOGLE_CLIENT_ID')) 
+        id_info = id_token.verify_oauth2_token(new_token, requests.Request(), os.getenv('GOOGLE_OAUTH_CLIENT_ID')) 
         user_info = {
             "email": id_info["email"],
             "name": id_info["name"]

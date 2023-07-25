@@ -39,7 +39,7 @@ import {
 } from "@ionic/vue";
 import { defineComponent, onMounted } from "vue";
 import { logoGoogle } from "ionicons/icons";
-import { useRoomStore } from "../stores/counter";
+import { useRoomStore } from "../stores/room";
 import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth"; //package for google login
 import axios from "axios";
 import { useRouter } from "vue-router";
@@ -73,8 +73,8 @@ export default defineComponent({
   },
   mounted() {
     /* this.getReturnStatus(); */
-    console.log(this.counter.isSignedIn);
-    console.log("68 signin", this.counter.roomNumber);
+    console.log(`User is signed in: ${this.counter.isSignedIn}`);
+    console.log("Room Number", this.counter.roomNumber);
   },
   setup() {
     const counter = useRoomStore();
@@ -108,7 +108,7 @@ export default defineComponent({
         user_agent: `${token}`,
       };
       axios
-        .post("http://100.101.65.53:8000/token_sign_in/", token, { headers })
+        .post(`${process.env.VUE_APP_LOCALHOST_URL}/token_sign_in/`, token, { headers })
         .then((response) => {
           console.log("131", response);
           const nameArr = response.data.message.name.split(" ");
@@ -196,5 +196,9 @@ ion-card > .card-icon {
   justify-content: center;
   align-items: center;
   padding: 5rem 0rem 0rem 0rem;
+}
+
+.card-icon {
+  width: 40%;
 }
 </style>

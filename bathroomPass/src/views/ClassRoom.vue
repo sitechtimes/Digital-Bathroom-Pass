@@ -101,7 +101,7 @@ import {
 } from "@ionic/vue";
 import { defineComponent, onMounted } from "vue";
 import { logoGoogle } from "ionicons/icons";
-import { useRoomStore } from "../stores/counter";
+import { useRoomStore } from "../stores/room";
 import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth"; //package for google login
 import axios from "axios";
 import { useRoute } from "vue-router";
@@ -204,7 +204,7 @@ export default defineComponent({
         user_agent: `${token}`,
       };
       axios
-        .post("http://100.101.65.53:8000/token_sign_in/", token, { headers })
+        .post(`${process.env.VUE_APP_LOCALHOST_URL}/token_sign_in/`, token, { headers })
         .then((response) => {
           // console.log("131",response)
           // this.counter.$state.response = response.data.message
@@ -254,7 +254,7 @@ export default defineComponent({
 
       async function fetchInfo() {
         const response = await fetch(
-          `http://100.101.65.53:8000/get_status/${roomId}`
+          `${process.env.VUE_APP_LOCALHOST_URL}/get_status/${roomId}`
         );
         const content = await response.json();
         console.log(content);
@@ -289,7 +289,7 @@ export default defineComponent({
       }
       let changeTo = this.changeTo;
       console.log("changeTo value", changeTo);
-      const apiUrl = `http://100.101.65.53:8000/change_status/?room_id=${roomId}&change_to=${changeTo}&first_name=${firstName}&last_name=${lastName}&email=${email}`;
+      const apiUrl = `${process.env.VUE_APP_LOCALHOST_URL}/change_status/?room_id=${roomId}&change_to=${changeTo}&first_name=${firstName}&last_name=${lastName}&email=${email}`;
       console.log(apiUrl);
       try {
         const response = await axios.get(apiUrl);
@@ -323,7 +323,7 @@ export default defineComponent({
     },
     async getReturnStatus() {
       try {
-        const fetchPass = `http://100.101.65.53:8000/get_status/${this.counter.$state.roomNumber}`;
+        const fetchPass = `${process.env.VUE_APP_LOCALHOST_URL}/get_status/${this.counter.$state.roomNumber}`;
         const fetchFunction = await fetch(fetchPass, {
           method: "get",
           mode: "cors",
