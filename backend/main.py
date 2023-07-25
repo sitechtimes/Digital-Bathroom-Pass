@@ -10,13 +10,24 @@ from google.auth.transport import requests
 
 load_dotenv()
 
-google_account = gspread.service_account(filename="credentials.json")
-sheets = google_account.open("Bathroom Pass Testing")
+google_account = gspread.service_account(filename="sheets_credentials.json")
+main_sheets = google_account.open_by_key(os.getenv('BATHROOM_PASS_MAIN_SHEET_KEY'))
+basement_sheets = google_account.open_by_key(os.getenv('BATHROOM_PASS_BASEMENT_KEY'))
+floor1_sheets = google_account.open_by_key(os.getenv('BATHROOM_PASS_FIRST_FLOOR_KEY'))
+floor2_sheets = google_account.open_by_key(os.getenv('BATHROOM_PASS_SECOND_FLOOR_KEY'))
+floor3_sheets = google_account.open_by_key(os.getenv('BATHROOM_PASS_THIRD_FLOOR_KEY'))
 
-master_sheet = sheets.get_worksheet(0)
-allowed_email_sheet = sheets.get_worksheet(1)
-currently_out_sheet = sheets.get_worksheet(2)
-room_range = range(100, 231)
+master_sheet = main_sheets.get_worksheet(0)
+allowed_email_sheet = main_sheets.get_worksheet(1)
+currently_out_sheet = main_sheets.get_worksheet(2)
+
+room_range = range(100, 231) #using for now
+
+# room ranges for all floors
+basement_range = range(0, 59)
+first_floor_range = range(100, 171)
+second_floor_range = range(200, 271)
+third_floor_range = range(300, 359)
 
 # def next_available_row(worksheet): 
 #     str_list = list(filter(None, worksheet.col.values(1)))
@@ -81,7 +92,20 @@ def update_status(room_number: int, change_to: bool, first_name: str, last_name:
         print("Updated master sheet")    
 
         # Update the sheet of the corresponding room for the room log
-        room_worksheet = sheets.worksheet(str(room_number))
+        if room_number in basement_range:
+            room_test_worksheet = basement_sheets.worksheet(str(room_number))
+            print("this number is in basement range", room_test_worksheet)
+        if room_number in first_floor_range:
+            room_test_worksheet = floor1_sheets.worksheet(str(room_number))
+            print("this number is in first floor range", room_test_worksheet)
+        if room_number in second_floor_range: 
+            room_test_worksheet = floor2_sheets.worksheet(str(room_number))
+            print("this number is in second floor range", room_test_worksheet)
+        if room_number in third_floor_range:
+            room_test_worksheet = floor3_sheets.worksheet(str(room_number))
+            print("this number is in third floor range", room_test_worksheet)
+        
+        room_worksheet = main_sheets.worksheet(str(room_number))
         print(room_worksheet)
         status_cell = room_worksheet.find('available')
         print(status_cell)
@@ -101,14 +125,13 @@ def update_status(room_number: int, change_to: bool, first_name: str, last_name:
         
         if change_to == False: 
             next_row = len(currently_out_sheet.col_values(1)) + 1
-            print(next_row)
-            print(currently_out_sheet.get)
             currently_out_sheet.update_cell(next_row, 1, full_name)
             currently_out_sheet.update_cell(next_row, 2, email)
-            currently_out_sheet.update_cell(next_row, 3, current_time)
-            currently_out_sheet.update_cell(next_row, 4, str(room_number))
-
-            print("goes to emergency sheet")   
+            currently_out_sheet.update_cell(next_row, 3, str(current_time))
+            currently_out_sheet.update_cell(next_row, 4, str(room_number)) 
+        else:
+            user_cell = currently_out_sheet.find(full_name)
+            currently_out_sheet.delete_row(user_cell.row)
         return({
             "message": "Successfully updated bathroom pass log"
         })
