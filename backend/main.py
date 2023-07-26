@@ -25,7 +25,7 @@ floor1_master_sheet = floor1_sheets.get_worksheet(0)
 floor2_master_sheet = floor2_sheets.get_worksheet(0)
 floor3_master_sheet = floor3_sheets.get_worksheet(0)
 
-room_range = range(100, 231) #using for now
+room_range = range(0, 359) #using for now
 
 # room ranges for all floors
 basement_range = range(0, 59)
@@ -206,7 +206,7 @@ class Item(BaseModel):
 
 @app.patch("/change_status/{room_id}")
 async def update_item(room_id: int, item: Item):
-    in_range = (0 <= room_id < 359)
+    in_range = (0 <= room_id <= 359)
     if isinstance(item.change_to, bool) and in_range:
         valid_email = check_email_validity(item.email)
         if(valid_email):

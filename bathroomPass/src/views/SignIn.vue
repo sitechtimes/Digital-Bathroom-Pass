@@ -1,6 +1,6 @@
 <template>
   <ion-page id="main">
-    <ion-content color="dark" id="main-container">
+    <ion-content color="dark" id="main">
       <div class="container-wrapper">
         <ion-card color="dark">
           <ion-card-content>
