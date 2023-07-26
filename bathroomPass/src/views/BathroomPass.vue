@@ -119,9 +119,9 @@ export default defineComponent({
               // last_name: roomStore.familyName,
               // email: roomStore.email
 
-              first_name: "Henry",
-              last_name: "Zheng",
-              email: "zhenghenry2@gmail.com",
+              first_name: roomStore.firstName,
+              last_name: roomStore.familyName,
+              email: roomStore.email,
             }
           );
           console.log(res);
@@ -151,9 +151,9 @@ export default defineComponent({
               `/change_status/${parseInt(roomStore.roomNumber)}`,
             {
               change_to: true,
-              first_name: "Henry",
-              last_name: "Zheng",
-              email: "zhenghenry2@gmail.com",
+              first_name: roomStore.firstName,
+              last_name: roomStore.familyName,
+              email: roomStore.email,
             }
           );
           console.log(res);
