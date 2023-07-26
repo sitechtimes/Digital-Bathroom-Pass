@@ -68,15 +68,26 @@ def update_status(room_number: int, change_to: bool, first_name: str, last_name:
     #     master_cell = floor_master.find(str(room_number))
     #     floor_master.range(f"B{master_cell.row}:D{master_cell.row}")
     #     print("updating floor masters")
-    def update_sheets(room_worksheet):
+    def update_sheets(room_worksheet, floor_master):
             status_cell = room_worksheet.find('available')
             print(f"Status cell for {room_number} found at {status_cell.row} {status_cell.col}")
             # Adding the entry into the log, then move the status cell down one row
             log_cells = room_worksheet.range(f"A{status_cell.row}:E{status_cell.row}")
-            test_log_values = [change_to, full_name, email, str(current_time), "unavailable"]
-            for i, value in enumerate(test_log_values):
+            log_values = [change_to, full_name, email, str(current_time), "unavailable"]
+            for i, value in enumerate(log_values):
                 log_cells[i].value = value
 
+            # updating the master sheets in each individual floor
+            floor_room_cell = floor_master.find(str(room_number))
+            master_cell_list = floor_master.range(f"B{floor_room_cell.row}:D{floor_room_cell.row}")
+            master_cell_values = [change_to, full_name, email]
+
+            for i, value in enumerate(master_cell_values):
+                master_cell_list[i].value = value
+
+            floor_master.update_cells(master_cell_list) 
+
+            # updating the individual cells in the individual sheets
             if status_cell.row == room_worksheet.row_count:
                 room_worksheet.add_rows(1)
                 room_worksheet.update_cells(log_cells)
@@ -117,34 +128,20 @@ def update_status(room_number: int, change_to: bool, first_name: str, last_name:
     #   Update the sheet of the corresponding room for the room log
         if room_number in basement_range:
             room_worksheet = basement_sheets.worksheet(str(room_number))
-            update_sheets(room_worksheet)
+            floor_master = basement_sheets.get_worksheet(0)
+            update_sheets(room_worksheet, floor_master)
         if room_number in first_floor_range:
             room_worksheet = floor1_sheets.worksheet(str(room_number))
-            update_sheets(room_worksheet)
+            floor_master = floor1_sheets.get_worksheet(0)
+            update_sheets(room_worksheet, floor_master)
         if room_number in second_floor_range: 
             room_worksheet = floor2_sheets.worksheet(str(room_number))
-            update_sheets(room_worksheet)
+            floor_master = floor2_sheets.get_worksheet(0)
+            update_sheets(room_worksheet, floor_master)
         if room_number in third_floor_range:
             room_worksheet = floor3_sheets.worksheet(str(room_number))
-            update_sheets(room_worksheet)
-        
-    #     room_worksheet = main_sheets.worksheet(str(room_number))
-    #     print(room_worksheet)
-    #     status_cell = room_worksheet.find('available')
-    #     print(status_cell)
-    #     print(f"Status cell for room {room_number} found at {status_cell.row} {status_cell.col}")
-
-    #     # Adding the entry into the log, then move the status cell down one row
-    #     log_cells = room_worksheet.range(f"A{status_cell.row}:E{status_cell.row}")
-    #     log_values = [change_to, full_name, email, str(current_time), "unavailable"]
-        
-    #     for i, value in enumerate(log_values):
-    #         log_cells[i].value = value
-        
-    #     room_worksheet.update_cells(log_cells)
-    #     print(status_cell.row)
-    #     # room_worksheet.update(f"A{status_cell.row}:E{status_cell.row}", [change_to, full_name, email, str(current_time), "unavailable"])
-    #     room_worksheet.update_cell(status_cell.row + 1, status_cell.col, "available")
+            floor_master = floor3_sheets.get_worksheet(0)
+            update_sheets(room_worksheet, floor_master)
         
         if change_to == False: 
             next_row = len(currently_out_sheet.col_values(1)) + 1
