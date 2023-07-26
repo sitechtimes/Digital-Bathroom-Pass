@@ -1,42 +1,44 @@
 <template>
     <ion-page id="main">
         <ion-content color="dark" class="main-container" :fullscreen="true">
-            <ion-card>
-                <ion-card-header>
-                    <img class="card-icon" src="/img/pass.gif" alt="seagulls">
-                    <ion-card-title>Bathroom Pass</ion-card-title>
-                    <ion-card-subtitle v-if="roomStore.roomNumber">Room {{ roomStore.roomNumber }}</ion-card-subtitle>
-                </ion-card-header>
-                <ion-card-content>
-                    <div v-if="roomStore.passAvailable">
-                        <ion-button @click="takeOutPass">
-                            <ion-ripple-effect></ion-ripple-effect>
-                            Take out pass
-                        </ion-button>
-                    </div>
-                    <div v-if="roomStore.hasPass">
-                        <p>You currently have the bathroom pass for this room.</p>
-                        <ion-button @click="returnPass">
-                            <ion-ripple-effect></ion-ripple-effect>
-                            Return pass
-                        </ion-button>
-                    </div>
-                    <div v-if="!roomStore.passAvailable && !roomStore.hasPass">
-                        <p>
-                            Someone in your class is currently out with the pass.
-                            <br>
-                            Please wait until they get back, or ask your teacher for permission to leave.
-                        </p>
-                    </div>
-
-                </ion-card-content>
-            </ion-card>
+            <div class="container-wrapper">
+                <ion-card>
+                    <ion-card-header>
+                        <img class="card-icon" src="/img/pass.gif" alt="seagulls">
+                        <ion-card-title>Bathroom Pass</ion-card-title>
+                        <ion-card-subtitle v-if="roomStore.roomNumber">Room {{ roomStore.roomNumber }}</ion-card-subtitle>
+                    </ion-card-header>
+                    <ion-card-content>
+                        <div v-if="roomStore.passAvailable">
+                            <ion-button @click="takeOutPass">
+                                <ion-ripple-effect></ion-ripple-effect>
+                                Take out pass
+                            </ion-button>
+                        </div>
+                        <div v-if="roomStore.hasPass">
+                            <p>You currently have the bathroom pass for this room.</p>
+                            <ion-button @click="returnPass">
+                                <ion-ripple-effect></ion-ripple-effect>
+                                Return pass
+                            </ion-button>
+                        </div>
+                        <div v-if="!roomStore.passAvailable && !roomStore.hasPass">
+                            <p>
+                                Someone in your class is currently out with the pass.
+                                <br>
+                                Please wait until they get back, or ask your teacher for permission to leave.
+                            </p>
+                        </div>
+    
+                    </ion-card-content>
+                </ion-card>
+            </div>
         </ion-content>
     </ion-page>
 </template>
 
 <script lang="ts">
-import { IonPage, IonContent, IonCard, IonCardContent, IonCardTitle, IonCardHeader, IonRippleEffect, IonButton, toastController, modalController, IonCardSubtitle } from '@ionic/vue';
+import { IonPage, IonContent, IonCard, IonCardContent, IonCardTitle, IonCardHeader, IonRippleEffect, IonButton, toastController, modalController, IonCardSubtitle, loadingController } from '@ionic/vue';
 import ReturnModal from '../components/Modal.vue';
 import { useRoomStore } from '@/stores/room';
 import { useRoute } from 'vue-router';
@@ -84,6 +86,11 @@ export default defineComponent({
             }
         },
         async takeOutPass() {
+            const loading = await loadingController.create({
+                message: 'Taking Pass, Please Wait...',
+                duration: 5000
+            })
+            loading.present();
             console.log("User attempting to take out the pass")
             const passIsAvailable = this.getPassStatus();
             if(!passIsAvailable) {
@@ -98,9 +105,9 @@ export default defineComponent({
                         // last_name: roomStore.familyName,
                         // email: roomStore.email
 
-                        first_name: 'Henry',
-                        last_name: 'Zheng',
-                        email: 'zhenghenry2@gmail.com'
+                        first_name: roomStore.firstName,
+                        last_name: roomStore.familyName,
+                        email: roomStore.email
                     })  
                     console.log(res);
                     const toast = await toastController.create({
@@ -125,13 +132,6 @@ export default defineComponent({
             }
             else {
                 try {
-                    const res = await axios.patch(process.env.VUE_APP_LOCALHOST_URL + `/change_status/${parseInt(roomStore.roomNumber)}`, {
-                        change_to: true,
-                        first_name: 'Henry',
-                        last_name: 'Zheng',
-                        email: 'zhenghenry2@gmail.com'
-                    })
-                    console.log(res)
                     const modal = await modalController.create({
                         component: ReturnModal
                     })
@@ -141,6 +141,13 @@ export default defineComponent({
                         console.log("User cancelled returning the bathroom pass.")
                         return
                     }
+                    const res = await axios.patch(process.env.VUE_APP_LOCALHOST_URL + `/change_status/${parseInt(roomStore.roomNumber)}`, {
+                        change_to: true,
+                        first_name: roomStore.firstName,
+                        last_name: roomStore.familyName,
+                        email: roomStore.email
+                    })
+                    console.log(res)
                     const toast = await toastController.create({
                         message: 'Bathroom Pass Returned! Thanks for using the SITHS Bathroom Pass app!',
                         duration: 3000,
@@ -180,7 +187,7 @@ ion-card {
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 0.5rem;
+    padding: 2rem;
 }
 
 ion-card-header {
@@ -189,6 +196,13 @@ ion-card-header {
     align-items: center;
     justify-content: center;
     gap: 1rem;
+}
+
+ion-card-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 ion-card-content > div {
@@ -200,8 +214,15 @@ ion-card-content > div {
 }
 
 .card-icon {
-    width: 90%;
+    width: 80%;
     border-radius: 0.3rem;
 }
 
+.container-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 6rem 0rem 0rem 0rem;
+    margin: auto;
+}
 </style>
