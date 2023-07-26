@@ -2,17 +2,15 @@
   <ion-page id="main">
     <ion-content color="dark" id="main-container">
       <div class="container-wrapper">
-        <ion-card>
+        <ion-card color="dark">
           <ion-card-content>
-            <img
-              class="card-icon"
-              src="/img/signin.png"
-              alt="seagull"
-            />
+            <img class="card-icon" src="/img/signin.png" alt="seagull" />
             <ion-card-header>
               <ion-card-title>SITHS Digital Bathroom Pass</ion-card-title>
               <ion-card-subtitle>"Pooping made easy"</ion-card-subtitle>
-              <ion-text v-if="roomStore.roomNumber === ''">Room Not Detected</ion-text>
+              <ion-text v-if="roomStore.roomNumber === ''"
+                >Room Not Detected</ion-text
+              >
             </ion-card-header>
             <ion-button
               class="round-button"
@@ -20,7 +18,7 @@
               v-if="!roomStore.isSignedIn"
               @click="doLogIn"
               shape="round"
-              >
+            >
               <ion-icon :icon="logoGoogle" slot="start"></ion-icon>
               Continue with Google
             </ion-button>
@@ -42,7 +40,7 @@ import {
   IonCardSubtitle,
   IonText,
   IonIcon,
-  IonCardHeader
+  IonCardHeader,
 } from "@ionic/vue";
 import { defineComponent } from "vue";
 import { logoGoogle } from "ionicons/icons";
@@ -68,7 +66,7 @@ export default defineComponent({
     IonCardSubtitle,
     IonText,
     IonIcon,
-    IonCardHeader
+    IonCardHeader,
   },
   setup() {
     const roomStore = useRoomStore();
@@ -76,8 +74,8 @@ export default defineComponent({
     return {
       roomStore,
       router,
-      logoGoogle
-    }
+      logoGoogle,
+    };
   },
   methods: {
     async login() {
@@ -86,8 +84,7 @@ export default defineComponent({
         const idToken = response.authentication.idToken;
         this.roomStore.idToken = idToken;
         this.router.push(`/pass/?room=${this.roomStore.roomNumber}`);
-      }
-      catch(error) {
+      } catch (error) {
         console.log("Error occurred when attempting to login");
         console.error(error);
       }
@@ -95,41 +92,47 @@ export default defineComponent({
     async authenticateToken() {
       const token = JSON.stringify(this.roomStore.idToken);
       const headers = {
-        user_agent: token
+        user_agent: token,
       };
-      const res = await axios.post(`${process.env.VUE_APP_LOCALHOST_URL}/token_sign_in/`, token, { headers })
+      const res = await axios.post(
+        `${process.env.VUE_APP_LOCALHOST_URL}/token_sign_in/`,
+        token,
+        { headers }
+      );
       const nameArr = res.data.message.name.split(" ");
       console.log(nameArr);
 
       this.roomStore.email = res.data.message.email;
-      this.roomStore.firstName = nameArr[0]
-      this.roomStore.familyName = nameArr[1]
+      this.roomStore.firstName = nameArr[0];
+      this.roomStore.familyName = nameArr[1];
 
-      console.log("Inserted data from Google into store.")
+      console.log("Inserted data from Google into store.");
     },
     changeToTrue() {
       setTimeout(() => {
-        if (this.roomStore.idToken.length === 0 && this.roomStore.email !== "") {
+        if (
+          this.roomStore.idToken.length === 0 &&
+          this.roomStore.email !== ""
+        ) {
           this.roomStore.isSignedIn = true;
+        } else {
+          console.log("There was an error or the user cancelled login.");
         }
-        else {
-          console.log("There was an error or the user cancelled login.")
-        }
-      })
+      });
     },
     async doLogIn() {
-      await this.login()
-      await this.authenticateToken()
-      this.changeToTrue()
-    }
+      await this.login();
+      await this.authenticateToken();
+      this.changeToTrue();
+    },
   },
   mounted() {
     GoogleAuth.initialize({
       clientId: process.env.VUE_APP_GOOGLE_OAUTH_CLIENT_ID,
-      scopes: ['profile', 'email'],
-      grantOfflineAccess: true
-    })
-  }
+      scopes: ["profile", "email"],
+      grantOfflineAccess: true,
+    });
+  },
 });
 </script>
 

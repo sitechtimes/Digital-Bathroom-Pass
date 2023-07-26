@@ -2,7 +2,7 @@
   <ion-page id="main">
     <ion-content color="dark" id="main-container" :fullscreen="true">
       <div class="container-wrapper">
-        <ion-card>
+        <ion-card color="dark">
           <img class="card-icon" src="/img/signin.png" alt="seagull" />
           <ion-card-title>SITHS Bathroom Scanner</ion-card-title>
           <ion-card-subtitle>Scan your classroom's QR code</ion-card-subtitle>
@@ -47,7 +47,7 @@ export default defineComponent({
     IonRippleEffect,
     IonCardSubtitle,
     IonButton,
-    IonCard
+    IonCard,
   },
   data() {
     return {
@@ -67,7 +67,7 @@ export default defineComponent({
     pushToScanner() {
       this.$router.push("/signin");
     },
-  }
+  },
 });
 </script>
 
@@ -90,6 +90,7 @@ ion-card {
   padding: 2rem;
   text-align: center;
   gap: 1.5rem;
+  color: #fff;
 }
 
 ion-button {
@@ -110,7 +111,6 @@ ion-button {
   align-items: center;
   padding: 6rem 0rem 0rem 0rem;
 }
-
 .card-icon {
   width: 40%;
 }
