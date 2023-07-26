@@ -82,7 +82,7 @@ export default defineComponent({
         const counter = useRoomStore()
         onMounted(() => {
             GoogleAuth.initialize({
-                clientId: process.env.VUE_APP_GOOGLE_CLIENT_ID,
+                clientId: process.env.VUE_APP_GOOGLE_OAUTH_CLIENT_ID,
                 scopes: ['profile', 'email'],
                 grantOfflineAccess: true,
             });

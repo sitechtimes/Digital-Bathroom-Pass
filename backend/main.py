@@ -107,7 +107,7 @@ def authenticate_google(token: any):
     new_token = token.replace('"', "")
     
     try:
-        id_info = id_token.verify_oauth2_token(new_token, requests.Request(), '970810655131-49b3ktgaaf0jdm7f8gqvsab9hm4ri5bj.apps.googleusercontent.com') 
+        id_info = id_token.verify_oauth2_token(new_token, requests.Request(), '98100725062-khqfp14kee3mk747g72eeeg0bdtbuola.apps.googleusercontent.com') 
         user_info = {
             "email": id_info["email"],
             "name": id_info["name"]
