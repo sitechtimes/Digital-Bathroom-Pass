@@ -43,12 +43,13 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  console.log(to.query.room)
   //add a check for the room numbers to make sure they're valid
   const roomStore = useRoomStore();
-  if(to.query.room) {
-    roomStore.roomNumber = '213'
-  } 
+  const roomNumber = to.query.room;
+  if(to.query.room && typeof roomNumber === 'string') {
+    roomStore.roomNumber = roomNumber
+    console.log(`Room number set to ${roomNumber}`)
+  }
   if(to.matched.some((record) => record.meta.requireLogin) && !roomStore.isSignedIn) {
     next('/signin')
   }

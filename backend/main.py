@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Header, Request
 from google.oauth2 import id_token
 from google.auth.transport import requests
-
+from pydantic import BaseModel
 load_dotenv()
 
 google_account = gspread.service_account(filename="credentials.json")
@@ -159,7 +159,7 @@ def authenticate_google(token: any):
         }
         return user_info
     except ValueError:
-        return "Invalid token provided"
+        return "Invalid token provided!"
 
 app = FastAPI()
 
@@ -182,26 +182,32 @@ async def read_item(room_id: int):
     data = get_room_status(room_id)
     return data
 
-@app.get("/change_status/")
-async def read_item(room_id: int, change_to: bool, first_name: str, last_name: str, email: str):
-    is_in_range = (100 < room_id < 232)
-    if isinstance(change_to, bool) and is_in_range:
-        is_valid_email = check_email_validity(email)
-        if is_valid_email == True:
-            print("Email is valid")
-            result = update_status(room_id, change_to, first_name, last_name, email)
+class Item(BaseModel):
+    change_to: bool
+    first_name: str
+    last_name: str
+    email: str
+
+@app.patch("/change_status/{room_id}")
+async def update_item(room_id: int, item: Item):
+    in_range = (100 < room_id < 232)
+    if isinstance(item.change_to, bool) and in_range:
+        valid_email = check_email_validity(item.email)
+        if(valid_email):
+            print(f"User has a valid email, attempting to update pass status for room {room_id}")
+            result = update_status(room_id, item.change_to, item.first_name, item.last_name, item.email)
             return result
         else:
             return {
-                "message": "The provided email address is invalid"
+                message: "The provided email address was invald. Please try again."
             }
     else:
         return {
-            "message": "Something went wrong. Invalid change_to parameter or room_id"
+            "message": "Something went wrong when changing pass status. Invalid change_to parameter or room_id."
         }
 
 @app.post("/token_sign_in")
-async def login(request:Request):
+async def login(request: Request):
     header = request.headers.get('user_agent')
     return {
         "message": authenticate_google(token=header)

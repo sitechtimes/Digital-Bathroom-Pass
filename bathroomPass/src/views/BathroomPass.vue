@@ -9,12 +9,19 @@
                 </ion-card-header>
                 <ion-card-content>
                     <div v-if="roomStore.passAvailable">
-                        <ion-button>
+                        <ion-button @click="takeOutPass">
                             <ion-ripple-effect></ion-ripple-effect>
                             Take out pass
                         </ion-button>
                     </div>
-                    <div v-if="!roomStore.passAvailable">
+                    <div v-if="roomStore.hasPass">
+                        <ion-button @click="returnPass">
+                            <ion-ripple-effect></ion-ripple-effect>
+                            Return pass
+                        </ion-button>
+                        <p>You currently have the bathroom pass for this room.</p>
+                    </div>
+                    <div v-if="!roomStore.passAvailable && !roomStore.hasPass">
                         <p>
                             Someone in your class is currently out with the pass.
                             <br>
@@ -29,7 +36,8 @@
 </template>
 
 <script lang="ts">
-import { IonPage, IonContent, IonCard } from '@ionic/vue';
+import { IonPage, IonContent, IonCard, IonCardContent, IonCardTitle, IonCardHeader, IonRippleEffect, IonButton, toastController, modalController } from '@ionic/vue';
+import ReturnModal from '../components/Modal.vue';
 import { useRoomStore } from '@/stores/room';
 import { useRoute } from 'vue-router';
 import { defineComponent } from 'vue';
@@ -43,7 +51,12 @@ export default defineComponent({
     components: {
         IonPage,
         IonContent,
-        IonCard
+        IonCard,
+        IonCardContent,
+        IonCardTitle,
+        IonCardHeader,
+        IonRippleEffect,
+        IonButton
     },
     data() {
         return {
@@ -70,18 +83,76 @@ export default defineComponent({
             }
         },
         async takeOutPass() {
-            console.log("Attempting to take out pass")
+            console.log("User attempting to take out the pass")
             const passIsAvailable = this.getPassStatus();
             if(!passIsAvailable) {
                 alert("The pass is currenty not available, please wait for someone to come back or ask your teacher to leave!")
             }
             else {
                 try {
-                    await axios.get(process.env.VUE_APP_LOCALHOST_URL + )
-                } catch(error) {    
+                    const res = await axios.patch(process.env.VUE_APP_LOCALHOST_URL + `/change_status/${parseInt(roomStore.roomNumber)}`, {
+                        //changing pass availability for the room to false
+                        change_to: false,
+                        // first_name: roomStore.firstName,
+                        // last_name: roomStore.familyName,
+                        // email: roomStore.email
+
+                        first_name: 'Henry',
+                        last_name: 'Zheng',
+                        email: 'zhenghenry2@gmail.com'
+                    })  
+                    console.log(res);
+                    const toast = await toastController.create({
+                        message: 'Bathroom Pass Taken!',
+                        duration: 3000,
+                        position: 'top'
+                    })
+                    await toast.present();
+                } catch(error) {   
+                    console.log("Error occurred when taking out the bathroom pass.");
                     console.error(error);
+                    return
                 }
+                roomStore.passAvailable = false;
                 roomStore.hasPass = true;
+            }
+        },
+        async returnPass() {
+            if(!roomStore.hasPass) {
+                console.log("You can't return the pass if you don't have it!")
+                return
+            }
+            else {
+                try {
+                    const res = await axios.patch(process.env.VUE_APP_LOCALHOST_URL + `/change_status/${parseInt(roomStore.roomNumber)}`, {
+                        change_to: true,
+                        first_name: 'Henry',
+                        last_name: 'Zheng',
+                        email: 'zhenghenry2@gmail.com'
+                    })
+                    console.log(res)
+                    const modal = await modalController.create({
+                        component: ReturnModal
+                    })
+                    await modal.present();
+                    const { data, role } = await modal.onWillDismiss();
+                    if (role !== 'confirm') {
+                        console.log("User cancelled returning the bathroom pass.")
+                        return
+                    }
+                    const toast = await toastController.create({
+                        message: 'Bathroom Pass Returned! Thanks for using the SITHS Bathroom Pass app!',
+                        duration: 3000,
+                        position: 'top'
+                    })
+                    await toast.present();
+                } catch (error) {
+                    console.log("Error occured when returning the bathroom pass.");
+                    console.error(error);
+                    return
+                }
+                roomStore.hasPass = false;
+                roomStore.passAvailable = true;
             }
         }
     },
