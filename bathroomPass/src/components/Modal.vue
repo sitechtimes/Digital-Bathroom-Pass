@@ -14,7 +14,7 @@
         <div class="modal-wrapper">
             <img class="modal-icon" src="/img/modal.png" alt="seagull">
             <ion-text>
-                <h3>Are you sure you want to return your bathroom pass?</h3>
+                Are you sure you want to return your bathroom pass?
             </ion-text>
                 <ion-button @click="confirm">
                     <ion-ripple-effect></ion-ripple-effect>
@@ -56,6 +56,10 @@ export default defineComponent({
 </script>
 
 <style scoped>
+ion-text {
+    font-size: 1.15rem;
+    padding: 0 4rem;
+}
 .modal-wrapper {
     margin-top: 15%;
     font-family: 'Open Sans', sans-serif;
@@ -65,10 +69,11 @@ export default defineComponent({
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
+    gap: 2rem;
+    text-align: center;
 }
 
 .modal-icon {
-    width: 25%;
+    width: 40%;
 }
 </style>

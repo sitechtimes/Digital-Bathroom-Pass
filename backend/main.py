@@ -207,7 +207,7 @@ async def update_item(room_id: int, item: Item):
         }
 
 @app.post("/token_sign_in")
-async def login(request: Request):
+async def google_login(request: Request):
     header = request.headers.get('user_agent')
     return {
         "message": authenticate_google(token=header)

@@ -3,23 +3,18 @@
     <ion-content color="dark" id="main-container" :fullscreen="true">
       <div class="container-wrapper">
         <ion-card>
-          <img class="card-icon" src="/assets/icon/seagull.png" alt="seagull" />
-          <ion-card-title> SITHS Bathroom Scanner </ion-card-title>
-          <ion-card-subtitle> "Pooping made easy" </ion-card-subtitle>
-          <ion-card-content
-            id="buttonText"
-            shape="round"
-            size="large"
-            @click="pushToScanner"
-          >
+          <img class="card-icon" src="/img/signin.png" alt="seagull" />
+          <ion-card-title>SITHS Bathroom Scanner</ion-card-title>
+          <ion-card-subtitle>Scan your classroom's QR code</ion-card-subtitle>
+          <ion-card-content>
             <ion-button
+              @click="pushToScanner"
               class="round-button"
               id="route-button"
               shape="round"
-              size="large"
             >
               <ion-ripple-effect></ion-ripple-effect>
-              Go to scanner
+              Go To Bathroom Pass
             </ion-button>
           </ion-card-content>
         </ion-card>
@@ -35,6 +30,9 @@ import {
   IonCardTitle,
   IonCardContent,
   IonRippleEffect,
+  IonCardSubtitle,
+  IonButton,
+  IonCard,
 } from "@ionic/vue";
 import { defineComponent } from "vue";
 import { useRoomStore } from "../stores/room";
@@ -47,6 +45,9 @@ export default defineComponent({
     IonCardContent,
     IonPage,
     IonRippleEffect,
+    IonCardSubtitle,
+    IonButton,
+    IonCard
   },
   data() {
     return {
@@ -73,15 +74,15 @@ export default defineComponent({
 <style scoped>
 ion-card-title {
   font-size: 1.75rem;
+  font-weight: 600;
   --color: #fff;
 }
 
 ion-card-subtitle {
-  font-size: 1.15rem;
+  font-size: 1rem;
 }
 
 ion-card {
-  --background: #3e4145;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -100,14 +101,14 @@ ion-button {
 .round-button {
   width: 16rem;
   height: 5rem;
-  font-size: 1.6rem;
+  font-size: 1rem;
   font-weight: 600;
 }
 .container-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 5.6rem 0rem 0rem 0rem;
+  padding: 6rem 0rem 0rem 0rem;
 }
 
 .card-icon {

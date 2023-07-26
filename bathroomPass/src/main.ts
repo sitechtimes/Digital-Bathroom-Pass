@@ -29,10 +29,12 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
+
 const app = createApp(App)
   .use(IonicVue)
   .use(router)
-app.use(pinia)
+  .use(pinia)
+
 router.isReady().then(() => {
   app.mount('#app');
 });

@@ -1,8 +1,7 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
-import HomePage from '../views/HomePage.vue';
-import SignIn from '../views/SignIn.vue';
 import { useRoomStore } from '@/stores/room';
+import HomePage from '../views/HomePage.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -18,13 +17,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/signin',
     name: 'SignIn',
-    component: SignIn,
-    props: (route) => ({query: route.query.id}) 
-  },
-  {
-    path: '/classroom/:id',
-    name: 'ClassRoom',
-    component: () => import('../views/ClassRoom.vue'),
+    component: () => import('../views/SignIn.vue'),
     // props: (route) => ({query: route.query.id}) 
   },
   {
@@ -32,7 +25,8 @@ const routes: Array<RouteRecordRaw> = [
     name: 'BathroomPass',
     component: () => import('../views/BathroomPass.vue'),
     meta: {
-      requireLogin: false
+      requireLogin: false,
+      requireRoom: true,
     }
   }
 ]
@@ -52,6 +46,10 @@ router.beforeEach((to, from, next) => {
   }
   if(to.matched.some((record) => record.meta.requireLogin) && !roomStore.isSignedIn) {
     next('/signin')
+  }
+  if(to.matched.some((record) => record.meta.requireRoom) && roomStore.roomNumber.length === 0) {
+    console.log('Room not detected')
+    next('/home')
   }
   else {
     next()

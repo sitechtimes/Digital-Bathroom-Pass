@@ -6,21 +6,23 @@
           <ion-card-content>
             <img
               class="card-icon"
-              src="/assets/icon/seagull.png"
+              src="/img/signin.png"
               alt="seagull"
             />
-            <ion-card-title> SITHS Bathroom Scanner </ion-card-title>
-            <ion-card-subtitle> "Pooping made easy" </ion-card-subtitle>
-            <ion-title v-if="counter.isSignedIn"> Room Not Detected </ion-title>
+            <ion-card-header>
+              <ion-card-title>SITHS Digital Bathroom Pass</ion-card-title>
+              <ion-card-subtitle>"Pooping made easy"</ion-card-subtitle>
+              <ion-text v-if="roomStore.roomNumber === ''">Room Not Detected</ion-text>
+            </ion-card-header>
             <ion-button
               class="round-button"
               id="login-button"
-              v-if="!counter.isSignedIn"
+              v-if="!roomStore.isSignedIn"
               @click="doLogIn"
-              size="default"
               shape="round"
-            >
-              Log In
+              >
+              <ion-icon :icon="logoGoogle" slot="start"></ion-icon>
+              Continue with Google
             </ion-button>
           </ion-card-content>
         </ion-card>
@@ -36,17 +38,24 @@ import {
   IonCard,
   IonCardContent,
   IonButton,
+  IonCardTitle,
+  IonCardSubtitle,
+  IonText,
+  IonIcon,
+  IonCardHeader
 } from "@ionic/vue";
-import { defineComponent, onMounted } from "vue";
+import { defineComponent } from "vue";
 import { logoGoogle } from "ionicons/icons";
-import { useRoomStore } from "../stores/room";
+import { useRoomStore } from "@/stores/room";
 import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth"; //package for google login
-import axios from "axios";
 import { useRouter } from "vue-router";
+import axios from "axios";
+
 // to get on own port go into backend directory and in terminal paste
 // python -m uvicorn main:app --reload
 // 10.94.168.231:8000 school port
 // 10.94.168.231:8001
+
 export default defineComponent({
   name: "SignIn",
   components: {
@@ -55,87 +64,72 @@ export default defineComponent({
     IonCardContent,
     IonContent,
     IonButton,
-  },
-  data() {
-    return {
-      userToken: "",
-      PassAvailability: "",
-      currentUserName: "",
-      lastUserName: "",
-      allowTakePass: true,
-      buttonText: "Take Out Pass",
-      roomNumber: "",
-      buttonTimer: 0,
-      buttonDisabled: false,
-      changeTo: "",
-      isOpen: false,
-    };
-  },
-  mounted() {
-    /* this.getReturnStatus(); */
-    console.log(`User is signed in: ${this.counter.isSignedIn}`);
-    console.log("Room Number", this.counter.roomNumber);
+    IonCardTitle,
+    IonCardSubtitle,
+    IonText,
+    IonIcon,
+    IonCardHeader
   },
   setup() {
-    const counter = useRoomStore();
+    const roomStore = useRoomStore();
     const router = useRouter();
-    onMounted(() => {
-      GoogleAuth.initialize({
-        clientId: process.env.VUE_APP_GOOGLE_OAUTH_CLIENT_ID,
-        scopes: ["profile", "email"],
-        grantOfflineAccess: true,
-      });
-    });
-
-    const logIn = async () => {
+    return {
+      roomStore,
+      router,
+      logoGoogle
+    }
+  },
+  methods: {
+    async login() {
       try {
         const response = await GoogleAuth.signIn();
         const idToken = response.authentication.idToken;
-        counter.$state.idToken = idToken;
-
-        router.push(`/classroom/${counter.roomNumber}`);
-      } catch (e) {
-        console.log("error");
+        this.roomStore.idToken = idToken;
+        this.router.push(`/pass/?room=${this.roomStore.roomNumber}`);
       }
-    };
-    return { logoGoogle, counter, logIn, router };
-  },
-
-  methods: {
-    AuthenticateToken() {
-      const token = JSON.stringify(this.counter.$state.idToken);
+      catch(error) {
+        console.log("Error occurred when attempting to login");
+        console.error(error);
+      }
+    },
+    async authenticateToken() {
+      const token = JSON.stringify(this.roomStore.idToken);
       const headers = {
-        user_agent: `${token}`,
+        user_agent: token
       };
-      axios
-        .post(`${process.env.VUE_APP_LOCALHOST_URL}/token_sign_in/`, token, { headers })
-        .then((response) => {
-          console.log("131", response);
-          const nameArr = response.data.message.name.split(" ");
-          console.log("This is the name array:", nameArr);
-          this.counter.$state.email = response.data.message.email;
-          this.counter.$state.firstName = nameArr[0];
-          this.counter.$state.familyName = nameArr[1];
-          console.log(
-            this.counter.email,
-            this.counter.firstName,
-            this.counter.familyName
-          );
-        });
+      const res = await axios.post(`${process.env.VUE_APP_LOCALHOST_URL}/token_sign_in/`, token, { headers })
+      const nameArr = res.data.message.name.split(" ");
+      console.log(nameArr);
+
+      this.roomStore.email = res.data.message.email;
+      this.roomStore.firstName = nameArr[0]
+      this.roomStore.familyName = nameArr[1]
+
+      console.log("Inserted data from Google into store.")
     },
-    ChangeToTrue() {
+    changeToTrue() {
       setTimeout(() => {
-        if (this.counter.idToken !== "" && this.counter.email !== "") {
-          this.counter.isSignedIn = true;
-        } else {
-          console.log("There was an error or user cancelled log in");
+        if (this.roomStore.idToken.length === 0 && this.roomStore.email !== "") {
+          this.roomStore.isSignedIn = true;
         }
-      }, 500);
+        else {
+          console.log("There was an error or the user cancelled login.")
+        }
+      })
     },
-    doLogIn() {
-      this.logIn().then(this.AuthenticateToken).then(this.ChangeToTrue);
-    },
+    async doLogIn() {
+      await this.login()
+      await this.authenticateToken()
+      this.changeToTrue()
+    }
   },
+  mounted() {
+    GoogleAuth.initialize({
+      clientId: process.env.VUE_APP_GOOGLE_OAUTH_CLIENT_ID,
+      scopes: ['profile', 'email'],
+      grantOfflineAccess: true
+    })
+  }
 });
 </script>
 
@@ -146,7 +140,6 @@ ion-title {
 }
 
 ion-card {
-  --background: #3e4145;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -174,6 +167,7 @@ ion-card-title {
   --color: #fff;
   font-size: 1.75rem;
   padding-top: 1rem;
+  font-weight: 600;
 }
 
 ion-card-subtitle {
@@ -187,7 +181,6 @@ ion-card > .card-icon {
 .round-button {
   width: 16rem;
   height: 5rem;
-  font-size: 1.6rem;
   font-weight: 600;
 }
 

@@ -3,9 +3,9 @@
         <ion-content color="dark" class="main-container" :fullscreen="true">
             <ion-card>
                 <ion-card-header>
-                    <img src="/img/pass.gif" alt="seagulls">
+                    <img class="card-icon" src="/img/pass.gif" alt="seagulls">
                     <ion-card-title>Bathroom Pass</ion-card-title>
-                    <h2 v-if="roomStore.roomNumber">Room {{ roomStore.roomNumber }}</h2>
+                    <ion-card-subtitle v-if="roomStore.roomNumber">Room {{ roomStore.roomNumber }}</ion-card-subtitle>
                 </ion-card-header>
                 <ion-card-content>
                     <div v-if="roomStore.passAvailable">
@@ -15,11 +15,11 @@
                         </ion-button>
                     </div>
                     <div v-if="roomStore.hasPass">
+                        <p>You currently have the bathroom pass for this room.</p>
                         <ion-button @click="returnPass">
                             <ion-ripple-effect></ion-ripple-effect>
                             Return pass
                         </ion-button>
-                        <p>You currently have the bathroom pass for this room.</p>
                     </div>
                     <div v-if="!roomStore.passAvailable && !roomStore.hasPass">
                         <p>
@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { IonPage, IonContent, IonCard, IonCardContent, IonCardTitle, IonCardHeader, IonRippleEffect, IonButton, toastController, modalController } from '@ionic/vue';
+import { IonPage, IonContent, IonCard, IonCardContent, IonCardTitle, IonCardHeader, IonRippleEffect, IonButton, toastController, modalController, IonCardSubtitle } from '@ionic/vue';
 import ReturnModal from '../components/Modal.vue';
 import { useRoomStore } from '@/stores/room';
 import { useRoute } from 'vue-router';
@@ -49,15 +49,16 @@ const route = useRoute();
 export default defineComponent({
     name: 'BathroomPass',
     components: {
-        IonPage,
-        IonContent,
-        IonCard,
-        IonCardContent,
-        IonCardTitle,
-        IonCardHeader,
-        IonRippleEffect,
-        IonButton
-    },
+    IonPage,
+    IonContent,
+    IonCard,
+    IonCardContent,
+    IonCardTitle,
+    IonCardHeader,
+    IonRippleEffect,
+    IonButton,
+    IonCardSubtitle
+},
     data() {
         return {
             roomNumber: String,
@@ -146,13 +147,13 @@ export default defineComponent({
                         position: 'top'
                     })
                     await toast.present();
+                    roomStore.hasPass = false;
+                    roomStore.passAvailable = true;
                 } catch (error) {
                     console.log("Error occured when returning the bathroom pass.");
                     console.error(error);
                     return
                 }
-                roomStore.hasPass = false;
-                roomStore.passAvailable = true;
             }
         }
     },
@@ -161,3 +162,46 @@ export default defineComponent({
     }
 })
 </script>
+
+<style scoped>
+ion-card-title {
+    --color: white;
+    font-weight: 600;
+    font-size: 1.75rem;
+}
+
+ion-card-subtitle {
+    font-size: 1.25rem;
+}
+
+ion-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0.5rem;
+}
+
+ion-card-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+ion-card-content > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+.card-icon {
+    width: 90%;
+    border-radius: 0.3rem;
+}
+
+</style>
