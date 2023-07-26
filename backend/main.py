@@ -64,10 +64,6 @@ def checkUserStatus(email: str) -> bool:
             return True
 
 def update_status(room_number: int, change_to: bool, first_name: str, last_name: str, email: str):
-    # def update_masters(floor_master):
-    #     master_cell = floor_master.find(str(room_number))
-    #     floor_master.range(f"B{master_cell.row}:D{master_cell.row}")
-    #     print("updating floor masters")
     def update_sheets(room_worksheet, floor_master):
             status_cell = room_worksheet.find('available')
             print(f"Status cell for {room_number} found at {status_cell.row} {status_cell.col}")
