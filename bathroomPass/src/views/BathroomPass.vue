@@ -2,7 +2,7 @@
     <ion-page id="main">
         <ion-content color="dark" class="main-container" :fullscreen="true">
             <div class="container-wrapper">
-                <ion-card>
+                <ion-card color="dark">
                     <ion-card-header>
                         <img class="card-icon" src="/img/pass.gif" alt="seagulls">
                         <ion-card-title>Bathroom Pass</ion-card-title>
@@ -49,8 +49,8 @@ const roomStore = useRoomStore();
 const route = useRoute();
 
 export default defineComponent({
-    name: 'BathroomPass',
-    components: {
+  name: "BathroomPass",
+  components: {
     IonPage,
     IonContent,
     IonCard,
@@ -59,22 +59,22 @@ export default defineComponent({
     IonCardHeader,
     IonRippleEffect,
     IonButton,
-    IonCardSubtitle
-},
-    data() {
-        return {
-            roomNumber: String,
-            roomStore,
-            route
-        }
-    },
-    setup() {
-        const router = useRouter();
-        return {
-            router
-        }
-    },
-    methods: {
+    IonCardSubtitle,
+  },
+  data() {
+    return {
+      roomNumber: String,
+      roomStore,
+      route,
+    };
+  },
+  setup() {
+    const router = useRouter();
+    return {
+      router
+    }
+  },
+  methods: {
         getRoomNumber() {
             roomStore.roomNumber = route.params.id.toString();
             return roomStore.roomNumber;
@@ -122,7 +122,7 @@ export default defineComponent({
                         position: 'top'
                     })
                     await toast.present();
-                } catch(error) {   
+                } catch (error) {   
                     console.log("Error occurred when taking out the bathroom pass.");
                     console.error(error);
                     return
@@ -170,23 +170,23 @@ export default defineComponent({
                     return
                 }
             }
-        }
-    },
-    mounted() {
-        this.getPassStatus();   
-    }
-})
+        },
+        mounted() {
+          this.getPassStatus();
+        },
+  }
+});
 </script>
 
 <style scoped>
 ion-card-title {
-    --color: white;
-    font-weight: 600;
-    font-size: 1.75rem;
+  --color: white;
+  font-weight: 600;
+  font-size: 1.75rem;
 }
 
 ion-card-subtitle {
-    font-size: 1.25rem;
+  font-size: 1.25rem;
 }
 
 ion-card {
@@ -199,11 +199,11 @@ ion-card {
 }
 
 ion-card-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
 }
 
 ion-card-content {
@@ -214,11 +214,11 @@ ion-card-content {
 }
 
 ion-card-content > div {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
 }
 
 .card-icon {

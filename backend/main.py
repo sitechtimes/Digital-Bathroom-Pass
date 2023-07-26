@@ -219,7 +219,7 @@ async def update_item(room_id: int, item: Item):
             return result
         else:
             return {
-                message: "The provided email address was invald. Please try again."
+                "message": "The provided email address was invald. Please try again."
             }
     else:
         return {
