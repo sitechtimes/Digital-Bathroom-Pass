@@ -107,10 +107,6 @@ export default defineComponent({
                     const res = await axios.patch(process.env.VUE_APP_LOCALHOST_URL + `/change_status/${parseInt(roomStore.roomNumber)}`, {
                         //changing pass availability for the room to false
                         change_to: false,
-                        // first_name: roomStore.firstName,
-                        // last_name: roomStore.familyName,
-                        // email: roomStore.email
-
                         first_name: roomStore.firstName,
                         last_name: roomStore.familyName,
                         email: roomStore.email
@@ -173,7 +169,7 @@ export default defineComponent({
         },
         mounted() {
           this.getPassStatus();
-        },
+        }
   }
 });
 </script>
