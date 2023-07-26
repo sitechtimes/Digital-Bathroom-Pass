@@ -41,7 +41,7 @@
 import { IonPage, IonContent, IonCard, IonCardContent, IonCardTitle, IonCardHeader, IonRippleEffect, IonButton, toastController, modalController, IonCardSubtitle, loadingController } from '@ionic/vue';
 import ReturnModal from '../components/Modal.vue';
 import { useRoomStore } from '@/stores/room';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { defineComponent } from 'vue';
 import axios from 'axios';
 
@@ -66,6 +66,12 @@ export default defineComponent({
             roomNumber: String,
             roomStore,
             route
+        }
+    },
+    setup() {
+        const router = useRouter();
+        return {
+            router
         }
     },
     methods: {
@@ -156,6 +162,8 @@ export default defineComponent({
                     await toast.present();
                     roomStore.hasPass = false;
                     roomStore.passAvailable = true;
+                    roomStore.roomNumber = "";
+                    this.router.push('/home')
                 } catch (error) {
                     console.log("Error occured when returning the bathroom pass.");
                     console.error(error);
