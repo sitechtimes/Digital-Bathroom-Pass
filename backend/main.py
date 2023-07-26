@@ -210,7 +210,7 @@ class Item(BaseModel):
 
 @app.patch("/change_status/{room_id}")
 async def update_item(room_id: int, item: Item):
-    in_range = (100 < room_id < 232)
+    in_range = (0 <= room_id < 359)
     if isinstance(item.change_to, bool) and in_range:
         valid_email = check_email_validity(item.email)
         if(valid_email):
