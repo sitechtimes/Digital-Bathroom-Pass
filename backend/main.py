@@ -1,6 +1,6 @@
 import gspread
-import datetime
 import os
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from typing import Annotated
 from fastapi.middleware.cors import CORSMiddleware
@@ -25,17 +25,11 @@ floor1_master_sheet = floor1_sheets.get_worksheet(0)
 floor2_master_sheet = floor2_sheets.get_worksheet(0)
 floor3_master_sheet = floor3_sheets.get_worksheet(0)
 
-room_range = range(0, 359) #using for now
-
 # room ranges for all floors
 basement_range = range(0, 59)
 first_floor_range = range(100, 171)
 second_floor_range = range(200, 271)
 third_floor_range = range(300, 359)
-
-# def next_available_row(worksheet): 
-#     str_list = list(filter(None, worksheet.col.values(1)))
-#     return str(len(str_list)+1)
 
 def get_room_status(room_number: int):
     cell = main_master_sheet.find(str(room_number))
@@ -69,7 +63,7 @@ def update_status(room_number: int, change_to: bool, first_name: str, last_name:
             print(f"Status cell for {room_number} found at row {status_cell.row}, column {status_cell.col}")
             # Adding the entry into the log, then move the status cell down one row
             log_cells = room_worksheet.range(f"A{status_cell.row}:E{status_cell.row}")
-            log_values = [change_to, full_name, email, str(current_time), "unavailable"]
+            log_values = [change_to, full_name, email, new_current_time, "unavailable"]
             for i, value in enumerate(log_values):
                 log_cells[i].value = value
 
@@ -106,7 +100,17 @@ def update_status(room_number: int, change_to: bool, first_name: str, last_name:
 
         print(f"Changing the availibility of room {room_number} from {is_available_value} to {change_to}")
         current_status = str(change_to).upper()
-        current_time = datetime.datetime.now()
+        # setting the current time to be more readable
+        fmt = '%H:%M:%S'
+        current_time = datetime.today()
+        if current_time.hour > 12:
+            time_tail = " PM"
+            current_time = current_time - timedelta(hours=12)
+            new_current_time = current_time.strftime(fmt) + time_tail
+        else:
+            time_tail =  " AM"
+            new_current_time = current_time.strftime(fmt) + time_tail
+        
         # Updating the values of the row associated with the room
         full_name = first_name + " " + last_name
         cell_list = main_master_sheet.range(f"B{room_cell.row}:D{room_cell.row}")
@@ -141,11 +145,12 @@ def update_status(room_number: int, change_to: bool, first_name: str, last_name:
             next_row = len(currently_out_sheet.col_values(1)) + 1
             currently_out_sheet.update_cell(next_row, 1, full_name)
             currently_out_sheet.update_cell(next_row, 2, email)
-            currently_out_sheet.update_cell(next_row, 3, str(current_time))
+            currently_out_sheet.update_cell(next_row, 3, new_current_time)
             currently_out_sheet.update_cell(next_row, 4, str(room_number)) 
         else:
             user_cell = currently_out_sheet.find(full_name)
             currently_out_sheet.delete_row(user_cell.row)
+            currently_out_sheet.add_rows(1)
         return({
             "message": "Successfully updated bathroom pass log"
         })
