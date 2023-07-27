@@ -150,6 +150,7 @@ def update_status(room_number: int, change_to: bool, first_name: str, last_name:
         else:
             user_cell = currently_out_sheet.find(full_name)
             currently_out_sheet.delete_row(user_cell.row)
+            currently_out_sheet.add_rows(1)
         return({
             "message": "Successfully updated bathroom pass log"
         })
