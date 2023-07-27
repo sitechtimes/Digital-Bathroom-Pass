@@ -64,13 +64,9 @@ def checkUserStatus(email: str) -> bool:
             return True
 
 def update_status(room_number: int, change_to: bool, first_name: str, last_name: str, email: str):
-    # def update_masters(floor_master):
-    #     master_cell = floor_master.find(str(room_number))
-    #     floor_master.range(f"B{master_cell.row}:D{master_cell.row}")
-    #     print("updating floor masters")
     def update_sheets(room_worksheet, floor_master):
             status_cell = room_worksheet.find('available')
-            print(f"Status cell for {room_number} found at {status_cell.row} {status_cell.col}")
+            print(f"Status cell for {room_number} found at row {status_cell.row}, column {status_cell.col}")
             # Adding the entry into the log, then move the status cell down one row
             log_cells = room_worksheet.range(f"A{status_cell.row}:E{status_cell.row}")
             log_values = [change_to, full_name, email, str(current_time), "unavailable"]
@@ -121,8 +117,6 @@ def update_status(room_number: int, change_to: bool, first_name: str, last_name:
         
         main_master_sheet.update_cells(cell_list)
         
-
-    #    master_sheet.update(f"B{room_cell.row}:D{room_cell.row}", [change_to, full_name, email]) 
         print("Updated master sheet")    
 
     #   Update the sheet of the corresponding room for the room log
@@ -210,7 +204,7 @@ class Item(BaseModel):
 
 @app.patch("/change_status/{room_id}")
 async def update_item(room_id: int, item: Item):
-    in_range = (0 <= room_id <= 359)
+    in_range = 0 <= room_id <= 359
     if isinstance(item.change_to, bool) and in_range:
         valid_email = check_email_validity(item.email)
         if(valid_email):
