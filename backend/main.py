@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from typing import Annotated
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI, Header, Request
 from google.oauth2 import id_token
 from google.auth.transport import requests
@@ -195,6 +196,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+dist_directory = os.path.join(os.path.dirname(__file__), '../bathroomPass/dist')
+app.mount('/', StaticFiles(directory=dist_directory, html=True), name='site')
 
 @app.get("/get_status/{room_id}")
 async def read_item(room_id: int):
