@@ -3,7 +3,7 @@
     <ion-content color="dark" id="main-container" :fullscreen="true">
       <div class="container-wrapper">
         <ion-card color="dark">
-          <img class="card-icon" src="/img/signin.png" alt="seagull" />
+          <img class="card-icon" src="/images/signin.png" alt="seagull" />
           <ion-card-title>SITHS Bathroom Scanner</ion-card-title>
           <ion-card-subtitle>Scan your classroom's QR code</ion-card-subtitle>
           <ion-card-content>

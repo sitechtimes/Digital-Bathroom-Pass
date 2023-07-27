@@ -4,7 +4,7 @@
             <div class="container-wrapper">
                 <ion-card color="dark">
                     <ion-card-header>
-                        <img class="card-icon" src="/img/pass.gif" alt="seagulls">
+                        <img class="card-icon" src="/images/pass.gif" alt="seagulls">
                         <ion-card-title>Bathroom Pass</ion-card-title>
                         <ion-card-subtitle v-if="roomStore.roomNumber">Room {{ roomStore.roomNumber }}</ion-card-subtitle>
                     </ion-card-header>
@@ -15,7 +15,7 @@
                                 Take out pass
                             </ion-button>
                         </div>
-                        <div v-if="roomStore.hasPass">
+                        <div v-if="roomStore.hasPass && !roomStore.passAvailable">
                             <p>You currently have the bathroom pass for this room.</p>
                             <ion-button @click="returnPass">
                                 <ion-ripple-effect></ion-ripple-effect>
@@ -39,11 +39,13 @@
 
 <script lang="ts">
 import { IonPage, IonContent, IonCard, IonCardContent, IonCardTitle, IonCardHeader, IonRippleEffect, IonButton, toastController, modalController, IonCardSubtitle, loadingController } from '@ionic/vue';
+import LimitModal from '@/components/LimitModal.vue';
 import ReturnModal from '../components/Modal.vue';
 import { useRoomStore } from '@/stores/room';
 import { useRoute, useRouter } from 'vue-router';
 import { defineComponent } from 'vue';
 import axios from 'axios';
+import date from 'date-and-time';
 
 const roomStore = useRoomStore();
 const route = useRoute();
@@ -79,10 +81,49 @@ export default defineComponent({
             roomStore.roomNumber = route.params.id.toString();
             return roomStore.roomNumber;
         },
+        autoReturn() {
+            const intervalID = setInterval(async () => {
+                const currentTime = new Date();
+                const timestamp = Date.parse(roomStore.timestamp);
+                const previousTime = new Date(timestamp);
+                const minutesPassed = date.subtract(currentTime, previousTime).toMinutes();
+                console.log(minutesPassed)
+                //change minutes to 10 in production
+                if (minutesPassed >= 1) {
+                    console.log("You have exceeded the limit of the bathroom pass.")
+                    try {
+                        const res = await axios.patch(process.env.VUE_APP_LOCALHOST_URL + `/change_status/${parseInt(roomStore.roomNumber)}`, {
+                            change_to: true,
+                            first_name: roomStore.firstName,
+                            last_name: roomStore.familyName,
+                            email: roomStore.email
+                        })
+                        console.log(res);
+                        const modal = await modalController.create({
+                            component: LimitModal,
+                        })
+                        modal.present();
+                        clearInterval(intervalID);
+                        this.router.push('/home');
+                    } catch (error) {
+                        console.log("Error occurred when automatically putting bathroom pass back.")
+                        console.error(error);
+                    }
+                } 
+            }, 5000)
+        },
         async getPassStatus() {
             const res = await axios.get(process.env.VUE_APP_LOCALHOST_URL + '/get_status/' + parseInt(roomStore.roomNumber));
+            console.log("PASS STATUS")
             console.log(res);
-            if (res.data.isAvailable === 'TRUE') {
+            if(res.data.isAvailable === 'FALSE' && res.data.userEmail === roomStore.email) {
+                //if the user has already has the pass for the current room
+                console.log("User already has the pass")
+                roomStore.hasPass = true;
+                roomStore.passAvailable = false;
+                return false;
+            }
+            else if (res.data.isAvailable === 'TRUE') {
                 roomStore.passAvailable = true;
                 return true;
             }
@@ -112,12 +153,15 @@ export default defineComponent({
                         email: roomStore.email
                     })  
                     console.log(res);
+                    const now = new Date();
+                    roomStore.timestamp = now.toISOString();
                     const toast = await toastController.create({
                         message: 'Bathroom Pass Taken!',
                         duration: 3000,
                         position: 'top'
                     })
                     await toast.present();
+                    this.autoReturn()
                 } catch (error) {   
                     console.log("Error occurred when taking out the bathroom pass.");
                     console.error(error);
@@ -158,7 +202,7 @@ export default defineComponent({
                     await toast.present();
                     roomStore.hasPass = false;
                     roomStore.passAvailable = true;
-                    roomStore.roomNumber = "";
+                    // roomStore.roomNumber = "";
                     this.router.push('/home')
                 } catch (error) {
                     console.log("Error occured when returning the bathroom pass.");
@@ -166,10 +210,10 @@ export default defineComponent({
                     return
                 }
             }
-        },
-        mounted() {
-          this.getPassStatus();
         }
+  },
+  mounted() {
+    this.getPassStatus();
   }
 });
 </script>

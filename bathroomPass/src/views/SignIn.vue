@@ -4,7 +4,7 @@
       <div class="container-wrapper">
         <ion-card color="dark">
           <ion-card-content>
-            <img class="card-icon" src="/img/signin.png" alt="seagull" />
+            <img class="card-icon" src="/images/signin.png" alt="seagull" />
             <ion-card-header>
               <ion-card-title>SITHS Digital Bathroom Pass</ion-card-title>
               <ion-card-subtitle>"Pooping made easy"</ion-card-subtitle>

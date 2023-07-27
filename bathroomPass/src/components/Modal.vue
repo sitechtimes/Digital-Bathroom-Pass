@@ -12,7 +12,7 @@
   </ion-header>
   <ion-content color="dark">
     <div class="modal-wrapper">
-      <img class="modal-icon" src="/img/modal.png" alt="seagull" />
+      <img class="modal-icon" src="/images/modal.png" alt="seagull" />
       <ion-text> Are you sure you want to return your bathroom pass? </ion-text>
       <ion-button @click="confirm">
         <ion-ripple-effect></ion-ripple-effect>

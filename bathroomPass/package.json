@@ -23,6 +23,7 @@
     "@ionic/vue-router": "^6.0.0",
     "axios": "^1.4.0",
     "core-js": "^3.6.5",
+    "date-and-time": "^3.0.2",
     "ionicons": "^6.0.3",
     "pinia": "^2.1.4",
     "pinia-plugin-persistedstate": "^3.1.0",
