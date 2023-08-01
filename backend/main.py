@@ -1,14 +1,16 @@
-import gspread
 import os
 from datetime import datetime, timedelta
-from dotenv import load_dotenv
 from typing import Annotated
+
+import gspread
+from dotenv import load_dotenv
+from fastapi import FastAPI, Header, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi import FastAPI, Header, Request
-from google.oauth2 import id_token
 from google.auth.transport import requests
+from google.oauth2 import id_token
 from pydantic import BaseModel
+
 load_dotenv()
 
 google_account = gspread.service_account(filename="credentials.json")
