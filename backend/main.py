@@ -1,10 +1,9 @@
 import os
 from datetime import datetime, timedelta
-from typing import Annotated
 
 import gspread
 from dotenv import load_dotenv
-from fastapi import FastAPI, Header, Request
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from google.auth.transport import requests
@@ -187,8 +186,8 @@ app = FastAPI()
 
 allowed_origins = [
     "http://localhost",
-    "http://localhost:8100",
-    "http://localhost:8101",
+    "http://localhost:8000",
+    "http://localhost:8001",
 ]
 
 app.add_middleware(
