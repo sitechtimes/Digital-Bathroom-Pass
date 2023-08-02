@@ -198,8 +198,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-dist_directory = os.path.join(os.path.dirname(__file__), '../bathroomPass/dist')
-app.mount('/', StaticFiles(directory=dist_directory, html=True), name='site')
+# dist_directory = os.path.join(os.path.dirname(__file__), '../bathroomPass/dist')
+# app.mount('/', StaticFiles(directory=dist_directory, html=True), name='site')
 
 @app.get("/get_status/{room_id}")
 async def read_item(room_id: int):
