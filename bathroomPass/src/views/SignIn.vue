@@ -49,11 +49,6 @@ import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth"; //package f
 import { useRouter } from "vue-router";
 import axios from "axios";
 
-// to get on own port go into backend directory and in terminal paste
-// python -m uvicorn main:app --reload
-// 10.94.168.231:8000 school port
-// 10.94.168.231:8001
-
 export default defineComponent({
   name: "SignIn",
   components: {
