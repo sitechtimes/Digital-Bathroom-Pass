@@ -10,7 +10,7 @@ from google.auth.transport import requests
 
 load_dotenv()
 
-google_account = gspread.service_account(filename="sheets_credentials.json")
+google_account = gspread.service_account(filename="credentials.json")
 main_sheets = google_account.open_by_key(os.getenv('BATHROOM_PASS_MAIN_SHEET_KEY'))
 basement_sheets = google_account.open_by_key(os.getenv('BATHROOM_PASS_BASEMENT_KEY'))
 floor1_sheets = google_account.open_by_key(os.getenv('BATHROOM_PASS_FIRST_FLOOR_KEY'))
