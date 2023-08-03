@@ -92,7 +92,7 @@ export default defineComponent({
                 if (minutesPassed >= 1) {
                     console.log("You have exceeded the limit of the bathroom pass.")
                     try {
-                        const res = await axios.patch(process.env.VUE_APP_LOCALHOST_URL + `/change_status/${parseInt(roomStore.roomNumber)}`, {
+                        const res = await axios.patch(window.location.origin + `/change_status/${parseInt(roomStore.roomNumber)}`, {
                             change_to: true,
                             first_name: roomStore.firstName,
                             last_name: roomStore.familyName,
@@ -113,7 +113,7 @@ export default defineComponent({
             }, 5000)
         },
         async getPassStatus() {
-            const res = await axios.get(process.env.VUE_APP_LOCALHOST_URL + '/get_status/' + parseInt(roomStore.roomNumber));
+            const res = await axios.get(window.location.origin + '/get_status/' + parseInt(roomStore.roomNumber));
             console.log("PASS STATUS")
             console.log(res);
             if(res.data.isAvailable === 'FALSE' && res.data.userEmail === roomStore.email) {
@@ -145,7 +145,7 @@ export default defineComponent({
             }
             else {
                 try {
-                    const res = await axios.patch(process.env.VUE_APP_LOCALHOST_URL + `/change_status/${parseInt(roomStore.roomNumber)}`, {
+                    const res = await axios.patch(window.location.origin + `/change_status/${parseInt(roomStore.roomNumber)}`, {
                         //changing pass availability for the room to false
                         change_to: false,
                         first_name: roomStore.firstName,
@@ -182,12 +182,12 @@ export default defineComponent({
                         component: ReturnModal
                     })
                     await modal.present();
-                    const { data, role } = await modal.onWillDismiss();
+                    const { role } = await modal.onWillDismiss();
                     if (role !== 'confirm') {
                         console.log("User cancelled returning the bathroom pass.")
                         return
                     }
-                    const res = await axios.patch(process.env.VUE_APP_LOCALHOST_URL + `/change_status/${parseInt(roomStore.roomNumber)}`, {
+                    const res = await axios.patch(window.location.origin + `/change_status/${parseInt(roomStore.roomNumber)}`, {
                         change_to: true,
                         first_name: roomStore.firstName,
                         last_name: roomStore.familyName,

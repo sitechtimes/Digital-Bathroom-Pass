@@ -45,14 +45,9 @@ import {
 import { defineComponent } from "vue";
 import { logoGoogle } from "ionicons/icons";
 import { useRoomStore } from "@/stores/room";
-import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth"; //package for google login
+import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
 import { useRouter } from "vue-router";
 import axios from "axios";
-
-// to get on own port go into backend directory and in terminal paste
-// python -m uvicorn main:app --reload
-// 10.94.168.231:8000 school port
-// 10.94.168.231:8001
 
 export default defineComponent({
   name: "SignIn",
@@ -95,7 +90,7 @@ export default defineComponent({
         user_agent: token,
       };
       const res = await axios.post(
-        `${process.env.VUE_APP_LOCALHOST_URL}/token_sign_in/`,
+        `${window.location.origin}/token_sign_in/`,
         token,
         { headers }
       );

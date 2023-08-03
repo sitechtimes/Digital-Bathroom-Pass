@@ -7,10 +7,8 @@ from dotenv import load_dotenv
 import os
 load_dotenv()
 
-# The app serving our SPA
+# The app serving our API
 app = FastAPI()
-# The subapp with our API
-# api = FastAPI()
 
 allowed_origins = [
     "http://localhost",
@@ -27,18 +25,8 @@ app.add_middleware(
 )
 
 dist_directory = os.path.join(os.path.dirname(__file__), '../bathroomPass/dist')
-image_directory = os.path.join(os.path.dirname(__file__), '../bathroomPass/dist/images')
-js_directory = os.path.join(os.path.dirname(__file__), '../bathroomPass/dist/js')
-
-app.mount('/static', StaticFiles(directory=dist_directory), name='static')
-app.mount('/images', StaticFiles(directory=image_directory), name='images')
-app.mount('/js', StaticFiles(directory=js_directory), name='js')
 
 @app.get('/')
-async def return_app():
-    return HTMLResponse(content=open(f"{dist_directory}/index.html").read())
-
-@app.get('/pass')
 async def return_app():
     return HTMLResponse(content=open(f"{dist_directory}/index.html").read())
 
@@ -47,6 +35,10 @@ async def return_app():
     return HTMLResponse(content=open(f"{dist_directory}/index.html").read())
 
 @app.get('/signin')
+async def return_app():
+    return HTMLResponse(content=open(f"{dist_directory}/index.html").read())
+
+@app.get('/pass')
 async def return_app():
     return HTMLResponse(content=open(f"{dist_directory}/index.html").read())
 
