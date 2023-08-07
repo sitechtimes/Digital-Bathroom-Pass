@@ -22,5 +22,5 @@ RUN npm install
 # Build and run the app
 RUN ionic build
 WORKDIR /app/backend
-EXPOSE 6666
-CMD ["venv/bin/uvicorn", "main:app"] 
+EXPOSE 1738
+CMD ["venv/bin/uvicorn", "main:app", "--host", "0.0.0.0", "--port", "1738"] 
