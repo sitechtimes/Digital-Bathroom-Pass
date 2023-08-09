@@ -1,8 +1,14 @@
 FROM node:18.16.0
 
+#Set the timezone environment variable
+ENV TZ="America/New_York"
+
+#Set the timezone for the system
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 # Install Python, pip, and virtual environment
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends python3.10 python3-pip python3-venv
+    && apt-get install -y --no-install-recommends python3.10 python3-pip python3-venv tzdata
 
 COPY . /app
 WORKDIR /app/backend
