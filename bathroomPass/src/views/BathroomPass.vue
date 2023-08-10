@@ -23,11 +23,8 @@
                             </ion-button>
                         </div>
                         <div v-if="!roomStore.passAvailable && !roomStore.hasPass">
-                            <p>
-                                Someone in your class is currently out with the pass.
-                                <br>
-                                Please wait until they get back, or ask your teacher for permission to leave.
-                            </p>
+                            <p>Someone in your class is currently out with the pass.</p>
+                            <p>Please wait until they get back, or ask your teacher for permission to leave.</p>
                         </div>
     
                     </ion-card-content>
@@ -222,7 +219,7 @@ export default defineComponent({
 ion-card-title {
   --color: white;
   font-weight: 600;
-  font-size: 1.75rem;
+  font-size: 2.25rem;
 }
 
 ion-card-subtitle {
@@ -235,7 +232,7 @@ ion-card {
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 2rem;
+    padding: 0.25rem;
 }
 
 ion-card-header {
@@ -251,6 +248,9 @@ ion-card-content {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    width: 85%;
+    gap: 1rem;
+    font-weight: 500;
 }
 
 ion-card-content > div {
@@ -262,7 +262,7 @@ ion-card-content > div {
 }
 
 .card-icon {
-    width: 80%;
+    width: 100%;
     border-radius: 0.3rem;
 }
 

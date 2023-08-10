@@ -7,7 +7,7 @@
             <img class="card-icon" src="/images/signin.png" alt="seagull" />
             <ion-card-header>
               <ion-card-title>SITHS Digital Bathroom Pass</ion-card-title>
-              <ion-card-subtitle>"Pooping made easy"</ion-card-subtitle>
+              <ion-card-subtitle>"The #1 way to #2"</ion-card-subtitle>
               <ion-text v-if="roomStore.roomNumber === ''"
                 >Room Not Detected</ion-text
               >
@@ -133,7 +133,7 @@ export default defineComponent({
 
 <style scoped>
 ion-title {
-  font-size: 1.75rem;
+  font-size: 2rem;
   --color: #fff;
 }
 
@@ -153,6 +153,13 @@ ion-card-content {
   justify-content: center;
   align-items: center;
   gap: 1.25rem;
+  width: 80vw;
+}
+
+ion-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 ion-button {
@@ -163,17 +170,18 @@ ion-button {
 
 ion-card-title {
   --color: #fff;
-  font-size: 1.75rem;
+  font-size: 2rem;
   padding-top: 1rem;
   font-weight: 600;
 }
 
 ion-card-subtitle {
-  font-size: 1.15rem;
+  font-weight: 600;
+  font-size: 1rem;
 }
 
-ion-card > .card-icon {
-  width: 128px;
+ion-text {
+  font-weight: 600;
 }
 
 .round-button {
@@ -190,6 +198,6 @@ ion-card > .card-icon {
 }
 
 .card-icon {
-  width: 40%;
+  width: 60%;
 }
 </style>

@@ -5,7 +5,7 @@
         <ion-card color="dark">
           <img class="card-icon" src="/images/signin.png" alt="seagull" />
           <ion-card-title>SITHS Bathroom Scanner</ion-card-title>
-          <ion-card-subtitle>Scan your classroom's QR code</ion-card-subtitle>
+          <ion-card-subtitle>SCAN YOUR CLASSROOM'S QR CODE</ion-card-subtitle>
           <ion-card-content>
             <ion-button
               @click="pushToScanner"
@@ -73,12 +73,13 @@ export default defineComponent({
 
 <style scoped>
 ion-card-title {
-  font-size: 1.75rem;
+  font-size: 2rem;
   font-weight: 600;
   --color: #fff;
 }
 
 ion-card-subtitle {
+  font-weight: 600;
   font-size: 1rem;
 }
 
@@ -112,6 +113,6 @@ ion-button {
   padding: 6rem 0rem 0rem 0rem;
 }
 .card-icon {
-  width: 40%;
+  width: 50%;
 }
 </style>

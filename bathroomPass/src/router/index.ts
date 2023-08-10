@@ -25,7 +25,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'BathroomPass',
     component: () => import('../views/BathroomPass.vue'),
     meta: {
-      requireLogin: false,
+      requireLogin: true,
       requireRoom: true,
     }
   }

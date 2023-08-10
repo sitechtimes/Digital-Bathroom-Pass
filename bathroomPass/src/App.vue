@@ -19,7 +19,7 @@ export default defineComponent({
 
 <style>
 * {
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
 body {
