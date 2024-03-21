@@ -52,17 +52,7 @@ const route = useRoute();
 
 export default defineComponent({
   name: "BathroomPass",
-  components: {
-    IonPage,
-    IonContent,
-    IonCard,
-    IonCardContent,
-    IonCardTitle,
-    IonCardHeader,
-    IonRippleEffect,
-    IonButton,
-    IonCardSubtitle,
-  },
+  components: { IonPage, IonContent, IonCard, IonCardContent, IonCardTitle, IonCardHeader, IonRippleEffect, IonButton, IonCardSubtitle },
   data() {
     return {
       roomNumber: String,
@@ -77,6 +67,7 @@ export default defineComponent({
     }
   },
   methods: {
+    //gets room number from the room query in the url
         getRoomNumber() {
             roomStore.roomNumber = route.params.id.toString();
             return roomStore.roomNumber;
