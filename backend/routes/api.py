@@ -213,9 +213,20 @@ async def update_item(room_id: int, item: RoomInfo):
             "message": "Something went wrong when changing pass status. Invalid change_to parameter or room_id."
         }
 
+# @router.post('/token_sign_in')
+# async def google_login(request: Request):
+#     header = request.headers.get('user_agent')
+#     return {
+#         "message": authenticate_google(token=header)
+#     }
+    
+class AuthorizationCode(BaseModel):
+    code: str
+
 @router.post('/token_sign_in')
-async def google_login(request: Request):
-    header = request.headers.get('user_agent')
+async def auth_login(item: AuthorizationCode):
+    authcode = item.code
+
     return {
-        "message": authenticate_google(token=header)
+        "message": f"Your code is {authcode}"
     }

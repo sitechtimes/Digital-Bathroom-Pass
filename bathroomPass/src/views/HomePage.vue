@@ -36,6 +36,8 @@ import {
 } from "@ionic/vue";
 import { defineComponent } from "vue";
 import { useRoomStore } from "../stores/room";
+import axios from "axios";
+import { body } from "ionicons/icons";
 
 export default defineComponent({
   name: "HomePage",
@@ -53,6 +55,15 @@ export default defineComponent({
     return {
       roomNumber: "",
     };
+  },
+  async mounted() {
+    if (this.$route.params.code) {
+      let authcode = this.$route.params.code
+      const res = await axios.post(`${window.location.origin}/token_sign_in/`, {
+        code: authcode
+      })
+      console.log(res.data)
+    }
   },
   setup() {
     const counter = useRoomStore();
