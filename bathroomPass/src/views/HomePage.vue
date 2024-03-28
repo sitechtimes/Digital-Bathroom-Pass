@@ -57,16 +57,21 @@ export default defineComponent({
     };
   },
   async mounted() {
-    if (this.$route.params.code) {
-      let authcode = this.$route.params.code
-      const res = await axios.post(`${window.location.origin}/token_sign_in/`, {
-        code: authcode
+    console.log(this.$route.query.code)
+    if (this.$route.query.code) {
+      let authcode = this.$route.query.code
+      const res = await axios.post(`http://localhost:8000/o/token/`, {
+        code_verifier: "GMZO-yw_vpdTZIE2uZvkmDtAfuzwbHhqxELPEiz5Y80",
+        redirect_uri: "http://localhost:1738/home",
+        code: authcode,
+        grant_type: "authorization_code"
       })
       console.log(res.data)
     }
   },
   setup() {
     const counter = useRoomStore();
+    
     return {
       counter,
     };

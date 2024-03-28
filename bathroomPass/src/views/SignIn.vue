@@ -79,7 +79,7 @@ export default defineComponent({
         // const idToken = response.authentication.idToken;
         // this.roomStore.idToken = idToken;
         // this.router.push(`/pass/?room=${this.roomStore.roomNumber}`);
-        window.location.href = 'http://localhost:8000/o/authorize/?response_type=code&client_id=qeOcXSvGXQDANW1offNEWHQ78wEsI1SPZVicPYPy&redirect_uri=http%3A%2F%2Flocalhost%3A1738%2Fhome&code_challenge=GMZO-yw_vpdTZIE2uZvkmDtAfuzwbHhqxELPEiz5Y80&code_challenge_method=S256'
+        window.location.href = 'http://localhost:8000/o/authorize/?response_type=code&client_id=qeOcXSvGXQDANW1offNEWHQ78wEsI1SPZVicPYPy&redirect_uri=http%3A%2F%2Flocalhost%3A1738%2Fhome&code_challenge=GMZO-yw_vpdTZIE2uZvkmDtAfuzwbHhqxELPEiz5Y80&code_challenge_method=plain'
       } catch (error) {
         console.log("Error occurred when attempting to login");
         console.error(error);

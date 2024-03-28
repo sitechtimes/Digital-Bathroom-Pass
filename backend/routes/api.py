@@ -1,5 +1,6 @@
 import gspread
 import os
+import json
 from datetime import datetime, timedelta
 from typing import Annotated
 from fastapi import APIRouter
@@ -8,6 +9,7 @@ from pydantic import BaseModel
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from dotenv import load_dotenv
+import requests as pyreq 
 router = APIRouter()
 
 load_dotenv()
@@ -211,22 +213,19 @@ async def update_item(room_id: int, item: RoomInfo):
     else:
         return {
             "message": "Something went wrong when changing pass status. Invalid change_to parameter or room_id."
-        }
-
-# @router.post('/token_sign_in')
-# async def google_login(request: Request):
-#     header = request.headers.get('user_agent')
-#     return {
-#         "message": authenticate_google(token=header)
-#     }
+        } 
     
-class AuthorizationCode(BaseModel):
+class AuthorizationBody(BaseModel):
+    grant_type: str
     code: str
+    redirect_uri: str
+    code_verifier: str
 
 @router.post('/token_sign_in')
-async def auth_login(item: AuthorizationCode):
-    authcode = item.code
-
-    return {
-        "message": f"Your code is {authcode}"
-    }
+async def get_token(item: AuthorizationBody):
+    try:
+        y = json.loads(item)
+        res = await pyreq.post('http://localhost:8000/o/token', data=y)
+        return res
+    except ValueError:
+        return { "message": "Something went wrong" }
